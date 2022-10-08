@@ -1,0 +1,13 @@
+## Interface: 90100
+## Title: Custom Achiever
+## Version: 0.1.1
+## Notes: Custom Achievements creator
+## Author: Xam_insight
+## SavedVariables: CustomAchieverData, CustomAchieverOptionsData, CustomAchieverMIcon, CustomAchieverWindow
+
+Libs\LibStub\LibStub.lua
+Libs\AceLocale-3.0\AceLocale-3.0.xml
+Libs\EZBlizzardUiPopups\EZBlizzardUiPopups.xml
+
+embeds.xml
+CustomAchieverTab.xml
