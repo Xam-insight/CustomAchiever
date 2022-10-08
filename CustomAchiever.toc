@@ -5,8 +5,8 @@
 ## Author: Xam_insight
 ## SavedVariables: CustomAchieverData, CustomAchieverOptionsData, CustomAchieverMIcon, CustomAchieverWindow
 
-Libs\Ace3\LibStub\LibStub.lua
-Libs\Ace3\AceLocale-3.0\AceLocale-3.0.xml
+..\Ace3\LibStub\LibStub.lua
+..\Ace3\AceLocale-3.0\AceLocale-3.0.xml
 Libs\EZBlizzardUiPopups\EZBlizzardUiPopups.xml
 
 embeds.xml
