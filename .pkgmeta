@@ -11,9 +11,7 @@ externals:
 	../Ace3/AceLocale-3.0: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
 	../Ace3/AceSerializer-3.0: https://repos.wowace.com/wow/ace3/trunk/AceSerializer-3.0
 	../Ace3/CallbackHandler-1.0: https://repos.wowace.com/wow/ace3/trunk/CallbackHandler-1.0
-	#Libs/CallbackHandler-1.0: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
 	../Ace3/LibStub: https://repos.wowace.com/wow/ace3/trunk/LibStub
-	#Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
 	Libs/LibDataBroker-1.1: git://github.com/tekkub/libdatabroker-1-1.git
 	Libs/LibDBIcon-1.0: https://repos.wowace.com/wow/libdbicon-1-0/trunk/LibDBIcon-1.0
 	Libs/UTF8: https://repos.wowace.com/wow/utf8/trunk
