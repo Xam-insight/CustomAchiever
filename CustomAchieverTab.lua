@@ -145,10 +145,10 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif)
 
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif then
 			local name = data["name_"..GetLocale()] or data["name_enUS"] or data["name_enGB"] or data["name_frFR"] or data["name_deDE"] or data["name_esES"] or data["name_esMX"] or data["name_itIT"] or data["name_koKR"] or data["name_ptBR"] or data["name_ruRU"] or data["name_zhCN"] or data["name_zhTW"]
-			EZBlizzardUiPopups_ToastFakeAchievement(CustomAchiever, name, 5208, false, 15, "Custom Achiever", function() CustAc_ShowAchievement(id) end, data["icon"])
+			EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, name, 5208, false, 15, "Custom Achiever", function() CustAc_ShowAchievement(id) end, data["icon"])
 		end
 		CustAc_LoadAchievementsData()
-		if CustAc_AchievementFrameAchievements:IsShown() then
+		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
 			CustAc_AchievementFrameAchievements_Update()
 		end
 	end

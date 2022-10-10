@@ -1,6 +1,6 @@
 ## Interface: 90207
 ## Title: Custom Achiever
-## Version: 0.1.2
+## Version: 0.1.3
 ## Notes: Custom Achievements creator
 ## Author: Xam_insight
 ## SavedVariables: CustomAchieverData, CustomAchieverOptionsData, CustomAchieverMIcon, CustomAchieverWindow
