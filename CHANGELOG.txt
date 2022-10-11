@@ -1,4 +1,6 @@
-﻿- v0.1.3
+﻿- v0.1.4
+	- New parameter in CustAc_CompleteAchievement: soundAskedBySourceAddon.
+- v0.1.3
 	- Adaptation to new version of EZBlizzardUiPopups library.
 - v0.1.2
 	- TOC for 9.2.7.
