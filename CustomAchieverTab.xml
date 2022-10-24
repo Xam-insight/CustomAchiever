@@ -67,8 +67,8 @@
 		<Scripts>
 			<OnLoad function="CustAc_AchievementFrameAchievements_OnLoad"/>
 			<OnHide>
-				AchievementFrameFilterDropDown:Hide();
-				AchievementFrame.Header.LeftDDLInset:Hide();
+				AchievementFrameFilterDropDown:Hide()
+				AchievementFrame.Header.LeftDDLInset:Hide()
 			</OnHide>
 			<!--OnShow function="CustAc_AchievementFrameAchievements_OnShow"/-->
 		</Scripts>

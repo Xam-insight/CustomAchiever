@@ -1,11 +1,32 @@
 local ACHIEVEMENTUI_FONTHEIGHT
 local ACHIEVEMENTUI_MAX_LINES_COLLAPSED = 3	-- can show 3 lines of text when achievement is collapsed
 
+CustAc_AchievementTabId = 4
+
 CUSTOMACHIEVER_ACHIEVEMENTUI_CATEGORIES = {}
 CUSTOMACHIEVER_CATEGORIES = {}
 CUSTOMACHIEVER_ACHIEVEMENTS = {}
 
+local g_achievementSelections = {{},{},{},{}}
+local function GetSelectedAchievement(categoryIndex)
+	local categoryIndex = CustAc_AchievementTabId
+	return g_achievementSelections[categoryIndex].id or 0
+end
+
 local g_categorySelections = {{},{},{},{}}
+local function GetSelectedCategory(categoryIndex)
+	local categoryIndex = CustAc_AchievementTabId
+	return g_categorySelections[categoryIndex].id or 0
+end
+
+local function SetSelectedAchievement(elementData)
+	local categoryIndex = achievementFunctions.categoryIndex;
+	g_achievementSelections[categoryIndex] = elementData or {};
+end
+
+local function ClearSelectedCategories()
+	g_categorySelections = {{},{},{},{}}
+end
 
 local g_achievementSelectionBehavior = nil
 
@@ -48,9 +69,7 @@ function CustAc_LoadAchievementsData()
 			if not CustomAchieverData["Achievements"][v]["firstAchiever"] then
 				CustAc_GetAchievement(CustomAchieverData["Achievements"][v])
 			end
-		end
-
-		--CustAc_AchievementFrameCategories_Update()
+		end		
 	end
 end
 
@@ -59,6 +78,7 @@ function insertCategory(cat)
 	for key, value in pairs(CustomAchieverData["Categories"][cat]) do
 		data[key] = value
 	end
+	data["isChild"] = (type(CustomAchieverData["Categories"][cat]["parent"]) == "string")
 	tinsert(CUSTOMACHIEVER_ACHIEVEMENTUI_CATEGORIES, data)
 	CUSTOMACHIEVER_CATEGORIES[cat] = {}
 	CUSTOMACHIEVER_CATEGORIES[cat]["categoryName"] = CustomAchieverData["Categories"][cat][GetLocale()] or CustomAchieverData["Categories"][cat]["enUS"] or CustomAchieverData["Categories"][cat]["enGB"] or CustomAchieverData["Categories"][cat]["frFR"] or CustomAchieverData["Categories"][cat]["deDE"] or CustomAchieverData["Categories"][cat]["esES"] or CustomAchieverData["Categories"][cat]["esMX"] or CustomAchieverData["Categories"][cat]["itIT"] or CustomAchieverData["Categories"][cat]["koKR"] or CustomAchieverData["Categories"][cat]["ptBR"] or CustomAchieverData["Categories"][cat]["ruRU"] or CustomAchieverData["Categories"][cat]["zhCN"] or CustomAchieverData["Categories"][cat]["zhTW"]
@@ -66,7 +86,6 @@ function insertCategory(cat)
 	CUSTOMACHIEVER_CATEGORIES[cat]["flags"] = 0
 end
 
-CustAc_AchievementTabId = 4
 function CustAc_AchievementFrame_Load()
 	if not CustAc_Categories then
 		local numtabs, tab = 0
@@ -118,40 +137,40 @@ end
 
 function CustAc_CategoryInit(self, elementData)
 	if ( elementData.isChild ) then
-		self.Button:SetWidth(ACHIEVEMENTUI_CATEGORIESWIDTH - 25);
-		self.Button.Label:SetFontObject("GameFontHighlight");
-		self.parentID = elementData.parent;
-		self.Button.Background:SetVertexColor(0.6, 0.6, 0.6);
+		self.Button:SetWidth(ACHIEVEMENTUI_CATEGORIESWIDTH - 25)
+		self.Button.Label:SetFontObject("GameFontHighlight")
+		self.parentID = elementData.parent
+		self.Button.Background:SetVertexColor(0.6, 0.6, 0.6)
 	else
-		self.Button:SetWidth(ACHIEVEMENTUI_CATEGORIESWIDTH - 10);
-		self.Button.Label:SetFontObject("GameFontNormal");
-		self.parentID = elementData.parent;
-		self.Button.Background:SetVertexColor(1, 1, 1);
+		self.Button:SetWidth(ACHIEVEMENTUI_CATEGORIESWIDTH - 10)
+		self.Button.Label:SetFontObject("GameFontNormal")
+		self.parentID = elementData.parent
+		self.Button.Background:SetVertexColor(1, 1, 1)
 	end
 
-	local categoryName, parentID, flags;
-	local numAchievements, numCompleted;
+	local categoryName, parentID, flags
+	local numAchievements, numCompleted
 
-	local id = elementData.id;
+	local id = elementData.id
 
 	categoryName = CUSTOMACHIEVER_CATEGORIES[id]["categoryName"]
 	flags = CUSTOMACHIEVER_CATEGORIES[id]["flags"]
 	
-	numAchievements, numCompleted = CustAc_GetCategoryNumAchievements_All(id);
+	numAchievements, numCompleted = CustAc_GetCategoryNumAchievements_All(id)
 
-	self.Button.Label:SetText(categoryName);
-	self.categoryID = id;
-	self.flags = flags;
+	self.Button.Label:SetText(categoryName)
+	self.categoryID = id
+	self.flags = flags
 
 	-- For the tooltip
-	self.Button.name = categoryName;
-	self.Button.text = nil;
-	self.Button.numAchievements = numAchievements;
-	self.Button.numCompleted = numCompleted;
-	self.Button.numCompletedText = numCompleted.."/"..numAchievements;
-	self.Button.showTooltipFunc = AchievementFrameCategory_StatusBarTooltip;
+	self.Button.name = categoryName
+	self.Button.text = nil
+	self.Button.numAchievements = numAchievements
+	self.Button.numCompleted = numCompleted
+	self.Button.numCompletedText = numCompleted.."/"..numAchievements
+	self.Button.showTooltipFunc = AchievementFrameCategory_StatusBarTooltip
 
-	self:UpdateSelectionState(elementData.selected);
+	self:UpdateSelectionState(elementData.selected)
 end
 
 function CustAc_AchievementFrameCategories_OnCategoryClicked(button)
@@ -379,6 +398,11 @@ function CustAc_GetAchievementInfoByOrder(category, order)
 		CUSTOMACHIEVER_ACHIEVEMENTS[category][order]["earnedBy"]
 end
 
+local function CustAc_SetSelectedAchievement(elementData)
+	local categoryIndex = CustAc_AchievementTabId
+	g_achievementSelections[categoryIndex] = elementData or {}
+end
+
 function CustAc_AchievementFrameAchievements_OnLoad(self)
 	--self:RegisterEvent("ADDON_LOADED")
 	
@@ -399,8 +423,8 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 	end)
 	local function AchievementInitializer(button, elementData)
 		if ( not ACHIEVEMENTUI_FONTHEIGHT ) then
-			local _, fontHeight = button.Description:GetFont();
-			ACHIEVEMENTUI_FONTHEIGHT = fontHeight;
+			local _, fontHeight = button.Description:GetFont()
+			ACHIEVEMENTUI_FONTHEIGHT = fontHeight
 		end
 		CustAc_AchievementInit(button, elementData)
 		button:SetScript("OnEnter", function(frame) frame.Highlight:Show() end)
@@ -416,9 +440,9 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 	g_achievementSelectionBehavior = ScrollUtil.AddSelectionBehavior(self.ScrollBox, SelectionBehaviorFlags.Deselectable, SelectionBehaviorFlags.Intrusive)
 	g_achievementSelectionBehavior:RegisterCallback(SelectionBehaviorMixin.Event.OnSelectionChanged, function(o, elementData, selected)
 		if selected then
-			SetSelectedAchievement(elementData)
+			CustAc_SetSelectedAchievement(elementData)
 		else
-			SetSelectedAchievement(nil)
+			CustAc_SetSelectedAchievement(nil)
 		end
 
 		local button = self.ScrollBox:FindFrame(elementData)
@@ -433,107 +457,107 @@ end
 function CustAc_AchievementInit(self, elementData)
 	self.UpdatePlusMinusTexture = CustAc_UpdatePlusMinusTexture
 	
-	self.index = elementData.index;
-	self.id = elementData.id;
-	local category = elementData.category;
+	self.index = elementData.index
+	self.id = elementData.id
+	local category = elementData.category
 
 	-- reset button info to get proper saturation/desaturation
-	self.completed = nil;
+	self.completed = nil
 
 	-- title
-	self.TitleBar:SetAlpha(0.8);
-	self.Icon.frame:SetTexture("Interface\\AchievementFrame\\UI-Achievement-IconFrame");
-	self.Icon.frame:SetTexCoord(0, 0.5625, 0, 0.5625);
-	self.Icon.frame:SetPoint("CENTER", -1, 2);
-	local tsunami = self.BottomTsunami1;
-	tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders");
-	tsunami:SetTexCoord(0, 0.72265, 0.51953125, 0.58203125);
-	tsunami:SetAlpha(0.35);
-	local tsunami = self.TopTsunami1;
-	tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders");
-	tsunami:SetTexCoord(0.72265, 0, 0.58203125, 0.51953125);
-	tsunami:SetAlpha(0.3);
-	self.Glow:SetTexCoord(0, 1, 0.00390625, 0.25390625);
+	self.TitleBar:SetAlpha(0.8)
+	self.Icon.frame:SetTexture("Interface\\AchievementFrame\\UI-Achievement-IconFrame")
+	self.Icon.frame:SetTexCoord(0, 0.5625, 0, 0.5625)
+	self.Icon.frame:SetPoint("CENTER", -1, 2)
+	local tsunami = self.BottomTsunami1
+	tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
+	tsunami:SetTexCoord(0, 0.72265, 0.51953125, 0.58203125)
+	tsunami:SetAlpha(0.35)
+	local tsunami = self.TopTsunami1
+	tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
+	tsunami:SetTexCoord(0.72265, 0, 0.58203125, 0.51953125)
+	tsunami:SetAlpha(0.3)
+	self.Glow:SetTexCoord(0, 1, 0.00390625, 0.25390625)
 
-	local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy;
+	local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy
 	if self.index then
-		id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy = CustAc_GetAchievementInfoByOrder(category, self.index);
+		id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy = CustAc_GetAchievementInfoByOrder(category, self.index)
 	else
 		-- Twitter
-		id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy = CustAc_GetAchievementInfoById(self.id);
-		category = GetAchievementCategory(self.id);
+		id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy = CustAc_GetAchievementInfoById(self.id)
+		category = GetAchievementCategory(self.id)
 	end
 
-	local saturatedStyle;
+	local saturatedStyle
 	if ( bit.band(flags, ACHIEVEMENT_FLAGS_ACCOUNT) == ACHIEVEMENT_FLAGS_ACCOUNT ) then
-		self.accountWide = true;
-		saturatedStyle = "account";
+		self.accountWide = true
+		saturatedStyle = "account"
 	else
-		self.accountWide = nil;
-		saturatedStyle = "normal";
+		self.accountWide = nil
+		saturatedStyle = "normal"
 	end
-	self.Label:SetWidth(ACHIEVEMENTBUTTON_LABELWIDTH);
-	self.Label:SetText(name);
+	self.Label:SetWidth(ACHIEVEMENTBUTTON_LABELWIDTH)
+	self.Label:SetText(name)
 
-	AchievementShield_SetPoints(points, self.Shield.Points, AchievementPointsFont, AchievementPointsFontSmall);
+	AchievementShield_SetPoints(points, self.Shield.Points, AchievementPointsFont, AchievementPointsFontSmall)
 
 	if ( points > 0 ) then
-		self.Shield.Icon:SetTexture([[Interface\AchievementFrame\UI-Achievement-Shields]]);
+		self.Shield.Icon:SetTexture([[Interface\AchievementFrame\UI-Achievement-Shields]])
 	else
-		self.Shield.Icon:SetTexture([[Interface\AchievementFrame\UI-Achievement-Shields-NoPoints]]);
+		self.Shield.Icon:SetTexture([[Interface\AchievementFrame\UI-Achievement-Shields-NoPoints]])
 	end
 
-	self.Shield.wasEarnedByMe = not (completed and not wasEarnedByMe);
-	self.Shield.earnedBy = earnedBy;
+	self.Shield.wasEarnedByMe = not (completed and not wasEarnedByMe)
+	self.Shield.earnedBy = earnedBy
 
-	self.Shield.id = id;
-	self.Description:SetText(description);
-	self.HiddenDescription:SetText(description);
-	self.numLines = ceil(self.HiddenDescription:GetHeight() / ACHIEVEMENTUI_FONTHEIGHT);
-	self.Icon.texture:SetTexture(icon);
+	self.Shield.id = id
+	self.Description:SetText(description)
+	self.HiddenDescription:SetText(description)
+	self.numLines = ceil(self.HiddenDescription:GetHeight() / ACHIEVEMENTUI_FONTHEIGHT)
+	self.Icon.texture:SetTexture(icon)
 	if ( completed or wasEarnedByMe ) then
-		self.completed = true;
-		self.DateCompleted:SetText(FormatShortDate(day, month, year));
-		self.DateCompleted:Show();
+		self.completed = true
+		self.DateCompleted:SetText(FormatShortDate(day, month, year))
+		self.DateCompleted:Show()
 		if ( self.saturatedStyle ~= saturatedStyle ) then
-			self:Saturate();
+			self:Saturate()
 		end
 	else
-		self.completed = nil;
-		self.DateCompleted:Hide();
-		self:Desaturate();
+		self.completed = nil
+		self.DateCompleted:Hide()
+		self:Desaturate()
 	end
 
 	if ( rewardText == "" ) then
-		self.Reward:Hide();
-		self.RewardBackground:Hide();
+		self.Reward:Hide()
+		self.RewardBackground:Hide()
 	else
-		self.Reward:SetText(rewardText);
-		self.Reward:Show();
-		self.RewardBackground:Show();
+		self.Reward:SetText(rewardText)
+		self.Reward:Show()
+		self.RewardBackground:Show()
 		if ( self.completed ) then
-			self.RewardBackground:SetVertexColor(1, 1, 1);
+			self.RewardBackground:SetVertexColor(1, 1, 1)
 		else
-			self.RewardBackground:SetVertexColor(0.35, 0.35, 0.35);
+			self.RewardBackground:SetVertexColor(0.35, 0.35, 0.35)
 		end
 	end
 
-	local noSound = true;
-	self:SetAsTracked(false, noSound);
-	self.Tracked:Hide();
+	local noSound = true
+	self:SetAsTracked(false, noSound)
+	self.Tracked:Hide()
 
-	self:UpdatePlusMinusTexture();
+	self:UpdatePlusMinusTexture()
 
-	local objectives = self:GetObjectiveFrame();
+	local objectives = self:GetObjectiveFrame()
 	if objectives.id == self.id then
-		objectives:Hide();
+		objectives:Hide()
 	end
 
 	if ( not self:IsMouseOver() ) then
-		self.Highlight:Hide();
+		self.Highlight:Hide()
 	end
 
-	self:Collapse();
+	self:Collapse()
 end
 
 function CustAc_AchievementFrameAchievements_UpdateDataProvider()
@@ -562,10 +586,64 @@ function CustAc_UpdatePlusMinusTexture(self)
 end
 
 function CustAc_ShowAchievement(id)
-	if id and CustomAchieverData["Achievements"][id] then
+	if id and CustomAchieverData["Achievements"][id] and AchievementFrame then
+		AchievementFrame:Show()
 		AchievementFrameTab_OnClick(1) -- to prevent IN_GUILD_VIEW
 		CustAc_AchievementFrame_OnClick(CustAc_AchievementTabId)
-		AchievementFrame_SelectAndScrollToAchievementId(CustAc_Categories.ScrollBox, CustomAchieverData["Achievements"][id]["parent"])
-		--AchievementFrame_SelectAndScrollToAchievementId(CustAc_AchievementFrameAchievements.ScrollBox, id)
+		CustAc_AchievementFrame_UpdateAndSelectCategory(CustomAchieverData["Achievements"][id]["parent"])
+		--CustAc_AchievementFrame_SelectAndScrollToAchievementId(CustAc_AchievementFrameAchievements.ScrollBox, id)
+	end
+end
+
+function CustAc_AchievementFrameCategories_ExpandToCategory(category)
+	local categories = CUSTOMACHIEVER_ACHIEVEMENTUI_CATEGORIES
+	local index, elementData = FindInTableIf(categories, function(elementData)
+		return elementData.id == category
+	end);
+
+	if elementData and elementData.isChild then
+		local openID = elementData.parent
+		for index, iterElementData in ipairs(categories) do
+			iterElementData.hidden = iterElementData.isChild and iterElementData.parent ~= openID
+		end
+	end
+end
+
+function CustAc_AchievementFrame_UpdateAndSelectCategory(category)
+	local currentCategory = GetSelectedCategory()
+	if not CustAc_Categories or not CustAc_Categories:IsShown() or currentCategory == category then
+		return;
+	end
+
+	-- Assume the category is not in our data provider.
+	CustAc_AchievementFrameCategories_ExpandToCategory(category)
+	CustAc_AchievementFrameCategories_UpdateDataProvider()
+
+	-- Select the category.
+	local scrollBox = CustAc_Categories.ScrollBox
+	local dataProvider = scrollBox:GetDataProvider()
+	if dataProvider then
+		local elementData = dataProvider:FindElementDataByPredicate(function(elementData)
+			return elementData.id == category
+		end);
+		if elementData then
+			CustAc_AchievementFrameCategories_SelectElementData(elementData)
+			scrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
+		end
+	end
+end
+
+function CustAc_AchievementFrame_SelectAndScrollToAchievementId(scrollBox, achievementId)
+	local dataProvider = scrollBox:GetDataProvider()
+	if dataProvider then
+		local elementData = dataProvider:FindElementDataByPredicate(function(elementData)
+			return elementData.id == achievementId
+		end)
+		if elementData then
+			g_achievementSelectionBehavior:SelectElementData(elementData)
+			-- Selection expands and modifies the size. We need to update the scroll box for the alignment to be correct.
+			scrollBox:FullUpdate(ScrollBoxConstants.UpdateImmediately)
+			scrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
+		end
 	end
 end

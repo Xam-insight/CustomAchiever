@@ -65,6 +65,7 @@ function CustAc_UpdateCategory(id, parentID, categoryName, locale)
 		end
 		
 		CustAc_LoadAchievementsData()
+		CustAc_AchievementFrame_UpdateAndSelectCategory(id)
 	end
 end
 
@@ -95,7 +96,7 @@ function CustAc_UpdateAchievement(id, parent, icon, points, name, description, l
 		CustomAchieverData["Achievements"][id] = data
 		CustAc_LoadAchievementsData()
 		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
-			CustAc_AchievementFrameAchievements_Update()
+			CustAc_AchievementFrameAchievements_UpdateDataProvider()
 		end
 	end
 end
@@ -155,7 +156,7 @@ function CustAc_GetCategoryNumAchievements_All(categoryID)
 	return numAchievements, numCompleted, 0
 end
 
-function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, soundAskedBySourceAddon)
+function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSound)
 	if id and CustomAchieverData["Achievements"][id] then
 		local earnedByWithRealm = CustAc_playerCharacter()
 		if earnedBy then
@@ -174,11 +175,11 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, soundAske
 
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif then
 			local name = data["name_"..GetLocale()] or data["name_enUS"] or data["name_enGB"] or data["name_frFR"] or data["name_deDE"] or data["name_esES"] or data["name_esMX"] or data["name_itIT"] or data["name_koKR"] or data["name_ptBR"] or data["name_ruRU"] or data["name_zhCN"] or data["name_zhTW"]
-			EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, name, 5208, soundAskedBySourceAddon and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 15, "Custom Achiever", function() CustAc_ShowAchievement(id) end, data["icon"])
+			EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, name, 5208, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 15, "Custom Achiever", function() CustAc_ShowAchievement(id) end, data["icon"])
 		end
 		CustAc_LoadAchievementsData()
 		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
-			CustAc_AchievementFrameAchievements_Update()
+			CustAc_AchievementFrameAchievements_UpdateDataProvider()
 		end
 	end
 end

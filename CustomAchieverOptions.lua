@@ -32,6 +32,7 @@ function loadCustomAchieverOptions()
 					},
 					enableSound = {
 						type = "toggle", order = 2,
+						width = "full",
 						name = L["ENABLE_SOUND"],
 						desc = L["ENABLE_SOUND_DESC"],
 						set = function(info, val) 
@@ -47,6 +48,7 @@ function loadCustomAchieverOptions()
 					},
 					enableAchievementAnnounce = {
 						type = "toggle", order = 3,
+						width = "full",
 						name = L["ENABLE_ACHIEVEMENT_ANNOUNCE"],
 						desc = L["ENABLE_ACHIEVEMENT_ANNOUNCE_DESC"],
 						set = function(info, val) 
