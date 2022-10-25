@@ -1,4 +1,6 @@
-﻿- v0.2.1
+﻿- v0.2.2
+	- [EZBlizzardUiPopups]Handeled a problem with the TalkinHeadFrame button.
+- v0.2.1
 	- Fixed the click on achievement popup.
 - v0.2.0
 	- Updated for Dragonflight.
