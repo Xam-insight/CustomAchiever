@@ -95,8 +95,15 @@ function CustAc_AchievementFrame_Load()
 		CustAc_AchievementTabId = numtabs
 		tab = CreateFrame("Button", "AchievementFrameTab"..numtabs, AchievementFrame, "AchievementFrameTabButtonTemplate")
 		tab:SetText("Custom Achiever")
-		tab:SetPoint("LEFT", "AchievementFrameTab"..numtabs-1, "RIGHT", -5, 0)
 		tab:SetID(numtabs)
+		
+		if CustAc_Krowi_Loaded then
+			tab:SetScript("OnShow", function(self)
+				PanelTemplates_TabResize(self, 30)
+				self:SetPoint("TOPLEFT", "AchievementFrameTab1", "BOTTOMLEFT", 20, -5)
+				self:SetFrameLevel(1)
+			end)
+		end
 		
 		tab:SetScript("OnClick", function(self)
 			CustAc_AchievementFrame_OnClick(self:GetID())

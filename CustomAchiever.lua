@@ -23,17 +23,18 @@ local CUSTOMACHIEVER_ALLCOLS_WIDTH = CUSTOMACHIEVER_COL1_WIDTH -- + Portrait !
 customAchieverList = {}
 local customAchieverLines = {}
 
-local WATCHED_ADDON = "Blizzard_AchievementUI"
+CustAc_Krowi_Loaded = false
 function CustomAchiever:OnInitialize()
 	-- Called when the addon is loaded
 	self:RegisterChatCommand("custac", "CustomAchieverChatCommand")
     --self:RegisterComm(CustomAchieverGlobal_CommPrefix, nil)
 	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
 	self:RegisterEvent("ADDON_LOADED", function(event, arg)
-		if(arg == "Overachiever") then
-			WATCHED_ADDON = "Overachiever_Tabs"
+		if(arg == "Krowi_AchievementFilter") then
+			--WATCHED_ADDON = "Overachiever_Tabs" -- Overachiever no longer supported. >> Krowi_AchievementFilter
+			CustAc_Krowi_Loaded = true
 		end
-		if(arg == WATCHED_ADDON) then
+		if(arg == "Blizzard_AchievementUI") then
 			self:UnregisterEvent("ADDON_LOADED")
 			CustAc_AchievementFrame_Load()
 		end
