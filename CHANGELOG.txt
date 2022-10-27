@@ -1,4 +1,6 @@
-﻿- v0.2.3
+﻿- v0.2.4
+	- [EZBlizzardUiPopups] New models and library import rationalization.
+- v0.2.3
 	- Handeled a compatibility problem with Krowi_AchievementFilter that was breaking the CustomAchiever tab.
 - v0.2.2
 	- [EZBlizzardUiPopups]Handeled a problem with the TalkinHeadFrame button.
