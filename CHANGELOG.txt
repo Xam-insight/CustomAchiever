@@ -1,4 +1,6 @@
-﻿- v0.2.5
+﻿- v0.2.6
+	- Now loading LibStub and EZBlizzardUiPopups in the xml file.
+- v0.2.5
 	- Library import revert to default handling.
 - v0.2.4
 	- [EZBlizzardUiPopups] New models and library import rationalization.
