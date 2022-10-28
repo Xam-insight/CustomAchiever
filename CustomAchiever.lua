@@ -1,6 +1,7 @@
 CustomAchiever = LibStub("AceAddon-3.0"):NewAddon("CustomAchiever", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0", "AceSerializer-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
 local AceGUI = LibStub("AceGUI-3.0")
+local ACD = LibStub("AceConfigDialog-3.0")
 
 CustomAchieverGlobal_CommPrefix = "CustomAchiever"
 
@@ -116,7 +117,11 @@ function CustomAchiever:ReloadData()
 end
 
 function CustomAchiever:CustomAchieverChatCommand(input)
-	CustomAchieverFrame:Show()
+	if input == "test" then
+		CustomAchieverFrame:Show()
+	else
+		ACD:Open("CustomAchiever")
+	end
 end
 
 function callbackCustomAchieverWindow(aFrame)

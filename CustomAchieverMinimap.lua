@@ -7,7 +7,7 @@ eventFrame:SetScript("OnEvent", function(self, event, addon)
 	-- Initialize the saved variables
 	local defaults = {
 		minimapIcon = {
-			hide = false,
+			hide = true,
 			minimapPos = 220,
 		}
 	}
