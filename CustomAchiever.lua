@@ -5,8 +5,6 @@ local ACD = LibStub("AceConfigDialog-3.0")
 
 CustomAchieverGlobal_CommPrefix = "CustomAchiever"
 
-CUSTAC = true
-
 customAchieverFramePool = {}
 local customAchieverDressUpModelPool = {}
 CustomAchieverGlobal_BetweenObjectsGap = 11
@@ -138,13 +136,4 @@ function customAchieverSaveWindowPosition()
 	CustomAchieverWindow["relativePoint"] = relativePoint
 	CustomAchieverWindow["xOffset"] = xOffset
 	CustomAchieverWindow["yOffset"] = yOffset
-end
-
--- NPC dialog pop-up
------------
-
-function tellTutorialText(text, force)
-	local quotePlayed = CustAc_PlaySoundFile(text, "Dialog")
-	EZBlizzardUiPopups_npcDialog(CUSTOMACHIEVER_BANKER, L[text])
-	return quotePlayed
 end
