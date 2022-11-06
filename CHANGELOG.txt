@@ -1,4 +1,6 @@
-﻿-v0.2.7
+﻿-v0.2.8
+	- Handled an issue with multiple addons using CustomAchiever.
+-v0.2.7
 	- Removed CUSTAC variable, CustomAchiever variable does the job.
 	- Removed unused tellTutorialText function.
 - v0.2.6

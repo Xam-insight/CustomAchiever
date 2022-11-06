@@ -38,6 +38,20 @@ function initCustomAchieverBusinessObjects()
 	end
 end
 
+function CustAc_SaveCategoryDataIntoAddon(categoryId)
+	local addOn = CustomAchieverData["Categories"][categoryId]["parent"]
+	if not addOn or addOn == true then
+		addOn = categoryId
+	end
+	if not _G[addOn.."_CustomAchieverData"] then
+		_G[addOn.."_CustomAchieverData"] = {}
+	end
+	if not _G[addOn.."_CustomAchieverData"]["Categories"] then
+		_G[addOn.."_CustomAchieverData"]["Categories"] = {}
+	end
+	_G[addOn.."_CustomAchieverData"]["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
+end
+
 function CustAc_UpdateCategory(id, parentID, categoryName, locale)
 	if id then
 		local parentCategory = nil
@@ -47,6 +61,8 @@ function CustAc_UpdateCategory(id, parentID, categoryName, locale)
 				parentCategory = parentID
 			elseif not CustomAchieverData["Categories"][parentID]["parent"] or CustomAchieverData["Categories"][parentID]["parent"] == true then
 				parentCategory = parentID
+			else
+				parentCategory = CustomAchieverData["Categories"][parentID]["parent"]
 			end
 		end
 
@@ -62,11 +78,28 @@ function CustAc_UpdateCategory(id, parentID, categoryName, locale)
 			CustomAchieverData["Categories"][id]["hidden"]                = true
 			CustomAchieverData["Categories"][parentCategory]["parent"]    = true
 			CustomAchieverData["Categories"][parentCategory]["collapsed"] = true
+			CustAc_SaveCategoryDataIntoAddon(parentCategory)
+		else
+			CustAc_SaveCategoryDataIntoAddon(id)
 		end
 		
 		CustAc_LoadAchievementsData()
 		CustAc_AchievementFrame_UpdateAndSelectCategory(id)
 	end
+end
+
+function CustAc_SaveAchievementDataIntoAddon(achievementId)
+	local addOn = CustomAchieverData["Categories"][CustomAchieverData["Achievements"][achievementId]["parent"]]["parent"]
+	if not addOn or addOn == true then
+		addOn = CustomAchieverData["Achievements"][achievementId]["parent"]
+	end
+	if not _G[addOn.."_CustomAchieverData"] then
+		_G[addOn.."_CustomAchieverData"] = {}
+	end
+	if not _G[addOn.."_CustomAchieverData"]["Achievements"] then
+		_G[addOn.."_CustomAchieverData"]["Achievements"] = {}
+	end
+	_G[addOn.."_CustomAchieverData"]["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId]
 end
 
 function CustAc_UpdateAchievement(id, parent, icon, points, name, description, locale)
@@ -94,6 +127,8 @@ function CustAc_UpdateAchievement(id, parent, icon, points, name, description, l
 		--data["earnedBy"] = "Xamena"
 
 		CustomAchieverData["Achievements"][id] = data
+		CustAc_SaveAchievementDataIntoAddon(id)
+		
 		CustAc_LoadAchievementsData()
 		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
 			CustAc_AchievementFrameAchievements_UpdateDataProvider()
@@ -172,6 +207,7 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 		--data["earnedBy"] = "Xamena"
 
 		CustomAchieverData["Achievements"][id] = data
+		CustAc_SaveAchievementDataIntoAddon(id)
 
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif then
 			local name = data["name_"..GetLocale()] or data["name_enUS"] or data["name_enGB"] or data["name_frFR"] or data["name_deDE"] or data["name_esES"] or data["name_esMX"] or data["name_itIT"] or data["name_koKR"] or data["name_ptBR"] or data["name_ruRU"] or data["name_zhCN"] or data["name_zhTW"]

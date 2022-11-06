@@ -62,6 +62,24 @@ function CustomAchiever:OnEnable()
 		applyCustomAchieverWindowOptions()
 
 		CustomAchiever:Print(L["CUSTOMACHIEVER_WELCOME"])
+		CustomAchiever:LoadAddonsData()
+	end
+end
+
+function CustomAchiever:LoadAddonsData()
+	for i=1, GetNumAddOns() do
+		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i);
+		if strmatch(name,"_CustomAchiever") then
+			local data = _G[gsub(name, "_CustomAchiever", "").."_CustomAchieverData"]
+			if data then
+				for key, value in pairs(data["Categories"]) do
+					CustomAchieverData["Categories"][key] = value
+				end
+				for key, value in pairs(data["Achievements"]) do
+					CustomAchieverData["Achievements"][key] = value
+				end
+			end
+		end
 	end
 end
 
