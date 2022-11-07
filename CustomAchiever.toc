@@ -3,6 +3,6 @@
 ## Version: 0.2.8
 ## Notes: Custom Achievements creator
 ## Author: Xam_insight
-## SavedVariables: CustomAchieverData, CustomAchieverOptionsData, CustomAchieverMIcon, CustomAchieverWindow, CustAcCategoryList
+## SavedVariables: CustomAchieverData, CustomAchieverOptionsData
 
 CustomAchieverTab.xml

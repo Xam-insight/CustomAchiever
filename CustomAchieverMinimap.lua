@@ -3,7 +3,7 @@ local ACD = LibStub("AceConfigDialog-3.0")
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:SetScript("OnEvent", function(self, event, addon)
-	if addon ~= "CustomAchiever" then return end
+	if not strmatch(addon,"CustomAchiever") then return end
 	-- Initialize the saved variables
 	local defaults = {
 		minimapIcon = {
@@ -11,12 +11,15 @@ eventFrame:SetScript("OnEvent", function(self, event, addon)
 			minimapPos = 220,
 		}
 	}
-	if not CustomAchieverMIcon then
-		CustomAchieverMIcon = defaults
+	if not CustomAchieverOptionsData then
+		CustomAchieverOptionsData = {}
+	end
+	if not CustomAchieverOptionsData["CustomAchieverMIcon"] then
+		CustomAchieverOptionsData["CustomAchieverMIcon"] = defaults
 	else
 		for k, v in pairs(defaults) do
-			if CustomAchieverMIcon[k] == nil or type(CustomAchieverMIcon[k]) ~= type(v) then
-				CustomAchieverMIcon[k] = v
+			if CustomAchieverOptionsData["CustomAchieverMIcon"][k] == nil or type(CustomAchieverOptionsData["CustomAchieverMIcon"][k]) ~= type(v) then
+				CustomAchieverOptionsData["CustomAchieverMIcon"][k] = v
 			end
 		end
 	end
@@ -40,10 +43,13 @@ eventFrame:SetScript("OnEvent", function(self, event, addon)
 		OnTooltipShow = function(tooltip)
 			tooltip:AddLine("Custom Achiever", 1.0, 1.0, 1.0)
 		end,
+		OnLeave = function()
+			CustAc_saveCustomAchieverOptionsDataForAddon()
+		end,
 	})
  
 	-- Register the data object for a minimap button
-	LibStub("LibDBIcon-1.0"):Register("CustomAchiever", obj, CustomAchieverMIcon.minimapIcon)
+	LibStub("LibDBIcon-1.0"):Register("CustomAchiever", obj, CustomAchieverOptionsData["CustomAchieverMIcon"].minimapIcon)
 
 	-- Clean up after ourselves
 	self:UnregisterEvent("ADDON_LOADED")

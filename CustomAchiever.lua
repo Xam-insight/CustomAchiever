@@ -68,7 +68,7 @@ end
 
 function CustomAchiever:LoadAddonsData()
 	for i=1, GetNumAddOns() do
-		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i);
+		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
 		if strmatch(name,"_CustomAchiever") then
 			local data = _G[gsub(name, "_CustomAchiever", "").."_CustomAchieverData"]
 			if data then
@@ -77,6 +77,14 @@ function CustomAchiever:LoadAddonsData()
 				end
 				for key, value in pairs(data["Achievements"]) do
 					CustomAchieverData["Achievements"][key] = value
+				end
+			end
+			local optionsData = _G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"]
+			if optionsData then
+				local addonDataTime = optionsData["dataTime"]
+				local custacDataTime = CustomAchieverOptionsData["dataTime"]
+				if addonDataTime and (not custacDataTime or custacDataTime < addonDataTime) then
+					CustomAchieverOptionsData = optionsData
 				end
 			end
 		end
@@ -92,11 +100,22 @@ function applyCustomAchieverWindowOptions()--withSummaryFrame)
 end
 
 function callbackCustomAchieverWindow(aFrame)
-	if CustomAchieverWindow["point"] then
+	if CustomAchieverOptionsData and CustomAchieverOptionsData["CustomAchieverWindow"] and CustomAchieverOptionsData["CustomAchieverWindow"]["point"] then
 		aFrame:ClearAllPoints()
-		aFrame:SetPoint(CustomAchieverWindow["point"], UIParent,
-			CustomAchieverWindow["relativePoint"], CustomAchieverWindow["xOffset"], CustomAchieverWindow["yOffset"])
+		aFrame:SetPoint(CustomAchieverOptionsData["CustomAchieverWindow"]["point"], UIParent,
+			CustomAchieverOptionsData["CustomAchieverWindow"]["relativePoint"], CustomAchieverOptionsData["CustomAchieverWindow"]["xOffset"], CustomAchieverOptionsData["CustomAchieverWindow"]["yOffset"])
 	end
+end
+
+function customAchieverSaveWindowPosition()
+	if CustomAchieverFrame then
+		local point, _, relativePoint, xOffset, yOffset = CustomAchieverFrame:GetPoint()
+		CustomAchieverOptionsData["CustomAchieverWindow"]["point"] = point
+		CustomAchieverOptionsData["CustomAchieverWindow"]["relativePoint"] = relativePoint
+		CustomAchieverOptionsData["CustomAchieverWindow"]["xOffset"] = xOffset
+		CustomAchieverOptionsData["CustomAchieverWindow"]["yOffset"] = yOffset
+	end
+	CustAc_saveCustomAchieverOptionsDataForAddon()
 end
 
 function CustAc_fullName(unit)
@@ -140,18 +159,3 @@ function CustomAchiever:CustomAchieverChatCommand(input)
 	end
 end
 
-function callbackCustomAchieverWindow(aFrame)
-	if CustomAchieverWindow["point"] then
-		aFrame:ClearAllPoints()
-		aFrame:SetPoint(CustomAchieverWindow["point"], UIParent,
-			CustomAchieverWindow["relativePoint"], CustomAchieverWindow["xOffset"], CustomAchieverWindow["yOffset"])
-	end
-end
-
-function customAchieverSaveWindowPosition()
-	local point, _, relativePoint, xOffset, yOffset = CustomAchieverFrame:GetPoint()
-	CustomAchieverWindow["point"] = point
-	CustomAchieverWindow["relativePoint"] = relativePoint
-	CustomAchieverWindow["xOffset"] = xOffset
-	CustomAchieverWindow["yOffset"] = yOffset
-end

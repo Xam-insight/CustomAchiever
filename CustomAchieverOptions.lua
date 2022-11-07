@@ -18,16 +18,17 @@ function loadCustomAchieverOptions()
 						name = L["ENABLE_MINIMAPBUTTON"],
 						desc = L["ENABLE_MINIMAPBUTTON_DESC"],
 						set = function(info, val)
-							CustomAchieverMIcon.minimapIcon.hide = not val
+							CustomAchieverOptionsData["CustomAchieverMIcon"].minimapIcon.hide = not val
 							local libDBIcon = LibStub("LibDBIcon-1.0")
-							if CustomAchieverMIcon.minimapIcon.hide then
+							if CustomAchieverOptionsData["CustomAchieverMIcon"].minimapIcon.hide then
 								libDBIcon:Hide("CustomAchiever")
 							else
 								libDBIcon:Show("CustomAchiever")
 							end
+							CustAc_saveCustomAchieverOptionsDataForAddon()
 						end,
 						get = function(info)
-							return not CustomAchieverMIcon.minimapIcon.hide
+							return not CustomAchieverOptionsData["CustomAchieverMIcon"].minimapIcon.hide
 						end
 					},
 					enableSound = {
@@ -37,6 +38,7 @@ function loadCustomAchieverOptions()
 						desc = L["ENABLE_SOUND_DESC"],
 						set = function(info, val) 
 							CustomAchieverOptionsData["CustomAchieverSoundsDisabled"] = not val
+							CustAc_saveCustomAchieverOptionsDataForAddon()
 						end,
 						get = function(info)
 							local enabled = true
@@ -53,6 +55,7 @@ function loadCustomAchieverOptions()
 						desc = L["ENABLE_ACHIEVEMENT_ANNOUNCE_DESC"],
 						set = function(info, val) 
 							CustomAchieverOptionsData["CustomAchieverAchievementAnnounceDisabled"] = not val
+							CustAc_saveCustomAchieverOptionsDataForAddon()
 						end,
 						get = function(info)
 							local enabled = true

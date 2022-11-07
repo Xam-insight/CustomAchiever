@@ -18,18 +18,14 @@ function initCustomAchieverBusinessObjects()
 		CustomAchieverData["Achievements"] = {}
 	end
 
-	if not CustomAchieverData["Ids"] then
-		CustomAchieverData["Ids"] = {}
-	end
-
 	-- CustomAchieverOptionsData
 	if not CustomAchieverOptionsData then
 		CustomAchieverOptionsData = {}
 	end
 
 	-- CustomAchieverWindow
-	if not CustomAchieverWindow then
-		CustomAchieverWindow = {}
+	if not CustomAchieverOptionsData["CustomAchieverWindow"] then
+		CustomAchieverOptionsData["CustomAchieverWindow"] = {}
 	end
 	
 	-- CustomAchieverTuto
@@ -296,4 +292,20 @@ function CustAc_PlaySoundFileId(soundFileId, channel, forcePlay)
 		PlaySoundFile(soundFileId, channel)
 	end
 	return soundHandle
+end
+
+function CustAc_saveCustomAchieverOptionsDataForAddon()
+	local dataTime = CustAc_getTimeUTCinMS()
+	for i=1, GetNumAddOns() do
+		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
+		if strmatch(name,"_CustomAchiever") then
+			_G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"] = CustomAchieverOptionsData
+			_G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"]["dataTime"] = dataTime
+		end
+	end
+	CustomAchieverOptionsData["dataTime"] = dataTime
+end
+
+function CustAc_getTimeUTCinMS()
+	return tostring(time(date("!*t")))
 end
