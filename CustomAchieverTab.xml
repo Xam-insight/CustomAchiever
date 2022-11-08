@@ -290,7 +290,7 @@
 								self:Hide()
 								self:GetParent().Name:SetText(self:GetText())
 								CustAc_CompleteAchievement("CustomAchiever2")
-								EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, self:GetParent().Name:GetText(), 5208, not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 15, aboveText, function()  CustomAchieverFrame:Show()  end, 236376, true)
+								EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, self:GetParent().Name:GetText(), 5208, not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, aboveText, function()  CustomAchieverFrame:Show()  end, 236376, true)
 							</OnEnterPressed>
 						</Scripts>
 					</EditBox>
