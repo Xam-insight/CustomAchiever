@@ -17,4 +17,12 @@ L["WINDOW_SECTION"] = "Options de fenêtre Custom Achiever"
 L["MENUOPTIONS_TOOLTIP"] = "Options de Custom Achiever"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Modifier les options de Custom Achiever."
 
+L["MENUCUSTAC_CATEGORY"] = "Catégorie"
+L["MENUCUSTAC_CATEGORIES"] = "Catégories"
+L["MENUCUSTAC_ACHIEVEMENT"] = "Haut fait"
+L["MENUCUSTAC_ACHIEVEMENTS"] = "Hauts faits personnalisés"
+L["MENUCUSTAC_NEW"] = "Créer un nouveau Haut fait..."
+L["MENUCUSTAC_DEFAULT_NAME"] = "Haut fait personnalisé"
+L["MENUCUSTAC_DESCRIPTION"] = "Description."
+
 end

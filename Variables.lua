@@ -1,12 +1,12 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
 
-local languageValues = {
-	["deDE"] = DEDE,
+CustAc_languageValues = {
+	["enUS"] = DEDE,
 	["enGB"] = ENGB,
-	["enUS"] = ENUS,
-	["esES"] = ESES,
-	["esMX"] = ESMX,
-	["frFR"] = FRFR,
+	["frFR"] = ENUS,
+	["deDE"] = ESES,
+	["esES"] = ESMX,
+	["esMX"] = FRFR,
 	["itIT"] = ITIT,
 	["koKR"] = KOKR,
 	["ptBR"] = PTBR,

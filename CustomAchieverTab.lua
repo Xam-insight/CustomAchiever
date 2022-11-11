@@ -81,7 +81,7 @@ function insertCategory(cat)
 	data["isChild"] = (type(CustomAchieverData["Categories"][cat]["parent"]) == "string")
 	tinsert(CUSTOMACHIEVER_ACHIEVEMENTUI_CATEGORIES, data)
 	CUSTOMACHIEVER_CATEGORIES[cat] = {}
-	CUSTOMACHIEVER_CATEGORIES[cat]["categoryName"] = CustomAchieverData["Categories"][cat][GetLocale()] or CustomAchieverData["Categories"][cat]["enUS"] or CustomAchieverData["Categories"][cat]["enGB"] or CustomAchieverData["Categories"][cat]["frFR"] or CustomAchieverData["Categories"][cat]["deDE"] or CustomAchieverData["Categories"][cat]["esES"] or CustomAchieverData["Categories"][cat]["esMX"] or CustomAchieverData["Categories"][cat]["itIT"] or CustomAchieverData["Categories"][cat]["koKR"] or CustomAchieverData["Categories"][cat]["ptBR"] or CustomAchieverData["Categories"][cat]["ruRU"] or CustomAchieverData["Categories"][cat]["zhCN"] or CustomAchieverData["Categories"][cat]["zhTW"]
+	CUSTOMACHIEVER_CATEGORIES[cat]["categoryName"] = CustAc_getLocaleData(CustomAchieverData["Categories"][cat], "name")
 	CUSTOMACHIEVER_CATEGORIES[cat]["parentID"] = CustomAchieverData["Categories"][cat]["parent"]
 	CUSTOMACHIEVER_CATEGORIES[cat]["flags"] = 0
 end
@@ -118,12 +118,12 @@ function CustAc_AchievementFrame_Load()
 		local achievementsFrame = CreateFrame("Frame", "CustAc_AchievementFrameAchievements", AchievementFrame, "CustAc_AchievementFrameAchievementsTemplate")
 	end
 
-	CustAc_UpdateCategory("CustomAchiever", nil, "Custom Achiever")
-	CustAc_UpdateAchievement("CustomAchiever1", "CustomAchiever", 975739,  10, "Bonne installation !", "Intaller Custom Achiever.", "frFR")
-	CustAc_UpdateAchievement("CustomAchiever1", "CustomAchiever",    nil, nil, "Happy move in!", "Install Custom Achiever.", "enUS")
+	CustAc_CreateOrUpdateCategory("CustomAchiever", nil, "Custom Achiever")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever1", "CustomAchiever", 975739,  10, "Bonne installation !", "Intaller Custom Achiever.", "frFR")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever1", "CustomAchiever",    nil, nil, "Happy move in!", "Install Custom Achiever.", "enUS")
 	CustAc_CompleteAchievement("CustomAchiever1")
-	CustAc_UpdateAchievement("CustomAchiever2", "CustomAchiever", 133053,  10, "Un petit pas pour Azeroth...", "Créer votre premier Haut fait.", "frFR")
-	CustAc_UpdateAchievement("CustomAchiever2", "CustomAchiever",    nil, nil, "One small step for Azeroth...", "Create your first Achievement.", "enUS")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever", 133053,  10, "Un petit pas pour Azeroth...", "Créer votre premier Haut fait.", "frFR")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever",    nil, nil, "One small step for Azeroth...", "Create your first Achievement.", "enUS")
 	CustAc_LoadAchievementsData()
 end
 

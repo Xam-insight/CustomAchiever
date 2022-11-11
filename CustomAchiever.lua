@@ -48,18 +48,6 @@ function CustomAchiever:OnEnable()
 
 		--NewCustomAchieverFrame
 		CustomAchieverFrame = CreateFrame("Frame", "CustomAchieverFrame", UIParent, "CustomAchieverFrameTemplate")
-		callbackCustomAchieverWindow(CustomAchieverFrame)
-
-		local fontstring = CustomAchieverFrame:CreateFontString("CustomAchieverLabel", "ARTWORK", "GameFontNormal")
-        fontstring:SetText(GetAddOnMetadata("CustomAchiever", "Title").." "..GetAddOnMetadata("CustomAchiever", "Version"))
-		fontstring:SetPoint("TOP", 0, -5)
-
-		CustomAchieverFrameAchievementAlertFrame.GuildBanner:Hide()
-		CustomAchieverFrameAchievementAlertFrame.OldAchievement:Hide()
-		CustomAchieverFrameAchievementAlertFrame.GuildBorder:Hide()
-		CustomAchieverFrameAchievementAlertFrame.Icon.Bling:Hide()
-
-		applyCustomAchieverWindowOptions()
 
 		CustomAchiever:Print(L["CUSTOMACHIEVER_WELCOME"])
 		CustomAchiever:LoadAddonsData()
@@ -92,7 +80,23 @@ function CustomAchiever:LoadAddonsData()
 end
 
 function showIconSelector()
-	
+	if not MacroFrame then
+		MacroFrame_LoadUI()
+	end
+	if not CustAc_IconsPopupFrame then
+		CustAc_IconsPopupFrame = CreateFrame("Frame", "CustAc_IconsPopupFrame", CustomAchieverFrame, "CustAc_IconsPopupFrameTemplate")
+		--CustAc_IconsPopupFrame.BorderBox.EditBoxHeaderText:SetText("tmp")
+		CustAc_IconsPopupFrame.BorderBox.IconSelectorEditBox:SetMaxLetters(30) 
+		CustAc_IconsPopupFrame.BorderBox.OkayButton:SetScript("OnClick", function()
+			PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
+			CustAc_IconsPopupFrame_OkayButton_OnClick(self)
+		end)
+		CustAc_IconsPopupFrame.BorderBox.IconSelectorEditBox:SetScript("OnEnterPressed", function()
+			PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
+			CustAc_IconsPopupFrame_OkayButton_OnClick(self)
+		end)
+	end
+	CustAc_IconsPopupFrame:Show()
 end
 
 function applyCustomAchieverWindowOptions()--withSummaryFrame)

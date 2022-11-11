@@ -1,8 +1,8 @@
 ## Interface: 100000
 ## Title: Custom Achiever
-## Version: 0.2.9
+## Version: 1.0.0
 ## Notes: Custom Achievements creator
 ## Author: Xam_insight
 ## SavedVariables: CustomAchieverData, CustomAchieverOptionsData
 
-CustomAchieverTab.xml
+embed.xml

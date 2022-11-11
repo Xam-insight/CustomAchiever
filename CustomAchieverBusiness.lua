@@ -48,12 +48,12 @@ function CustAc_SaveCategoryDataIntoAddon(categoryId)
 	_G[addOn.."_CustomAchieverData"]["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
 end
 
-function CustAc_UpdateCategory(id, parentID, categoryName, locale)
+function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale)
 	if id then
 		local parentCategory = nil
 		if parentID then
 			if not CustomAchieverData["Categories"][parentID] then
-				CustAc_UpdateCategory(parentID)
+				CustAc_CreateOrUpdateCategory(parentID)
 				parentCategory = parentID
 			elseif not CustomAchieverData["Categories"][parentID]["parent"] or CustomAchieverData["Categories"][parentID]["parent"] == true then
 				parentCategory = parentID
@@ -66,7 +66,8 @@ function CustAc_UpdateCategory(id, parentID, categoryName, locale)
 		data["id"]       = id or data["id"]
 		data["parent"]   = parentCategory or data["parent"]
 		data["hidden"]   = (data["parentID"] ~= nil)
-		data[locale or GetLocale()] = categoryName or data[locale or GetLocale()] or id
+		local dataLocale = locale or GetLocale()
+		data["name_"..dataLocale] = categoryName or data["name_"..dataLocale] or id
 
 		CustomAchieverData["Categories"][id] = data
 
@@ -98,27 +99,28 @@ function CustAc_SaveAchievementDataIntoAddon(achievementId)
 	_G[addOn.."_CustomAchieverData"]["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId]
 end
 
-function CustAc_UpdateAchievement(id, parent, icon, points, name, description, locale)
+function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, locale)
 	if id then
 		local parentCategory = parent or "CustomAchiever"
 		if not CustomAchieverData["Categories"][parentCategory] then
-			CustAc_UpdateCategory(parentCategory, nil, parentCategory, locale)
+			CustAc_CreateOrUpdateCategory(parentCategory, nil, parentCategory, locale)
 		end
 		local data = {}
 		if CustomAchieverData["Achievements"][id] then
 			data = CustomAchieverData["Achievements"][id]
 		end
-		data["id"]                             = id
-		data["parent"]                         = parentCategory
-		data["name_"..(locale or GetLocale())] = name              or data["name_"..(locale or GetLocale())] or "Custom Achiever"
-		data["desc_"..(locale or GetLocale())] = description       or data["desc_"..(locale or GetLocale())] or "Custom Achiever"
-		data["icon"]                           = icon              or data["icon"]                           or 236376
-		data["points"]                         = points            or data["points"]                         or 10
-		data["flags"]                          = 0
-		data["rewardText"]                     = nil
-		data["isGuild"]                        = false
-		data["completed"]                      = data["completed"] or {}
-		data["date"]                           = data["date"]      or {}
+		data["id"]                = id
+		data["parent"]            = parentCategory
+		local dataLocale          = locale            or GetLocale()
+		data["name_"..dataLocale] = name              or data["name_"..dataLocale] or L["MENUCUSTAC_DEFAULT_NAME"]
+		data["desc_"..dataLocale] = description       or data["desc_"..dataLocale] or L["MENUCUSTAC_DEFAULT_NAME"]
+		data["icon"]              = icon              or data["icon"]                           or 236376
+		data["points"]            = points            or data["points"]                         or 10
+		data["flags"]             = 0
+		data["rewardText"]        = nil
+		data["isGuild"]           = false
+		data["completed"]         = data["completed"] or {}
+		data["date"]              = data["date"]      or {}
 		--data["wasEarnedByMe"] = true
 		--data["earnedBy"] = "Xamena"
 
@@ -136,8 +138,8 @@ function CustAc_GetAchievement(achievement)
 	if achievement then
 		local data = {}
 		data["id"] = achievement["id"]
-		data["name"] = achievement["name_"..GetLocale()] or achievement["name_enUS"] or achievement["name_enGB"] or achievement["name_frFR"] or achievement["name_deDE"] or achievement["name_esES"] or achievement["name_esMX"] or achievement["name_itIT"] or achievement["name_koKR"] or achievement["name_ptBR"] or achievement["name_ruRU"] or achievement["name_zhCN"] or achievement["name_zhTW"]
-		data["description"] = achievement["desc_"..GetLocale()] or achievement["desc_enUS"] or achievement["desc_enGB"] or achievement["desc_frFR"] or achievement["desc_deDE"] or achievement["desc_esES"] or achievement["desc_esMX"] or achievement["desc_itIT"] or achievement["desc_koKR"] or achievement["desc_ptBR"] or achievement["desc_ruRU"] or achievement["desc_zhCN"] or achievement["desc_zhTW"]
+		data["name"] = CustAc_getLocaleData(achievement, "name")
+		data["description"] = CustAc_getLocaleData(achievement, "desc")
 		data["points"] = achievement["points"]
 		data["completed"] = achievement["completed"][CustAc_playerCharacter()] or achievement["firstAchiever"]
 		local custacDate = (achievement["firstAchiever"] and achievement["date"][achievement["firstAchiever"]]) or achievement["date"][CustAc_playerCharacter()]
@@ -206,7 +208,7 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 		CustAc_SaveAchievementDataIntoAddon(id)
 
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif then
-			local name = data["name_"..GetLocale()] or data["name_enUS"] or data["name_enGB"] or data["name_frFR"] or data["name_deDE"] or data["name_esES"] or data["name_esMX"] or data["name_itIT"] or data["name_koKR"] or data["name_ptBR"] or data["name_ruRU"] or data["name_zhCN"] or data["name_zhTW"]
+			local name = getLocaleData(data, "name")
 			EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, name, 5208, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, "Custom Achiever", function() CustAc_ShowAchievement(id) end, data["icon"])
 		end
 		CustAc_LoadAchievementsData()
@@ -214,6 +216,20 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 			CustAc_AchievementFrameAchievements_UpdateDataProvider()
 		end
 	end
+end
+
+function CustAc_getLocaleData(data, name)
+	local localeData = data[name.."_"..GetLocale()]
+	if localeData then
+		return localeData
+	end
+	for k,v in pairs(CustAc_languageValues) do
+		localeData = data[name.."_"..k]
+		if localeData then
+			return localeData
+		end
+	end
+	return UNKNOWN
 end
 
 function CustAc_GetAchievementCategory(id)

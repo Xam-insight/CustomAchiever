@@ -1,4 +1,6 @@
-﻿-v0.2.9
+﻿-v1.0.0
+	- Custom achievements creation interface.
+-v0.2.9
 	- Achievement display duration reduced. 
 -v0.2.8
 	- Handled an issue with multiple addons using CustomAchiever.

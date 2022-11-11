@@ -17,4 +17,12 @@ L["WINDOW_SECTION"] = "Custom Achiever window options"
 L["MENUOPTIONS_TOOLTIP"] = "Custom Achiever options"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Change Custom Achiever options."
 
+L["MENUCUSTAC_CATEGORY"] = "Category"
+L["MENUCUSTAC_CATEGORIES"] = "Categories"
+L["MENUCUSTAC_ACHIEVEMENT"] = "Achievement"
+L["MENUCUSTAC_ACHIEVEMENTS"] = "Custom Achievements"
+L["MENUCUSTAC_NEW"] = "Create a new Achievement..."
+L["MENUCUSTAC_DEFAULT_NAME"] = "Custom Achievement"
+L["MENUCUSTAC_DESCRIPTION"] = "Description."
+
 end
