@@ -16,17 +16,35 @@ local function CustAc_InitSelectedAchievement(achievementId, categoryId)
 	selectedAchievement.achievementPoints   = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].points) or 0
 end
 
-function CustomAchieverFrameTemplate_OnLoad(self)
+StaticPopupDialogs["CUSTAC_DELETE"] = {
+	text = L["MENUCUSTAC_CONFIRM_DELETION"],
+	button1 = ACCEPT,
+	button2 = CANCEL,
+	OnAccept = function (self, data)
+		CustAc_DeleteAchievement(data.achievementId)
+		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
+		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
+		CustAc_InitSelectedAchievement(nextCustomAchieverId, selectedAchievement.achievementCategory)
+		CustomAchieverFrame_UpdateAchievementAlertFrame()
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+}
+
+function CustomAchieverFrame_OnLoad(self)
 	self:RegisterForDrag("LeftButton")
 	self.CloseButton:SetHitRectInsets(6, 6, 6, 6)
 	self.AchievementAlertFrame.Icon.Texture:SetTexCoord(0, 0, 0, 1, 1, 0, 1, 1)	
 
 	applyCustomAchieverWindowOptions()
 	
-	local fontstring = CustomAchieverFrame:CreateFontString("CustomAchieverLabel", "ARTWORK", "GameFontNormal")
-	fontstring:SetText(GetAddOnMetadata("CustomAchiever", "Title"))
-	fontstring:SetPoint("TOP", 0, -5)
-
+	self:SetTitle(GetAddOnMetadata("CustomAchiever", "Title"))
+	SetPortraitToTexture(self.PortraitContainer.portrait, "Interface\\Friendsframe\\friendsframescrollicon")
+	
+	local custacOptionsButton = createCustomAchieverOptionsButton(self)
+	
 	CustomAchieverFrameAchievementAlertFrame.GuildBanner:Hide()
 	CustomAchieverFrameAchievementAlertFrame.OldAchievement:Hide()
 	CustomAchieverFrameAchievementAlertFrame.GuildBorder:Hide()
@@ -35,7 +53,7 @@ function CustomAchieverFrameTemplate_OnLoad(self)
 	nextCustomCategoryId = CustAc_playerCharacter()
 	local categoryFontstring = CustomAchieverFrame:CreateFontString("CategoryFontstring", "ARTWORK", "GameFontNormal")
 	categoryFontstring:SetText(L["MENUCUSTAC_CATEGORY"])
-	categoryFontstring:SetPoint("TOPLEFT", 30, -39)
+	categoryFontstring:SetPoint("TOPLEFT", 65, -39)
 	local categoryDropDown = LibDD:Create_UIDropDownMenu("CustomAchieverCategoryDownMenu", self, "MENU")
 	categoryDropDown:SetPoint("TOPRIGHT", -30 , -30)
 	LibDD:UIDropDownMenu_SetWidth(categoryDropDown, 150)
@@ -46,12 +64,32 @@ function CustomAchieverFrameTemplate_OnLoad(self)
 	nextCustomAchieverId = CustAc_playerCharacter()..'-'..tostring(CustAc_getTimeUTCinMS())
 	local achievementFontstring = CustomAchieverFrame:CreateFontString("AchievementFontstring", "ARTWORK", "GameFontNormal")
 	achievementFontstring:SetText(L["MENUCUSTAC_ACHIEVEMENT"])
-	achievementFontstring:SetPoint("TOPLEFT", 30, -69)
+	achievementFontstring:SetPoint("TOPLEFT", 30, -79)
 	local achievementDropDown = LibDD:Create_UIDropDownMenu("CustomAchieverAchievementsDownMenu", self, "MENU")
-	achievementDropDown:SetPoint("TOPRIGHT", -30 , -60)
+	achievementDropDown:SetPoint("TOPRIGHT", -18 , -70)
 	LibDD:UIDropDownMenu_SetWidth(achievementDropDown, 200)
 
-	CustomAchieverFrame.DescriptionEditBox:SetText(L["MENUCUSTAC_DESCRIPTION"])
+	local iconFontstring = CustomAchieverFrame:CreateFontString("IconFontstring", "ARTWORK", "GameFontNormal")
+	iconFontstring:SetText(L["MENUCUSTAC_ICON"])
+	iconFontstring:SetPoint("TOPLEFT", 30, -197)
+	CustomAchieverFrame.IconEditBox:SetPoint("TOPLEFT", 80 , -195)
+	CustomAchieverFrame.IconEditBox:SetSize(70, 16)
+	CustomAchieverFrame.IconEditBox:HighlightText()
+	CustomAchieverFrame.IconEditBox.type = "achievementIcon"
+
+	local pointsFontstring = CustomAchieverFrame:CreateFontString("PointsFontstring", "ARTWORK", "GameFontNormal")
+	pointsFontstring:SetText(L["MENUCUSTAC_POINTS"])
+	pointsFontstring:SetPoint("TOPRIGHT", -70, -197)
+	CustomAchieverFrame.PointsEditBox:SetPoint("TOPRIGHT", -30 , -195)
+	CustomAchieverFrame.PointsEditBox:SetSize(20, 16)
+	CustomAchieverFrame.PointsEditBox:HighlightText()
+	CustomAchieverFrame.PointsEditBox.type = "achievementPoints"
+
+	local descriptionFontstring = CustomAchieverFrame:CreateFontString("DescriptionFontstring", "ARTWORK", "GameFontNormal")
+	descriptionFontstring:SetText(L["MENUCUSTAC_DESCRIPTION"])
+	descriptionFontstring:SetPoint("TOPLEFT", 30, -227)
+	CustomAchieverFrame.DescriptionEditBox:SetPoint("TOPRIGHT", -30 , -225)
+	CustomAchieverFrame.DescriptionEditBox:SetSize(220, 16)
 	CustomAchieverFrame.DescriptionEditBox:HighlightText()
 
 	LibDD:UIDropDownMenu_Initialize(achievementDropDown, CustAc_AchievementDropDownMenu_Update)
@@ -59,6 +97,21 @@ function CustomAchieverFrameTemplate_OnLoad(self)
 	
 	CustAc_InitSelectedAchievement(nextCustomAchieverId, nextCustomCategoryId)
 	CustomAchieverFrame_UpdateAchievementAlertFrame()
+end
+
+function createCustomAchieverOptionsButton(parent)
+	local name = "CustomAchieverOptionsButton"
+	local iconPath = "Interface\\GossipFrame\\BinderGossipIcon"
+	local tooltip = L["MENUOPTIONS_TOOLTIP"]
+	local tooltipDetail = L["MENUOPTIONS_TOOLTIPDETAIL"]
+
+	local optionsButton = CreateFrame("Button", name, parent, "CustomAchieverOptionsButtonTemplate")
+	optionsButton:SetPoint("TOPRIGHT", -24, -4)
+	optionsButton:SetNormalTexture(iconPath)
+	optionsButton:SetAttribute("tooltip", tooltip)
+	optionsButton:SetAttribute("tooltipDetail", { tooltipDetail })
+
+	return optionsButton
 end
 
 function CustAc_CategoryDropDownMenu_Update(self)
@@ -138,13 +191,30 @@ function CustomAchieverFrame_UpdateAchievementAlertFrame()
 		CustomAchieverFrame.AchievementAlertFrame.Icon.Texture:SetTexture(selectedAchievement.achievementIcon)
 		CustomAchieverFrame.AchievementAlertFrame.Name:SetText(selectedAchievement.achievementName)
 		CustomAchieverFrame.AchievementAlertFrame.Shield.Points:SetText(selectedAchievement.achievementPoints)
+		CustomAchieverFrame.IconEditBox:SetText(selectedAchievement.achievementIcon)
+		--CustomAchieverFrame.IconEditBox:HighlightText()
+		CustomAchieverFrame.PointsEditBox:SetText(selectedAchievement.achievementPoints)
+		--CustomAchieverFrame.PointsEditBox:HighlightText()
 		CustomAchieverFrame.DescriptionEditBox:SetText(selectedAchievement.achievementDesc)
-		CustomAchieverFrame.DescriptionEditBox:HighlightText()
+		--CustomAchieverFrame.DescriptionEditBox:HighlightText()
+		
+		if selectedAchievement.achievementId == nextCustomAchieverId then
+			CustomAchieverFrame.DeleteButton:Disable()
+		else
+			CustomAchieverFrame.DeleteButton:Enable()
+		end
 	end
 end
 
 function CustomAchieverFrameDescriptionEditBox_OnTextChanged(self)
 	selectedAchievement.achievementDesc = CustAc_titleFormat(self:GetText())
+end
+
+function CustomAchieverFrameEditBox_OnTextChanged(self)
+	if self.type then
+		selectedAchievement[self.type] = self:GetText()
+	end
+	CustomAchieverFrame_UpdateAchievementAlertFrame()
 end
 
 function CustAc_IconsPopupFrame_OkayButton_OnClick()
@@ -156,9 +226,20 @@ function CustAc_IconsPopupFrame_OkayButton_OnClick()
 	CustomAchieverFrame_UpdateAchievementAlertFrame()
 end
 
+function CustAc_DeleteButton_OnClick(self)
+	if selectedAchievement.achievementId == nextCustomAchieverId then
+		self:Disable()
+	else
+		local dialog = StaticPopup_Show("CUSTAC_DELETE", selectedAchievement.achievementName)
+		if (dialog) then
+			dialog.data = {}
+			dialog.data["achievementId"] = selectedAchievement.achievementId
+		end
+	end
+end
+
 function CustAc_SaveButton_OnClick()
 	if selectedAchievement.achievementId then
-		print(selectedAchievement.achievementCategory)
 		CustAc_CreateOrUpdateAchievement(selectedAchievement.achievementId, selectedAchievement.achievementCategory, selectedAchievement.achievementIcon, 0, selectedAchievement.achievementName, selectedAchievement.achievementDesc, nil, true)
 		if selectedAchievement.achievementId == nextCustomAchieverId then
 			nextCustomAchieverId = CustAc_playerCharacter()..'-'..tostring(CustAc_getTimeUTCinMS())
@@ -171,6 +252,8 @@ function CustAc_SaveButton_OnClick()
 		
 		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
 		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, selectedAchievement.achievementId)
+		
+		CustomAchieverFrame_UpdateAchievementAlertFrame()
 	end
 end
 
@@ -180,6 +263,7 @@ function CustAc_IconsPopupFrame_OnHide(self)
 	LibDD:UIDropDownMenu_EnableDropDown(CustomAchieverCategoryDownMenu)
 	LibDD:UIDropDownMenu_EnableDropDown(CustomAchieverAchievementsDownMenu)
 	CustomAchieverFrame.DescriptionEditBox:Enable()
+	CustomAchieverFrame.DeleteButton:Enable()
 	CustomAchieverFrame.SaveButton:Enable()
 end
 
@@ -189,6 +273,7 @@ function CustAc_IconsPopupFrame_OnShow(self)
 	LibDD:UIDropDownMenu_DisableDropDown(CustomAchieverCategoryDownMenu)
 	LibDD:UIDropDownMenu_DisableDropDown(CustomAchieverAchievementsDownMenu)
 	CustomAchieverFrame.DescriptionEditBox:Disable()
+	CustomAchieverFrame.DeleteButton:Disable()
 	CustomAchieverFrame.SaveButton:Disable()
 
 	self.BorderBox.IconSelectorEditBox:SetFocus()
@@ -228,4 +313,35 @@ function CustAc_IconsPopupFrame_RefreshIconDataProvider(self)
 	end
 
 	return self.iconDataProvider;
+end
+
+function CustomAchieverButtonEnter(self)
+	local tooltip = self:GetAttribute("tooltip")
+	local tooltipDetail = self:GetAttribute("tooltipDetail")
+	local tooltipDetailGreen = self:GetAttribute("tooltipDetailGreen")
+	local tooltipDetailRed = self:GetAttribute("tooltipDetailRed")
+	CustomAchieverTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+	if tooltip then
+		CustomAchieverTooltip:SetText(tooltip)
+		if tooltipDetail then
+			for index,value in pairs(tooltipDetail) do
+				CustomAchieverTooltip:AddLine(value, 1.0, 1.0, 1.0)
+			end
+		end
+		if tooltipDetailGreen then
+			for index,value in pairs(tooltipDetailGreen) do
+				CustomAchieverTooltip:AddLine(value, 0.0, 1.0, 0.0)
+			end
+		end
+		if tooltipDetailRed then
+			for index,value in pairs(tooltipDetailRed) do
+				CustomAchieverTooltip:AddLine(value, 1.0, 0.0, 0.0)
+			end
+		end
+		CustomAchieverTooltip:Show()
+	end
+end
+
+function CustomAchieverButtonLeave(self)
+	CustomAchieverTooltip:Hide()
 end

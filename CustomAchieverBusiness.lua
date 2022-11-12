@@ -143,6 +143,17 @@ function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, descri
 	end
 end
 
+function CustAc_DeleteAchievement(id)
+	if id then
+		CustomAchieverData["Achievements"][id] = nil
+	end
+	
+	CustAc_LoadAchievementsData()
+	if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
+		CustAc_AchievementFrameAchievements_UpdateDataProvider()
+	end
+end
+
 function CustAc_GetAchievement(achievement)
 	if achievement then
 		local data = {}

@@ -30,7 +30,7 @@ eventFrame:SetScript("OnEvent", function(self, event, addon)
 		icon = "interface\\friendsframe\\friendsframescrollicon",
 		tocname = "CustomAchiever",
 		OnClick = function(self, button)
-			if false --[[TEMP button == "LeftButton"--]] then
+			if button == "LeftButton" then
 				if CustomAchieverFrame:IsShown() then
 					CustomAchieverFrame:Hide()
 				else

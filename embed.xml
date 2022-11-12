@@ -26,8 +26,8 @@
 	<Script file="CustomAchieverOptions.lua" />
 	<Include file="CustomAchieverTab.xml" />
 	<Script file="embed.lua" />
-	<Frame name="CustomAchieverFrameTemplate" enableMouse="true" clampedToScreen="true" inherits="BasicFrameTemplate" virtual="true" hidden="true" toplevel="true" movable="true" resizable="true" frameStrata="MEDIUM">
-		<Size x="380" y="265" />
+	<Frame name="CustomAchieverFrameTemplate" enableMouse="true" clampedToScreen="true" inherits="ButtonFrameTemplate" virtual="true" hidden="true" toplevel="true" movable="true" resizable="true" frameStrata="MEDIUM">
+		<Size x="380" y="285" />
 		<Anchors>
 			<Anchor point="CENTER" x="0" y="0" />
 		</Anchors>
@@ -35,7 +35,7 @@
 			<Frame parentKey="AchievementAlertFrame" name="$parentAchievementAlertFrame">
 				<Size x="310" y="90" />
 				<Anchors>
-					<Anchor point="TOP" x="-5" y="-90"/>
+					<Anchor point="TOP" x="0" y="-100"/>
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
@@ -190,28 +190,54 @@
 					</Frame>
 				</Frames>
 			</Frame>
-			<EditBox parentKey="DescriptionEditBox" inherits="InputBoxTemplate" letters="40">
-				<Anchors>
-					<Anchor point="TOP" x="0" y="-190"/>
-				</Anchors>
-				<Size x="310" y="16"/>
+			<EditBox parentKey="IconEditBox" inherits="InputBoxTemplate" letters="9" numeric="true">
 				<Scripts>
-					<OnTextChanged function="CustomAchieverFrameDescriptionEditBox_OnTextChanged"/>
+					<OnTextChanged function="CustomAchieverFrameEditBox_OnTextChanged"/>
+					<OnEscapePressed function="HideParentPanel"/>
 				</Scripts>
 			</EditBox>
-			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate" text="HUD_EDIT_MODE_SAVE_LAYOUT">
+			<EditBox parentKey="PointsEditBox" inherits="InputBoxTemplate" letters="2" numeric="true">
+				<Scripts>
+					<OnTextChanged function="CustomAchieverFrameEditBox_OnTextChanged"/>
+					<OnEscapePressed function="HideParentPanel"/>
+				</Scripts>
+			</EditBox>
+			<EditBox parentKey="DescriptionEditBox" inherits="InputBoxTemplate" letters="40">
+				<Scripts>
+					<OnTextChanged function="CustomAchieverFrameDescriptionEditBox_OnTextChanged"/>
+					<OnEscapePressed function="HideParentPanel"/>
+				</Scripts>
+			</EditBox>
+			<Button parentKey="DeleteButton" inherits="UIPanelButtonTemplate" motionScriptsWhileDisabled="true" text="DELETE">
+				<Size x="80" y="22"/>
 				<Anchors>
-					<Anchor point="TOP" x="0" y="-220"/>
+					<Anchor point="BOTTOMLEFT" x="4" y="4"/>
 				</Anchors>
-				<Size x="220" y="28"/>
-				<NormalFont style="GameFontNormal"/>
+				<Scripts>
+					<OnClick function="CustAc_DeleteButton_OnClick"/>
+				</Scripts>
+			</Button>
+			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate" motionScriptsWhileDisabled="true" text="HUD_EDIT_MODE_SAVE_LAYOUT">
+				<Size x="80" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-82" y="4"/>
+				</Anchors>
 				<Scripts>
 					<OnClick function="CustAc_SaveButton_OnClick"/>
 				</Scripts>
-		   </Button>
+			</Button>
+			<Button parentKey="ExitButton" inherits="UIPanelButtonTemplate" text="EXIT">
+				<Size x="80" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-5" y="4"/>
+				</Anchors>
+				<Scripts>
+					<OnClick function="HideParentPanel"/>
+				</Scripts>
+			</Button>
 		</Frames>
 		<Scripts>
-			<OnLoad function="CustomAchieverFrameTemplate_OnLoad"/>
+			<OnLoad function="CustomAchieverFrame_OnLoad"/>
 			<OnDragStart>
 				self.moving = true
 				self:StartMoving()
@@ -235,5 +261,13 @@
 			<OnShow function="CustAc_IconsPopupFrame_OnShow"/>
 		</Scripts>
 	</Frame>
+	<Button name="CustomAchieverOptionsButtonTemplate" frameStrata="HIGH" virtual="true">
+		<Size x="16" y="16" />
+		<Scripts>
+			<OnClick function="CustomAchieverOptions"/>
+			<OnEnter function="CustomAchieverButtonEnter"/>
+			<OnLeave function="CustomAchieverButtonLeave"/>
+		</Scripts>
+	</Button>
 	<GameTooltip name="CustomAchieverTooltip" frameStrata="TOOLTIP" hidden="true" parent="UIParent" inherits="GameTooltipTemplate" />
 </Ui>

@@ -2,7 +2,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("CustomAchiever", "frFR", false)
 
 if L then
 
-L["CUSTOMACHIEVER_WELCOME"] = "Tapez /custac pour afficher les options de Custom Achiever."
+L["CUSTOMACHIEVER_WELCOME"] = "Tapez /custac pour afficher Custom Achiever."
 
 L["SPACE_BEFORE_DOT"] = " "
 
@@ -23,6 +23,12 @@ L["MENUCUSTAC_ACHIEVEMENT"] = "Haut fait"
 L["MENUCUSTAC_ACHIEVEMENTS"] = "Hauts faits personnalisés"
 L["MENUCUSTAC_NEW"] = "Créer un nouveau Haut fait..."
 L["MENUCUSTAC_DEFAULT_NAME"] = "Haut fait personnalisé"
-L["MENUCUSTAC_DESCRIPTION"] = "Description."
+L["MENUCUSTAC_ICON"] = "Icône"
+L["MENUCUSTAC_POINTS"] = "Points"
+L["MENUCUSTAC_DESCRIPTION"] = "Description"
+L["MENUCUSTAC_CONFIRM_DELETION"] = "Voulez-vous vraiment effacer définitivement le Haut fait personnalisé |cff00ff00%s|r ?"
+
+L["MENUOPTIONS_TOOLTIP"] = "Options de Custom Achiever"
+L["MENUOPTIONS_TOOLTIPDETAIL"] = "Modifier les options de Custom Achiever."
 
 end

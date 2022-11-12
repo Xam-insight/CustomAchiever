@@ -156,10 +156,13 @@ function CustomAchiever:ReloadData()
 end
 
 function CustomAchiever:CustomAchieverChatCommand(input)
-	if input == "test" then
-		CustomAchieverFrame:Show()
+	if input == "options" then
+		CustomAchieverOptions()
 	else
-		ACD:Open("CustomAchiever")
+		CustomAchieverFrame:Show()
 	end
 end
 
+function CustomAchieverOptions()
+	ACD:Open("CustomAchiever")
+end

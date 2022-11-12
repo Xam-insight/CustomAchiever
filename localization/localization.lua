@@ -2,7 +2,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("CustomAchiever", "enUS", true)
 
 if L then
 
-L["CUSTOMACHIEVER_WELCOME"] = "Type /cusac to show Custom Achiever options."
+L["CUSTOMACHIEVER_WELCOME"] = "Type /cusac to show Custom Achiever."
 
 L["SPACE_BEFORE_DOT"] = ""
 
@@ -23,6 +23,12 @@ L["MENUCUSTAC_ACHIEVEMENT"] = "Achievement"
 L["MENUCUSTAC_ACHIEVEMENTS"] = "Custom Achievements"
 L["MENUCUSTAC_NEW"] = "Create a new Achievement..."
 L["MENUCUSTAC_DEFAULT_NAME"] = "Custom Achievement"
-L["MENUCUSTAC_DESCRIPTION"] = "Description."
+L["MENUCUSTAC_ICON"] = "Icon"
+L["MENUCUSTAC_POINTS"] = "Points"
+L["MENUCUSTAC_DESCRIPTION"] = "Description"
+L["MENUCUSTAC_CONFIRM_DELETION"] = "Are you sure you want to permanently delete the Custom Achievement |cff00ff00%s|r?"
+
+L["MENUOPTIONS_TOOLTIP"] = "Custom Achiever options"
+L["MENUOPTIONS_TOOLTIPDETAIL"] = "Change Custom Achiever options."
 
 end
