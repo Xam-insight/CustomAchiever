@@ -4,6 +4,18 @@ local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 local nextCustomCategoryId
 local nextCustomAchieverId
 
+local selectedAchievement = {}
+
+local function CustAc_InitSelectedAchievement(achievementId, categoryId)
+	selectedAchievement = {}
+	selectedAchievement.achievementId       =  achievementId or nextCustomAchieverId
+	selectedAchievement.achievementCategory =  categoryId or (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].parent) or nextCustomCategoryId
+	selectedAchievement.achievementName     =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "name")                                 or L["MENUCUSTAC_DEFAULT_NAME"]
+	selectedAchievement.achievementIcon     = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].icon)   or 236376
+	selectedAchievement.achievementDesc     =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "desc")                                 or L["MENUCUSTAC_DESCRIPTION"]
+	selectedAchievement.achievementPoints   = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].points) or 0
+end
+
 function CustomAchieverFrameTemplate_OnLoad(self)
 	self:RegisterForDrag("LeftButton")
 	self.CloseButton:SetHitRectInsets(6, 6, 6, 6)
@@ -20,7 +32,7 @@ function CustomAchieverFrameTemplate_OnLoad(self)
 	CustomAchieverFrameAchievementAlertFrame.GuildBorder:Hide()
 	CustomAchieverFrameAchievementAlertFrame.Icon.Bling:Hide()
 	
-	nextCustomCategoryId = "CustomAchiever"
+	nextCustomCategoryId = CustAc_playerCharacter()
 	local categoryFontstring = CustomAchieverFrame:CreateFontString("CategoryFontstring", "ARTWORK", "GameFontNormal")
 	categoryFontstring:SetText(L["MENUCUSTAC_CATEGORY"])
 	categoryFontstring:SetPoint("TOPLEFT", 30, -39)
@@ -44,41 +56,55 @@ function CustomAchieverFrameTemplate_OnLoad(self)
 
 	LibDD:UIDropDownMenu_Initialize(achievementDropDown, CustAc_AchievementDropDownMenu_Update)
 	LibDD:UIDropDownMenu_SetSelectedValue(achievementDropDown, nextCustomAchieverId)
-	CustomAchieverFrame_UpdateAchievementAlertFrame(nextCustomAchieverId)
+	
+	CustAc_InitSelectedAchievement(nextCustomAchieverId, nextCustomCategoryId)
+	CustomAchieverFrame_UpdateAchievementAlertFrame()
 end
 
 function CustAc_CategoryDropDownMenu_Update(self)
+	local function CustAc_SelectCategory(_, dropdown, id)
+		LibDD:UIDropDownMenu_SetSelectedValue(dropdown, id)
+		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
+		CustAc_InitSelectedAchievement(nextCustomAchieverId)
+		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
+		CustomAchieverFrame_UpdateAchievementAlertFrame()
+	end
+	
 	local info = LibDD:UIDropDownMenu_CreateInfo()
 	info.text = L["MENUCUSTAC_CATEGORIES"]
 	info.isTitle = true
 	info.notCheckable = true
 	LibDD:UIDropDownMenu_AddButton(info)
 	
-	--local info = LibDD:UIDropDownMenu_CreateInfo()
-	--info.text = L["MENUCUSTAC_NEW"]
-	--info.value = nextCustomAchieverId
-	--info.func = function(button)
-	--	LibDD:UIDropDownMenu_SetSelectedValue(self, button.value)
-	--end
-	--LibDD:UIDropDownMenu_AddButton(info)
+	local info = LibDD:UIDropDownMenu_CreateInfo()
+	info.text  = CustAc_delRealm(nextCustomCategoryId)--L["MENUCUSTAC_NEW"]
+	info.value = nextCustomCategoryId
+	info.func  = CustAc_SelectCategory
+	info.arg1  = self
+	info.arg2  = nextCustomCategoryId
+	LibDD:UIDropDownMenu_AddButton(info)
 
 	for k,v in pairs(CustomAchieverData["Categories"]) do
-		if k == "CustomAchiever" then
+		if k ~= nextCustomCategoryId and CustomAchieverData["PersonnalCategories"][k] then
 			local info = LibDD:UIDropDownMenu_CreateInfo()
-			info = LibDD:UIDropDownMenu_CreateInfo()
-			info.text = CustAc_getLocaleData(v, "name")
+			info       = LibDD:UIDropDownMenu_CreateInfo()
+			info.text  = CustAc_getLocaleData(v, "name")
 			info.value = k
-			info.func = function(button)
-				LibDD:UIDropDownMenu_SetSelectedValue(self, button.value)
-			end
+			info.func  = CustAc_SelectCategory
+			info.arg1  = self
+			info.arg2  = k
 			LibDD:UIDropDownMenu_AddButton(info)
 		end
 	end
-	
-	--CustAc_AchievementDropDownMenu_Update(self)
 end
 
 function CustAc_AchievementDropDownMenu_Update(self)
+	local function CustAc_SelectAchievement(_, dropdown, id)
+		CustAc_InitSelectedAchievement(id)
+		LibDD:UIDropDownMenu_SetSelectedValue(dropdown, id)
+		CustomAchieverFrame_UpdateAchievementAlertFrame()
+	end
+	
 	local info = LibDD:UIDropDownMenu_CreateInfo()
 	info.text = L["MENUCUSTAC_ACHIEVEMENTS"]
 	info.isTitle = true
@@ -86,90 +112,90 @@ function CustAc_AchievementDropDownMenu_Update(self)
 	LibDD:UIDropDownMenu_AddButton(info)
 	
 	local info = LibDD:UIDropDownMenu_CreateInfo()
-	info.text = CreateAtlasMarkup("UI-HUD-MicroMenu-Achievements-Up", 16, 22, 0, -3).." |cFF00FF00"..L["MENUCUSTAC_NEW"].."|r"
+	info.text  = CreateAtlasMarkup("UI-HUD-MicroMenu-Achievements-Up", 16, 22, 0, -3).." |cFF00FF00"..L["MENUCUSTAC_NEW"].."|r"
 	info.value = nextCustomAchieverId
-	info.func = function(button)
-		LibDD:UIDropDownMenu_SetSelectedValue(self, button.value)
-		CustomAchieverFrame_UpdateAchievementAlertFrame(button.value)
-	end
+	info.func  = CustAc_SelectAchievement
+	info.arg1  = self
+	info.arg2  = nextCustomAchieverId
 	LibDD:UIDropDownMenu_AddButton(info)
 
 	for k,v in pairs(CustomAchieverData["Achievements"]) do
 		if v["parent"] == LibDD:UIDropDownMenu_GetSelectedValue(CustomAchieverCategoryDownMenu) then
 			local info = LibDD:UIDropDownMenu_CreateInfo()
-			info = LibDD:UIDropDownMenu_CreateInfo()
-			info.text = CustAc_getLocaleData(v, "name")
+			info       = LibDD:UIDropDownMenu_CreateInfo()
+			info.text  = CustAc_getLocaleData(v, "name")
 			info.value = k
-			info.func = function(button)
-				LibDD:UIDropDownMenu_SetSelectedValue(self, button.value)
-				CustomAchieverFrame_UpdateAchievementAlertFrame(button.value)
-			end
+			info.func  = CustAc_SelectAchievement
+			info.arg1  = self
+			info.arg2  = k
 			LibDD:UIDropDownMenu_AddButton(info)
 		end
 	end
 end
 
-
-function CustomAchieverFrame_UpdateAchievementAlertFrame(achievementId, achievementName, achievementIcon, description)
-	if achievementId then
-		if CustomAchieverData["Achievements"][achievementId] then
-			CustomAchieverFrame.AchievementAlertFrame.Icon.Texture:SetTexture(achievementIcon or CustomAchieverData["Achievements"][achievementId].icon)
-			CustomAchieverFrame.AchievementAlertFrame.Name:SetText(achievementName or CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "name"))
-			if CustomAchieverData["Achievements"][achievementId].points and CustomAchieverData["Achievements"][achievementId].points > 0 then
-						CustomAchieverFrame.AchievementAlertFrame.Shield.Points:SetText(CustomAchieverData["Achievements"][achievementId].points)
-			end 
-		else
-			CustomAchieverFrame.AchievementAlertFrame.Icon.Texture:SetTexture(achievementIcon or 236376)
-			CustomAchieverFrame.AchievementAlertFrame.Name:SetText(achievementName or L["MENUCUSTAC_DEFAULT_NAME"])
-			CustomAchieverFrame.AchievementAlertFrame.Shield.Points:SetText("0")
-		end
-		CustomAchieverFrame.DescriptionEditBox:SetText(description or (CustomAchieverData["Achievements"][achievementId] and CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "desc")) or L["MENUCUSTAC_DESCRIPTION"])
+function CustomAchieverFrame_UpdateAchievementAlertFrame()
+	if selectedAchievement.achievementId then
+		CustomAchieverFrame.AchievementAlertFrame.Icon.Texture:SetTexture(selectedAchievement.achievementIcon)
+		CustomAchieverFrame.AchievementAlertFrame.Name:SetText(selectedAchievement.achievementName)
+		CustomAchieverFrame.AchievementAlertFrame.Shield.Points:SetText(selectedAchievement.achievementPoints)
+		CustomAchieverFrame.DescriptionEditBox:SetText(selectedAchievement.achievementDesc)
 		CustomAchieverFrame.DescriptionEditBox:HighlightText()
 	end
+end
+
+function CustomAchieverFrameDescriptionEditBox_OnTextChanged(self)
+	selectedAchievement.achievementDesc = CustAc_titleFormat(self:GetText())
 end
 
 function CustAc_IconsPopupFrame_OkayButton_OnClick()
 	CustAc_IconsPopupFrame:Hide()
 	
-	local id = CustomAchieverAchievementsDownMenu.selectedValue
-	local iconTexture = CustAc_IconsPopupFrame.BorderBox.SelectedIconArea.SelectedIconButton:GetIconTexture()
-	local achievementName = CustAc_IconsPopupFrame.BorderBox.IconSelectorEditBox:GetText()
-	achievementName = strtrim(achievementName):gsub("^%l", string.utf8upper):gsub("%s+", " ")
+	selectedAchievement.achievementIcon = CustAc_IconsPopupFrame.BorderBox.SelectedIconArea.SelectedIconButton:GetIconTexture()
+	selectedAchievement.achievementName = CustAc_titleFormat(CustAc_IconsPopupFrame.BorderBox.IconSelectorEditBox:GetText())
 
-	CustomAchieverFrame_UpdateAchievementAlertFrame(id, achievementName, iconTexture, CustomAchieverFrame.DescriptionEditBox:GetText())
+	CustomAchieverFrame_UpdateAchievementAlertFrame()
 end
 
 function CustAc_SaveButton_OnClick()
-	local id   = CustomAchieverAchievementsDownMenu.selectedValue
-	local achievementName = CustomAchieverFrame.AchievementAlertFrame.Name:GetText()
-	local icon = CustomAchieverFrame.AchievementAlertFrame.Icon.Texture:GetTexture()
-	local categoryId = CustomAchieverCategoryDownMenu.selectedValue
-	local description = CustomAchieverFrame.DescriptionEditBox:GetText()
-	
-	CustAc_CreateOrUpdateAchievement(id, categoryId, icon, 0, achievementName, description)
-	if id == nextCustomAchieverId then
-		nextCustomAchieverId = CustAc_playerCharacter()..'-'..tostring(CustAc_getTimeUTCinMS())
+	if selectedAchievement.achievementId then
+		print(selectedAchievement.achievementCategory)
+		CustAc_CreateOrUpdateAchievement(selectedAchievement.achievementId, selectedAchievement.achievementCategory, selectedAchievement.achievementIcon, 0, selectedAchievement.achievementName, selectedAchievement.achievementDesc, nil, true)
+		if selectedAchievement.achievementId == nextCustomAchieverId then
+			nextCustomAchieverId = CustAc_playerCharacter()..'-'..tostring(CustAc_getTimeUTCinMS())
+		end
+		
+		local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name")
+		
+		CustAc_CompleteAchievement("CustomAchiever2")
+		EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, selectedAchievement.achievementName, 5208, true, 4, categoryName, function() CustAc_ShowAchievement(selectedAchievement.achievementId) end, selectedAchievement.achievementIcon)
+		
+		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
+		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, selectedAchievement.achievementId)
 	end
-	
-	local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][categoryId], "name")
-	
-	CustAc_CompleteAchievement("CustomAchiever2")
-	EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, achievementName, 5208, true, 4, categoryName, function() CustAc_ShowAchievement(id) end, icon)
-	
-	LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
-	LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, id)
 end
 
 function CustAc_IconsPopupFrame_OnHide(self)
 	IconSelectorPopupFrameTemplateMixin.OnHide(self)
+	
+	LibDD:UIDropDownMenu_EnableDropDown(CustomAchieverCategoryDownMenu)
+	LibDD:UIDropDownMenu_EnableDropDown(CustomAchieverAchievementsDownMenu)
+	CustomAchieverFrame.DescriptionEditBox:Enable()
+	CustomAchieverFrame.SaveButton:Enable()
 end
 
 function CustAc_IconsPopupFrame_OnShow(self)
 	IconSelectorPopupFrameTemplateMixin.OnShow(self)
+	
+	LibDD:UIDropDownMenu_DisableDropDown(CustomAchieverCategoryDownMenu)
+	LibDD:UIDropDownMenu_DisableDropDown(CustomAchieverAchievementsDownMenu)
+	CustomAchieverFrame.DescriptionEditBox:Disable()
+	CustomAchieverFrame.SaveButton:Disable()
+
 	self.BorderBox.IconSelectorEditBox:SetFocus()
 
 	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
 	self.iconDataProvider = CustAc_IconsPopupFrame_RefreshIconDataProvider(self)
+	CustAc_IconsPopupFrame_Init(self)
 	self:Update()
 	self.BorderBox.IconSelectorEditBox:OnTextChanged()
 
@@ -182,18 +208,16 @@ function CustAc_IconsPopupFrame_OnShow(self)
 		self.BorderBox.SelectedIconArea.SelectedIconText.SelectedIconDescription:SetText(ICON_SELECTION_CLICK)
 	end
     self.IconSelector:SetSelectedCallback(OnIconSelected)
-	
-	CustAc_IconsPopupFrame_Init(self)
 end
 
 function CustAc_IconsPopupFrame_Init(self)
-	local name = "tmp"
+	local name = selectedAchievement.achievementName
 	self.BorderBox.IconSelectorEditBox:SetText(name)
 	self.BorderBox.IconSelectorEditBox:HighlightText()
 
-	local texture = 236376
+	local texture = selectedAchievement.achievementIcon
 	self.IconSelector:SetSelectedIndex(self:GetIndexOfIcon(texture))
-	print(self:GetIndexOfIcon(texture))
+	self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(texture);
 	self.IconSelector:ScrollToSelectedIndex()
 	self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(texture)
 end

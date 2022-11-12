@@ -13,6 +13,10 @@ function initCustomAchieverBusinessObjects()
 	if not CustomAchieverData["Categories"] then
 		CustomAchieverData["Categories"] = {}
 	end
+	
+	if not CustomAchieverData["PersonnalCategories"] then
+		CustomAchieverData["PersonnalCategories"] = {}
+	end
 
 	if not CustomAchieverData["Achievements"] then
 		CustomAchieverData["Achievements"] = {}
@@ -48,7 +52,7 @@ function CustAc_SaveCategoryDataIntoAddon(categoryId)
 	_G[addOn.."_CustomAchieverData"]["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
 end
 
-function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale)
+function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPersonnal)
 	if id then
 		local parentCategory = nil
 		if parentID then
@@ -68,7 +72,12 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale)
 		data["hidden"]   = (data["parentID"] ~= nil)
 		local dataLocale = locale or GetLocale()
 		data["name_"..dataLocale] = categoryName or data["name_"..dataLocale] or id
-
+		
+		if isPersonnal then
+			data["name_"..dataLocale] = CustAc_delRealm(id)
+			CustomAchieverData["PersonnalCategories"][id] = true
+		end
+		
 		CustomAchieverData["Categories"][id] = data
 
 		if parentCategory then
@@ -99,11 +108,11 @@ function CustAc_SaveAchievementDataIntoAddon(achievementId)
 	_G[addOn.."_CustomAchieverData"]["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId]
 end
 
-function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, locale)
+function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, locale, isPersonnal)
 	if id then
 		local parentCategory = parent or "CustomAchiever"
 		if not CustomAchieverData["Categories"][parentCategory] then
-			CustAc_CreateOrUpdateCategory(parentCategory, nil, parentCategory, locale)
+			CustAc_CreateOrUpdateCategory(parentCategory, nil, parentCategory, locale, isPersonnal)
 		end
 		local data = {}
 		if CustomAchieverData["Achievements"][id] then
@@ -208,7 +217,7 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 		CustAc_SaveAchievementDataIntoAddon(id)
 
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif then
-			local name = getLocaleData(data, "name")
+			local name = CustAc_getLocaleData(data, "name")
 			EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, name, 5208, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, "Custom Achiever", function() CustAc_ShowAchievement(id) end, data["icon"])
 		end
 		CustAc_LoadAchievementsData()
@@ -219,17 +228,20 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 end
 
 function CustAc_getLocaleData(data, name)
-	local localeData = data[name.."_"..GetLocale()]
-	if localeData then
-		return localeData
-	end
-	for k,v in pairs(CustAc_languageValues) do
-		localeData = data[name.."_"..k]
+	if data then
+		local localeData = data[name.."_"..GetLocale()]
 		if localeData then
 			return localeData
 		end
+		for k,v in pairs(CustAc_languageValues) do
+			localeData = data[name.."_"..k]
+			if localeData then
+				return localeData
+			end
+		end
+		return UNKNOWN
 	end
-	return UNKNOWN
+	return nil
 end
 
 function CustAc_GetAchievementCategory(id)
@@ -263,6 +275,20 @@ function CustAc_Error(message)
 	UIErrorsFrame:AddMessage(messageToPrint, 1.0, 0.1, 0.1)
 	CustomAchiever:Print("|cFFFF0000"..messageToPrint)
 end
+
+
+function CustAc_titleFormat(aText)
+	local newText = ""
+	if aText then
+		newText = strtrim(aText):gsub("%s+", " ")
+		retOK, ret = pcall(CustAc_upperCaseBusiness, string.utf8sub(string.utf8upper(newText), 1 , 1))
+		if retOK then
+			newText = ret..string.utf8sub(newText, 2)
+		end
+	end
+	return newText
+end
+
 
 function CustAc_upperCase(aText)
 	local newText = ""

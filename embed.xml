@@ -35,7 +35,7 @@
 			<Frame parentKey="AchievementAlertFrame" name="$parentAchievementAlertFrame">
 				<Size x="310" y="90" />
 				<Anchors>
-					<Anchor point="TOP" x="0" y="-90"/>
+					<Anchor point="TOP" x="-5" y="-90"/>
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
@@ -195,6 +195,9 @@
 					<Anchor point="TOP" x="0" y="-190"/>
 				</Anchors>
 				<Size x="310" y="16"/>
+				<Scripts>
+					<OnTextChanged function="CustomAchieverFrameDescriptionEditBox_OnTextChanged"/>
+				</Scripts>
 			</EditBox>
 			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate" text="HUD_EDIT_MODE_SAVE_LAYOUT">
 				<Anchors>
