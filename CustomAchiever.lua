@@ -26,7 +26,7 @@ CustAc_Krowi_Loaded = false
 function CustomAchiever:OnInitialize()
 	-- Called when the addon is loaded
 	self:RegisterChatCommand("custac", "CustomAchieverChatCommand")
-    --self:RegisterComm(CustomAchieverGlobal_CommPrefix, nil)
+	self:RegisterComm(CustomAchieverGlobal_CommPrefix, "ReceiveDataFrame_OnEvent")
 	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
 	self:RegisterEvent("IGNORELIST_UPDATE", "ApplyIgnoreList")
 

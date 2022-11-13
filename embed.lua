@@ -237,10 +237,10 @@ end
 
 
 function CustAc_AwardButton_OnClick(self)
-	name, realm = UnitFullName("target")
+	local name, realm = UnitFullName("target")
 	local target = CustAc_addRealm(name, realm)
-	if target and target ~= CustAc_playerCharacter() then
-		
+	if target then
+		encodeAndSendAchievementInfo(CustomAchieverData["Achievements"][selectedAchievement.achievementId], target, "Award")
 	else
 		CustAc_CompleteAchievement(selectedAchievement.achievementId)
 	end

@@ -26,6 +26,7 @@
 	<Script file="CustomAchieverOptions.lua" />
 	<Include file="CustomAchieverTab.xml" />
 	<Include file="CustomAchieverHelpTip.xml" />
+	<Script file="Sharing.lua" />
 	<Script file="embed.lua" />
 	<Frame name="CustomAchieverFrameTemplate" enableMouse="true" clampedToScreen="true" inherits="ButtonFrameTemplate" virtual="true" hidden="true" toplevel="true" movable="true" resizable="true" frameStrata="MEDIUM">
 		<Size x="380" y="285" />

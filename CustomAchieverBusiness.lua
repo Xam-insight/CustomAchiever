@@ -274,12 +274,12 @@ function CustAc_getLocaleData(data, name)
 	if data then
 		local localeData = data[name.."_"..GetLocale()]
 		if localeData then
-			return localeData
+			return localeData, GetLocale()
 		end
 		for k,v in pairs(CustAc_languageValues) do
 			localeData = data[name.."_"..k]
 			if localeData then
-				return localeData
+				return localeData, k
 			end
 		end
 		return UNKNOWN
