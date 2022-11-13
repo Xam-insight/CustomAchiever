@@ -28,6 +28,8 @@ function CustomAchiever:OnInitialize()
 	self:RegisterChatCommand("custac", "CustomAchieverChatCommand")
     --self:RegisterComm(CustomAchieverGlobal_CommPrefix, nil)
 	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
+	self:RegisterEvent("IGNORELIST_UPDATE", "ApplyIgnoreList")
+
 	self:RegisterEvent("ADDON_LOADED", function(event, arg)
 		if(arg == "Krowi_AchievementFilter") then
 			--WATCHED_ADDON = "Overachiever_Tabs" -- Overachiever no longer supported. >> Krowi_AchievementFilter
@@ -40,11 +42,15 @@ function CustomAchiever:OnInitialize()
 	end)
 end
 
+function CustomAchiever:ApplyIgnoreList()
+	CustAc_ApplyIgnoreList()
+end
+
 function CustomAchiever:OnEnable()
 	-- Called when the addon is enabled
 	if not CustomAchieverFrame then
-        loadCustomAchieverOptions()
 		initCustomAchieverBusinessObjects()
+        loadCustomAchieverOptions()
 
 		--NewCustomAchieverFrame
 		CustomAchieverFrame = CreateFrame("Frame", "CustomAchieverFrame", UIParent, "CustomAchieverFrameTemplate")

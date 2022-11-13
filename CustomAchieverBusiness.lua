@@ -18,6 +18,12 @@ function initCustomAchieverBusinessObjects()
 		CustomAchieverData["PersonnalCategories"] = {}
 	end
 
+	if not CustomAchieverData["BlackList"] then
+		CustomAchieverData["BlackList"] = {}
+	end
+	
+	CustAc_ApplyIgnoreList()
+
 	if not CustomAchieverData["Achievements"] then
 		CustomAchieverData["Achievements"] = {}
 	end
@@ -35,6 +41,28 @@ function initCustomAchieverBusinessObjects()
 	-- CustomAchieverTuto
 	if not CustomAchieverTuto then
 		CustomAchieverTuto = {}
+	end
+end
+
+function CustAc_ApplyIgnoreList()
+	local dataFound = false
+	for i = 1, C_FriendList.GetNumIgnores() do
+		local user = CustAc_addRealm(C_FriendList.GetIgnoreName(i))
+		CustomAchieverData["BlackList"][user] = "IgnoreList"
+		if CustomAchieverData["Categories"][user] then
+			CustomAchieverData["Categories"][user] = nil
+			dataFound = true
+		end
+		for k,v in pairs(CustomAchieverData["Achievements"]) do
+			if v.parent == user then
+				CustomAchieverData["Achievements"][k] = nil
+				dataFound = true
+			end
+		end
+	end
+	if dataFound then
+		CustAc_LoadAchievementsData()
+		CustAc_AchievementFrame_UpdateAndSelectCategory(id)
 	end
 end
 
@@ -124,7 +152,7 @@ function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, descri
 		data["name_"..dataLocale] = name              or data["name_"..dataLocale] or L["MENUCUSTAC_DEFAULT_NAME"]
 		data["desc_"..dataLocale] = description       or data["desc_"..dataLocale] or L["MENUCUSTAC_DEFAULT_NAME"]
 		data["icon"]              = icon              or data["icon"]                           or 236376
-		data["points"]            = points            or data["points"]                         or 10
+		data["points"]            = tonumber(points   or data["points"]                         or 10)
 		data["flags"]             = 0
 		data["rewardText"]        = nil
 		data["isGuild"]           = false

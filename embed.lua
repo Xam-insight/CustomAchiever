@@ -240,7 +240,7 @@ end
 
 function CustAc_SaveButton_OnClick()
 	if selectedAchievement.achievementId then
-		CustAc_CreateOrUpdateAchievement(selectedAchievement.achievementId, selectedAchievement.achievementCategory, selectedAchievement.achievementIcon, 0, selectedAchievement.achievementName, selectedAchievement.achievementDesc, nil, true)
+		CustAc_CreateOrUpdateAchievement(selectedAchievement.achievementId, selectedAchievement.achievementCategory, selectedAchievement.achievementIcon, selectedAchievement.achievementPoints, selectedAchievement.achievementName, selectedAchievement.achievementDesc, nil, true)
 		if selectedAchievement.achievementId == nextCustomAchieverId then
 			nextCustomAchieverId = CustAc_playerCharacter()..'-'..tostring(CustAc_getTimeUTCinMS())
 		end
@@ -262,6 +262,8 @@ function CustAc_IconsPopupFrame_OnHide(self)
 	
 	LibDD:UIDropDownMenu_EnableDropDown(CustomAchieverCategoryDownMenu)
 	LibDD:UIDropDownMenu_EnableDropDown(CustomAchieverAchievementsDownMenu)
+	CustomAchieverFrame.IconEditBox:Enable()
+	CustomAchieverFrame.PointsEditBox:Enable()
 	CustomAchieverFrame.DescriptionEditBox:Enable()
 	CustomAchieverFrame.DeleteButton:Enable()
 	CustomAchieverFrame.SaveButton:Enable()
@@ -272,6 +274,8 @@ function CustAc_IconsPopupFrame_OnShow(self)
 	
 	LibDD:UIDropDownMenu_DisableDropDown(CustomAchieverCategoryDownMenu)
 	LibDD:UIDropDownMenu_DisableDropDown(CustomAchieverAchievementsDownMenu)
+	CustomAchieverFrame.IconEditBox:Disable()
+	CustomAchieverFrame.PointsEditBox:Disable()
 	CustomAchieverFrame.DescriptionEditBox:Disable()
 	CustomAchieverFrame.DeleteButton:Disable()
 	CustomAchieverFrame.SaveButton:Disable()
@@ -300,7 +304,7 @@ function CustAc_IconsPopupFrame_Init(self)
 	self.BorderBox.IconSelectorEditBox:SetText(name)
 	self.BorderBox.IconSelectorEditBox:HighlightText()
 
-	local texture = selectedAchievement.achievementIcon
+	local texture = tonumber(selectedAchievement.achievementIcon)
 	self.IconSelector:SetSelectedIndex(self:GetIndexOfIcon(texture))
 	self.BorderBox.SelectedIconArea.SelectedIconButton:SetIconTexture(texture);
 	self.IconSelector:ScrollToSelectedIndex()

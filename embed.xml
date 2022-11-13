@@ -104,6 +104,14 @@
 							<OnClick>
 								showIconSelector()
 							</OnClick>
+							<OnEnter>
+								CustomAchieverFrameAchievementAlertFrame.Icon.SelectedTexture:Show()
+								CustomAchieverFrameAchievementAlertFrame.Name:SetTextColor(1.0, 0.82, 0.0, 1.0)
+							</OnEnter>
+							<OnLeave>
+								CustomAchieverFrameAchievementAlertFrame.Icon.SelectedTexture:Hide()
+								CustomAchieverFrameAchievementAlertFrame.Name:SetTextColor(1.0, 1.0, 1.0, 1.0)
+							</OnLeave>
 						</Scripts>
 					</Button>
 					<Button parentKey="ButtonName">
@@ -116,6 +124,14 @@
 							<OnClick>
 								showIconSelector()
 							</OnClick>
+							<OnEnter>
+								CustomAchieverFrameAchievementAlertFrame.Icon.SelectedTexture:Show()
+								CustomAchieverFrameAchievementAlertFrame.Name:SetTextColor(1.0, 0.82, 0.0, 1.0)
+							</OnEnter>
+							<OnLeave>
+								CustomAchieverFrameAchievementAlertFrame.Icon.SelectedTexture:Hide()
+								CustomAchieverFrameAchievementAlertFrame.Name:SetTextColor(1.0, 1.0, 1.0, 1.0)
+							</OnLeave>
 						</Scripts>
 					</Button>
 					<Button parentKey="ButtonShield">
@@ -136,6 +152,14 @@
 							<Anchor point="TOPLEFT" x="-26" y="16"/>
 						</Anchors>
 						<Layers>
+							<Layer level="OVERLAY">
+								<Texture parentKey="SelectedTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" hidden="true">
+									<Anchors>
+										<Anchor point="CENTER" x="-1" y="1"/>
+									</Anchors>
+									<Size x="50" y="50"/>
+								</Texture>
+							</Layer>
 							<Layer level="BORDER">
 								<Texture parentKey="Bling" file="Interface\AchievementFrame\UI-Achievement-Bling">
 									<Anchors>
