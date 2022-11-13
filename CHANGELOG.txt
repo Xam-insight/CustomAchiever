@@ -1,4 +1,6 @@
-﻿-v1.0.0
+﻿-v1.0.1
+	- Award button to ward achievements to target or self.
+-v1.0.0
 	- Custom achievements creation interface.
 -v0.2.9
 	- Achievement display duration reduced. 

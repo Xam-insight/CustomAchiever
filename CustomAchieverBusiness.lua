@@ -28,6 +28,10 @@ function initCustomAchieverBusinessObjects()
 		CustomAchieverData["Achievements"] = {}
 	end
 
+	if not CustomAchieverData["Tutorial"] then
+		CustomAchieverData["Tutorial"] = {}
+	end
+	
 	-- CustomAchieverOptionsData
 	if not CustomAchieverOptionsData then
 		CustomAchieverOptionsData = {}

@@ -91,7 +91,9 @@ function CustomAchieverFrame_OnLoad(self)
 	CustomAchieverFrame.DescriptionEditBox:SetPoint("TOPRIGHT", -30 , -225)
 	CustomAchieverFrame.DescriptionEditBox:SetSize(220, 16)
 	CustomAchieverFrame.DescriptionEditBox:HighlightText()
-
+	
+	CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_AWARD"])
+	
 	LibDD:UIDropDownMenu_Initialize(achievementDropDown, CustAc_AchievementDropDownMenu_Update)
 	LibDD:UIDropDownMenu_SetSelectedValue(achievementDropDown, nextCustomAchieverId)
 	
@@ -118,7 +120,7 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	local function CustAc_SelectCategory(_, dropdown, id)
 		LibDD:UIDropDownMenu_SetSelectedValue(dropdown, id)
 		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
-		CustAc_InitSelectedAchievement(nextCustomAchieverId)
+		CustAc_InitSelectedAchievement(nextCustomAchieverId, id)
 		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
 		CustomAchieverFrame_UpdateAchievementAlertFrame()
 	end
@@ -153,7 +155,7 @@ end
 
 function CustAc_AchievementDropDownMenu_Update(self)
 	local function CustAc_SelectAchievement(_, dropdown, id)
-		CustAc_InitSelectedAchievement(id)
+		CustAc_InitSelectedAchievement(id, selectedAchievement.achievementCategory)
 		LibDD:UIDropDownMenu_SetSelectedValue(dropdown, id)
 		CustomAchieverFrame_UpdateAchievementAlertFrame()
 	end
@@ -203,6 +205,13 @@ function CustomAchieverFrame_UpdateAchievementAlertFrame()
 		else
 			CustomAchieverFrame.DeleteButton:Enable()
 		end
+		
+		if selectedAchievement.achievementId == nextCustomAchieverId then
+			CustomAchieverFrame.AwardButton:Disable()
+		else
+			CustomAchieverFrame.AwardButton:Enable()
+			custacShowHelpTip("CUSTAC_HELPTIP_AWARD")
+		end
 	end
 end
 
@@ -224,6 +233,17 @@ function CustAc_IconsPopupFrame_OkayButton_OnClick()
 	selectedAchievement.achievementName = CustAc_titleFormat(CustAc_IconsPopupFrame.BorderBox.IconSelectorEditBox:GetText())
 
 	CustomAchieverFrame_UpdateAchievementAlertFrame()
+end
+
+
+function CustAc_AwardButton_OnClick(self)
+	name, realm = UnitFullName("target")
+	local target = CustAc_addRealm(name, realm)
+	if target and target ~= CustAc_playerCharacter() then
+		
+	else
+		CustAc_CompleteAchievement(selectedAchievement.achievementId)
+	end
 end
 
 function CustAc_DeleteButton_OnClick(self)
@@ -265,6 +285,10 @@ function CustAc_IconsPopupFrame_OnHide(self)
 	CustomAchieverFrame.IconEditBox:Enable()
 	CustomAchieverFrame.PointsEditBox:Enable()
 	CustomAchieverFrame.DescriptionEditBox:Enable()
+	if selectedAchievement.achievementId ~= nextCustomAchieverId then
+		CustomAchieverFrame.AwardButton:Enable()
+		custacShowHelpTip("CUSTAC_HELPTIP_AWARD")
+	end
 	CustomAchieverFrame.DeleteButton:Enable()
 	CustomAchieverFrame.SaveButton:Enable()
 end
@@ -278,6 +302,7 @@ function CustAc_IconsPopupFrame_OnShow(self)
 	CustomAchieverFrame.PointsEditBox:Disable()
 	CustomAchieverFrame.DescriptionEditBox:Disable()
 	CustomAchieverFrame.DeleteButton:Disable()
+	CustomAchieverFrame.AwardButton:Disable()
 	CustomAchieverFrame.SaveButton:Disable()
 
 	self.BorderBox.IconSelectorEditBox:SetFocus()
@@ -300,7 +325,7 @@ function CustAc_IconsPopupFrame_OnShow(self)
 end
 
 function CustAc_IconsPopupFrame_Init(self)
-	local name = selectedAchievement.achievementName
+	local name = (selectedAchievement.achievementName ~= L["MENUCUSTAC_DEFAULT_NAME"] and selectedAchievement.achievementName) or "" 
 	self.BorderBox.IconSelectorEditBox:SetText(name)
 	self.BorderBox.IconSelectorEditBox:HighlightText()
 

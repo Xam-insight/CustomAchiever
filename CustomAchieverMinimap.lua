@@ -1,3 +1,4 @@
+local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
 local ACD = LibStub("AceConfigDialog-3.0")
 
 local eventFrame = CreateFrame("Frame")
@@ -7,7 +8,7 @@ eventFrame:SetScript("OnEvent", function(self, event, addon)
 	-- Initialize the saved variables
 	local defaults = {
 		minimapIcon = {
-			hide = true,
+			hide = false,
 			minimapPos = 220,
 		}
 	}
@@ -42,6 +43,8 @@ eventFrame:SetScript("OnEvent", function(self, event, addon)
 		end,
 		OnTooltipShow = function(tooltip)
 			tooltip:AddLine("Custom Achiever", 1.0, 1.0, 1.0)
+			tooltip:AddLine(L["MINIMAP_TOOLTIP1"])
+			tooltip:AddLine(L["MINIMAP_TOOLTIP2"])
 		end,
 		OnLeave = function()
 			CustAc_saveCustomAchieverOptionsDataForAddon()

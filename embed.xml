@@ -25,6 +25,7 @@
 	<Script file="CustomAchieverMinimap.lua" />
 	<Script file="CustomAchieverOptions.lua" />
 	<Include file="CustomAchieverTab.xml" />
+	<Include file="CustomAchieverHelpTip.xml" />
 	<Script file="embed.lua" />
 	<Frame name="CustomAchieverFrameTemplate" enableMouse="true" clampedToScreen="true" inherits="ButtonFrameTemplate" virtual="true" hidden="true" toplevel="true" movable="true" resizable="true" frameStrata="MEDIUM">
 		<Size x="380" y="285" />
@@ -239,6 +240,15 @@
 				</Anchors>
 				<Scripts>
 					<OnClick function="CustAc_DeleteButton_OnClick"/>
+				</Scripts>
+			</Button>
+			<Button name="$parentAwardButton" parentKey="AwardButton" inherits="UIPanelButtonTemplate" motionScriptsWhileDisabled="true">
+				<Size x="80" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" x="111" y="4"/>
+				</Anchors>
+				<Scripts>
+					<OnClick function="CustAc_AwardButton_OnClick"/>
 				</Scripts>
 			</Button>
 			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate" motionScriptsWhileDisabled="true" text="HUD_EDIT_MODE_SAVE_LAYOUT">

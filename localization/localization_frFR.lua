@@ -28,7 +28,14 @@ L["MENUCUSTAC_POINTS"] = "Points"
 L["MENUCUSTAC_DESCRIPTION"] = "Description"
 L["MENUCUSTAC_CONFIRM_DELETION"] = "Voulez-vous vraiment effacer définitivement le Haut fait personnalisé |cff00ff00%s|r ?"
 
+L["MENUCUSTAC_AWARD"] = "Décerner"
+
 L["MENUOPTIONS_TOOLTIP"] = "Options de Custom Achiever"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Modifier les options de Custom Achiever."
+
+L["MINIMAP_TOOLTIP1"] = "Clic gauche pour afficher Custom Achiever."
+L["MINIMAP_TOOLTIP2"] = "Clic droit pour ouvrir les options."
+
+L["CUSTAC_HELPTIP_AWARD"] = "Décerner le Haut fait à votre cible (ou à défaut à vous-même).|n|nVotre cible doit avoir installé CustomAchiever."
 
 end

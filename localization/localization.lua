@@ -28,7 +28,14 @@ L["MENUCUSTAC_POINTS"] = "Points"
 L["MENUCUSTAC_DESCRIPTION"] = "Description"
 L["MENUCUSTAC_CONFIRM_DELETION"] = "Are you sure you want to permanently delete the Custom Achievement |cff00ff00%s|r?"
 
+L["MENUCUSTAC_AWARD"] = "Award"
+
 L["MENUOPTIONS_TOOLTIP"] = "Custom Achiever options"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Change Custom Achiever options."
+
+L["MINIMAP_TOOLTIP1"] = "Left click to show Custom Achiever."
+L["MINIMAP_TOOLTIP2"] = "Right click to open options panel."
+
+L["CUSTAC_HELPTIP_AWARD"] = "Award the Achievement to your target (to yourself if no target).|n|nYour target must have installed CustomAchiever."
 
 end
