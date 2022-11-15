@@ -241,6 +241,6 @@ function custacAcknowledgeHelpTip(helpTip)
 	end
 end
 
-function closeMenuHelpTip(helpTip)
+function custacCloseMenuHelpTip(helpTip)
 	CustomAchieverHelpTip:Hide(L_DropDownList1, helpTip)
 end

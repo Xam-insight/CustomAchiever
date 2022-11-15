@@ -1,4 +1,6 @@
-﻿-v1.0.1
+﻿-v1.0.2
+	- Fixed a compatibility problem with the Dead Pool menus.
+-v1.0.1
 	- Award button to ward achievements to target or self.
 -v1.0.0
 	- Custom achievements creation interface.
