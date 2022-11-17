@@ -1,4 +1,6 @@
-﻿-v1.0.3
+﻿-v1.0.4
+	- Fixed an issue due to GetNormalizedRealmName.
+-v1.0.3
 	- TOC for 10.0.2.
 -v1.0.2
 	- Fixed a compatibility problem with the Dead Pool menus.

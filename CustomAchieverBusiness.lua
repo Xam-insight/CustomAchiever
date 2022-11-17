@@ -299,7 +299,7 @@ function CustAc_addRealm(aName, aRealm)
 	if aName and not string.match(aName, "-") then
 		if aRealm and aRealm ~= "" then
 			aName = aName.."-"..aRealm
-		else
+		elseif GetNormalizedRealmName() then
 			aName = aName.."-"..GetNormalizedRealmName()
 		end
 	end
