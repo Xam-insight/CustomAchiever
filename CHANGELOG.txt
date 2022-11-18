@@ -1,4 +1,6 @@
 ﻿-v1.0.4
+	- Fixed another issue due to GetNormalizedRealmName when you first start the game.
+-v1.0.4
 	- Fixed an issue due to GetNormalizedRealmName.
 -v1.0.3
 	- TOC for 10.0.2.

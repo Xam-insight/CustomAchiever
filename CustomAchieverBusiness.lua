@@ -52,15 +52,17 @@ function CustAc_ApplyIgnoreList()
 	local dataFound = false
 	for i = 1, C_FriendList.GetNumIgnores() do
 		local user = CustAc_addRealm(C_FriendList.GetIgnoreName(i))
-		CustomAchieverData["BlackList"][user] = "IgnoreList"
-		if CustomAchieverData["Categories"][user] then
-			CustomAchieverData["Categories"][user] = nil
-			dataFound = true
-		end
-		for k,v in pairs(CustomAchieverData["Achievements"]) do
-			if v.parent == user then
-				CustomAchieverData["Achievements"][k] = nil
+		if user then
+			CustomAchieverData["BlackList"][user] = "IgnoreList"
+			if CustomAchieverData["Categories"][user] then
+				CustomAchieverData["Categories"][user] = nil
 				dataFound = true
+			end
+			for k,v in pairs(CustomAchieverData["Achievements"]) do
+				if v.parent == user then
+					CustomAchieverData["Achievements"][k] = nil
+					dataFound = true
+				end
 			end
 		end
 	end
