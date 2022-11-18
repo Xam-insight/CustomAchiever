@@ -1,4 +1,4 @@
-﻿-v1.0.4
+﻿-v1.0.5
 	- Fixed another issue due to GetNormalizedRealmName when you first start the game.
 -v1.0.4
 	- Fixed an issue due to GetNormalizedRealmName.
