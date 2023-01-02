@@ -1,4 +1,7 @@
-﻿-v1.0.5
+﻿-v1.0.6
+	- Achievements description length increased to 200 characters.
+	- User custom categories.
+-v1.0.5
 	- Fixed another issue due to GetNormalizedRealmName when you first start the game.
 -v1.0.4
 	- Fixed an issue due to GetNormalizedRealmName.

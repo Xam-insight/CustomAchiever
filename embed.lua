@@ -16,6 +16,28 @@ local function CustAc_InitSelectedAchievement(achievementId, categoryId)
 	selectedAchievement.achievementPoints   = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].points) or 0
 end
 
+StaticPopupDialogs["CUSTAC_CAT_DELETE"] = {
+	text = L["MENUCUSTAC_CAT_CONFIRM_DELETION"],
+	button1 = ACCEPT,
+	button2 = CANCEL,
+	OnAccept = function (self, data)
+		StaticPopupSpecial_Hide(CustacCategoryCreateDialog)
+		CustAc_DeleteCategory(data.categoryId)
+		if selectedAchievement.achievementCategory and selectedAchievement.achievementCategory == data.categoryId then
+			LibDD:UIDropDownMenu_Initialize(CustomAchieverCategoryDownMenu, CustAc_CategoryDropDownMenu_Update)
+			LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverCategoryDownMenu, nextCustomCategoryId)
+			LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
+			LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
+			CustAc_InitSelectedAchievement(nextCustomAchieverId, nextCustomCategoryId)
+			CustomAchieverFrame_UpdateAchievementAlertFrame()
+		end
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+}
+
 StaticPopupDialogs["CUSTAC_DELETE"] = {
 	text = L["MENUCUSTAC_CONFIRM_DELETION"],
 	button1 = ACCEPT,
@@ -116,13 +138,43 @@ function createCustomAchieverOptionsButton(parent)
 	return optionsButton
 end
 
+function CustAc_SaveCategory(popup, categoryName, categoryId)
+	local newCategoryName = CustAc_titleFormat(categoryName)
+	local dropdown = popup:GetAttribute("Dropdown")
+	if newCategoryName ~= "" then
+	local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..tostring(CustAc_getTimeUTCinMS())
+		CustAc_CreateOrUpdateCategory(newCategoryId, nil, newCategoryName, nil, true)
+		StaticPopupSpecial_Hide(popup)
+		if dropdown then
+			LibDD:UIDropDownMenu_Initialize(dropdown, CustAc_CategoryDropDownMenu_Update)
+			LibDD:UIDropDownMenu_SetSelectedValue(dropdown, newCategoryId)
+			LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
+			LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
+			CustAc_InitSelectedAchievement(nextCustomAchieverId, newCategoryId)
+			CustomAchieverFrame_UpdateAchievementAlertFrame()
+		end
+	end
+end
+
 function CustAc_CategoryDropDownMenu_Update(self)
-	local function CustAc_SelectCategory(_, dropdown, id)
-		LibDD:UIDropDownMenu_SetSelectedValue(dropdown, id)
-		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
-		CustAc_InitSelectedAchievement(nextCustomAchieverId, id)
-		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
-		CustomAchieverFrame_UpdateAchievementAlertFrame()
+	local function CustAc_CreateCategory(_, dropdown, selectFunc)
+		CustacCategoryCreateDialog:SetAttribute("Dropdown", dropdown);
+		CustacCategoryCreateDialog:SetAttribute("categoryId", nil);
+		StaticPopupSpecial_Show(CustacCategoryCreateDialog)
+	end
+
+	local function CustAc_SelectCategory(button, dropdown, id)
+		local gearIcon = button.Icon;
+		if button.mouseOverIcon and gearIcon:IsMouseOver() then
+			CustacCategoryCreateDialog:SetAttribute("categoryId", id);
+			StaticPopupSpecial_Show(CustacCategoryCreateDialog)
+		else
+			LibDD:UIDropDownMenu_SetSelectedValue(dropdown, id)
+			LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
+			CustAc_InitSelectedAchievement(nextCustomAchieverId, id)
+			LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
+			CustomAchieverFrame_UpdateAchievementAlertFrame()
+		end
 	end
 	
 	local info = LibDD:UIDropDownMenu_CreateInfo()
@@ -132,18 +184,28 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	LibDD:UIDropDownMenu_AddButton(info)
 	
 	local info = LibDD:UIDropDownMenu_CreateInfo()
+	info.notCheckable = true
+	info.colorCode = GREEN_FONT_COLOR_CODE
+	info.text  = " "..CreateAtlasMarkup("communities-icon-addchannelplus", 16, 16).."  "..L["MENUCUSTAC_NEWCATEGORY"]
+	info.func  = CustAc_CreateCategory
+	info.arg1  = self
+	info.arg2  = CustAc_SelectCategory
+	LibDD:UIDropDownMenu_AddButton(info)
+
+	local info = LibDD:UIDropDownMenu_CreateInfo()
 	info.text  = CustAc_delRealm(nextCustomCategoryId)--L["MENUCUSTAC_NEW"]
 	info.value = nextCustomCategoryId
 	info.func  = CustAc_SelectCategory
 	info.arg1  = self
 	info.arg2  = nextCustomCategoryId
 	LibDD:UIDropDownMenu_AddButton(info)
-
+	
 	for k,v in pairs(CustomAchieverData["Categories"]) do
 		if k ~= nextCustomCategoryId and CustomAchieverData["PersonnalCategories"][k] then
 			local info = LibDD:UIDropDownMenu_CreateInfo()
 			info       = LibDD:UIDropDownMenu_CreateInfo()
 			info.text  = CustAc_getLocaleData(v, "name")
+			info.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
 			info.value = k
 			info.func  = CustAc_SelectCategory
 			info.arg1  = self
@@ -167,7 +229,8 @@ function CustAc_AchievementDropDownMenu_Update(self)
 	LibDD:UIDropDownMenu_AddButton(info)
 	
 	local info = LibDD:UIDropDownMenu_CreateInfo()
-	info.text  = CreateAtlasMarkup("UI-HUD-MicroMenu-Achievements-Up", 16, 22, 0, -3).." |cFF00FF00"..L["MENUCUSTAC_NEW"].."|r"
+	info.colorCode = GREEN_FONT_COLOR_CODE
+	info.text  = CreateAtlasMarkup("communities-icon-addchannelplus", 16, 16).." "..L["MENUCUSTAC_NEW"]
 	info.value = nextCustomAchieverId
 	info.func  = CustAc_SelectAchievement
 	info.arg1  = self
@@ -243,6 +306,14 @@ function CustAc_AwardButton_OnClick(self)
 		encodeAndSendAchievementInfo(CustomAchieverData["Achievements"][selectedAchievement.achievementId], target, "Award")
 	else
 		CustAc_CompleteAchievement(selectedAchievement.achievementId)
+	end
+end
+
+function CustAc_DeleteCategoryButton_OnClick(categoryId, categoryName)
+	local dialog = StaticPopup_Show("CUSTAC_CAT_DELETE", categoryName)
+	if (dialog) then
+		dialog.data = {}
+		dialog.data["categoryId"] = categoryId
 	end
 end
 

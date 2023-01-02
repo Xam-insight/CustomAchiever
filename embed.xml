@@ -228,7 +228,7 @@
 					<OnEscapePressed function="HideParentPanel"/>
 				</Scripts>
 			</EditBox>
-			<EditBox parentKey="DescriptionEditBox" inherits="InputBoxTemplate" letters="40">
+			<EditBox parentKey="DescriptionEditBox" inherits="InputBoxTemplate" letters="200">
 				<Scripts>
 					<OnTextChanged function="CustomAchieverFrameDescriptionEditBox_OnTextChanged"/>
 					<OnEscapePressed function="HideParentPanel"/>
@@ -304,5 +304,136 @@
 			<OnLeave function="CustomAchieverButtonLeave"/>
 		</Scripts>
 	</Button>
+	<Frame name="CustacCategoryCreateDialog" parent="UIParent" hidden="true" frameStrata="DIALOG" frameLevel="100">
+		<KeyValues>
+			<KeyValue key="titleText" value="CATEGORY" type="global"/>
+		</KeyValues>
+		<Size x="460" y="150"/>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Title" inherits="GameFontHighlight">
+					<Size x="250"/>
+					<Anchors>
+						<Anchor point="TOP" y="-20"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="Border" inherits="DialogBorderDarkTemplate"/>
+			<Frame parentKey="ContentArea">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="40" y="-40"/>
+					<Anchor point="BOTTOMRIGHT" x="-40" y="25"/>
+				</Anchors>
+			</Frame>
+			
+			<Frame parentKey="NameControl" name="NameControl">
+				<KeyValues>
+					<KeyValue key="labelText" value="NAME" type="global"/>
+				</KeyValues>
+				<Size x="260" y="50"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ContentArea"/>
+					<Anchor point="RIGHT" relativeKey="$parent.ContentArea"/>
+				</Anchors>
+
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="Label" inherits="GameFontNormal">
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<EditBox parentKey="EditBox" inherits="InputBoxTemplate" letters="30">
+						<Size x="260" y="32"/>
+						<FontString inherits="ChatFontNormal"/>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.Label" y="10"/>
+							<Anchor point="RIGHT"/>
+							<Anchor point="BOTTOM"/>
+						</Anchors>
+						<Scripts>
+							<OnEscapePressed>
+								StaticPopupSpecial_Hide(CustacCategoryCreateDialog)
+							</OnEscapePressed>
+						</Scripts>
+					</EditBox>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self.Label:SetText(self.labelText);
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+			<Button parentKey="AcceptButton" inherits="UIPanelButtonTemplate, UIButtonTemplate" text="SAVE">
+				<Size x="120" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ContentArea"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						CustAc_SaveCategory(self:GetParent(), self:GetParent().NameControl.EditBox:GetText(), self:GetParent():GetAttribute("categoryId"))
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button parentKey="DeleteButton" inherits="UIPanelButtonTemplate, UIButtonTemplate" text="DELETE">
+				<Size x="120" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOM" relativeKey="$parent.ContentArea"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						local categoryId = self:GetParent():GetAttribute("categoryId")
+						local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][categoryId], "name")
+						self:GetParent().NameControl.EditBox:SetText(categoryName)
+						CustAc_DeleteCategoryButton_OnClick(categoryId, categoryName)
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button parentKey="CancelButton" inherits="UIPanelButtonTemplate, UIButtonTemplate" text="CANCEL">
+				<Size x="120" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.ContentArea"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						StaticPopupSpecial_Hide(self:GetParent())
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self.Title:SetText(self.titleText)
+			</OnLoad>
+			<OnShow>
+				local categoryId = self:GetAttribute("categoryId")
+				if categoryId then
+					self.NameControl.EditBox:SetText(CustAc_getLocaleData(CustomAchieverData["Categories"][categoryId], "name"))
+					self.DeleteButton:Enable()
+				else
+					self.NameControl.EditBox:SetText("")
+					self.DeleteButton:Disable()
+				end
+			</OnShow>
+		</Scripts>
+	</Frame>
 	<GameTooltip name="CustomAchieverTooltip" frameStrata="TOOLTIP" hidden="true" parent="UIParent" inherits="GameTooltipTemplate" />
+	<!--Frame name="GreenScreen" hidden="false" parent="UIParent" setAllPoints="true">
+		<Layers>
+			<Layer>
+				<Texture parentKey="Background" setAllPoints="true">
+					<Color a="1" r="0" g="1" b="0" />
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame-->
 </Ui>
