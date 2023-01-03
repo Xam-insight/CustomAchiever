@@ -94,6 +94,8 @@ function CustAc_AchievementFrame_Load()
 		until (not _G["AchievementFrameTab"..numtabs])
 		CustAc_AchievementTabId = numtabs
 		tab = CreateFrame("Button", "AchievementFrameTab"..numtabs, AchievementFrame, "AchievementFrameTabButtonTemplate")
+		CustacButton:SetParent(tab)
+		CustacButton:SetPoint("CENTER", tab, "BOTTOMRIGHT", -5, -5)
 		tab:SetText("Custom Achiever")
 		tab:SetID(numtabs)
 		
