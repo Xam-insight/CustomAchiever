@@ -55,6 +55,29 @@ StaticPopupDialogs["CUSTAC_DELETE"] = {
 	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
 }
 
+function Custac_ChangeAwardButtonText()
+	if CustomAchieverFrame:IsShown() then
+		local name, realm = UnitFullName("target")
+		local target = CustAc_addRealm(name, realm)
+		
+		if UnitIsPlayer("target") then
+			if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, target, CustAc_isPlayerCharacter(target)) then
+				CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_REVOKE"])
+			else
+				CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_AWARD"])
+			end
+		else
+			CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_AWARD"])
+		end
+	end
+end
+
+function CustomAchieverFrame_OnEvent(self, event)
+	if event == "PLAYER_TARGET_CHANGED" then
+		Custac_ChangeAwardButtonText()
+	end
+end
+
 function CustomAchieverFrame_OnLoad(self)
 	self:RegisterForDrag("LeftButton")
 	self.CloseButton:SetHitRectInsets(6, 6, 6, 6)
@@ -140,9 +163,9 @@ end
 
 function CustAc_SaveCategory(popup, categoryName, categoryId)
 	local newCategoryName = CustAc_titleFormat(categoryName)
-	local dropdown = popup:GetAttribute("Dropdown")
 	if newCategoryName ~= "" then
-	local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..tostring(CustAc_getTimeUTCinMS())
+		local dropdown = popup:GetAttribute("Dropdown")
+		local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..tostring(CustAc_getTimeUTCinMS())
 		CustAc_CreateOrUpdateCategory(newCategoryId, nil, newCategoryName, nil, true)
 		StaticPopupSpecial_Hide(popup)
 		if dropdown then
@@ -276,6 +299,7 @@ function CustomAchieverFrame_UpdateAchievementAlertFrame()
 			custacShowHelpTip("CUSTAC_HELPTIP_AWARD")
 		end
 	end
+	Custac_ChangeAwardButtonText()
 end
 
 function CustomAchieverFrameDescriptionEditBox_OnTextChanged(self)
@@ -302,10 +326,17 @@ end
 function CustAc_AwardButton_OnClick(self)
 	local name, realm = UnitFullName("target")
 	local target = CustAc_addRealm(name, realm)
-	if target then
-		encodeAndSendAchievementInfo(CustomAchieverData["Achievements"][selectedAchievement.achievementId], target, "Award")
-	else
-		CustAc_CompleteAchievement(selectedAchievement.achievementId)
+	
+	if not target then
+		target = CustAc_playerCharacter()
+	end
+	
+	if not name or UnitIsPlayer("target") then
+		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, target, CustAc_isPlayerCharacter(target)) then
+			manualEncodeAndSendAchievementInfo(CustomAchieverData["Achievements"][selectedAchievement.achievementId], target, "Revoke")
+		else
+			manualEncodeAndSendAchievementInfo(CustomAchieverData["Achievements"][selectedAchievement.achievementId], target, "Award")
+		end
 	end
 end
 

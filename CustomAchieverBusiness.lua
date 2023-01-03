@@ -273,14 +273,71 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 		CustomAchieverData["Achievements"][id] = data
 		CustAc_SaveAchievementDataIntoAddon(id)
 
+		local name = CustAc_getLocaleData(data, "name")
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif then
-			local name = CustAc_getLocaleData(data, "name")
 			EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, name, 5208, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, "Custom Achiever", function() CustAc_ShowAchievement(id) end, data["icon"])
 		end
 		CustAc_LoadAchievementsData()
 		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
 			CustAc_AchievementFrameAchievements_UpdateDataProvider()
 		end
+		if not alreadyEarned then
+			CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_AWARD"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE.."["..earnedByWithRealm.."]"))
+		end
+	end
+end
+
+function CustAc_IsAchievementCompletedBy(id, earnedBy, isSelf)
+	local completed = false
+	
+	if isSelf then
+		if CustomAchieverData["Achievements"][id] and
+				CustomAchieverData["Achievements"][id]["completed"] and
+				CustomAchieverData["Achievements"][id]["completed"][earnedBy] and
+				CustomAchieverData["Achievements"][id]["completed"][earnedBy] == true then
+			completed = true
+		end
+	else
+	
+	end
+				
+	return completed
+end
+
+function CustAc_RevokeAchievement(id, earnedBy)--/run CustAc_RevokeAchievement("Xamëna-Ner'zhul-1668713877", "Xamëna-Ner'zhul")
+	if id and CustomAchieverData["Achievements"][id] then
+		local earnedByWithRealm = CustAc_playerCharacter()
+		if earnedBy then
+			earnedByWithRealm = CustAc_addRealm(earnedBy)
+		end
+		local data = CustomAchieverData["Achievements"][id]
+		data["completed"][earnedByWithRealm] = nil
+		data["date"][earnedByWithRealm] = nil
+		if data["firstAchiever"] == earnedByWithRealm then
+			local newFirstAchiever
+			local newFirstAchieverDate
+			for k,v in pairs(data["date"]) do
+				if not newFirstAchieverDate or C_DateAndTime.CompareCalendarTime(v, newFirstAchieverDate) == 1 then
+					print(k, "Plus récent")
+					newFirstAchiever = k
+					newFirstAchieverDate = v
+				end
+			end
+			data["firstAchiever"] = newFirstAchiever
+		end
+		--data["wasEarnedByMe"] = true
+		--data["earnedBy"] = "Xamena"
+
+		CustomAchieverData["Achievements"][id] = data
+		CustAc_SaveAchievementDataIntoAddon(id)
+
+		CustAc_LoadAchievementsData()
+		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
+			CustAc_AchievementFrameAchievements_UpdateDataProvider()
+		end
+		
+		local name = CustAc_getLocaleData(data, "name")
+		CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_REVOKE"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE.."["..earnedByWithRealm.."]"))
 	end
 end
 

@@ -31,6 +31,12 @@ L["MENUCUSTAC_CAT_CONFIRM_DELETION"] = "Voulez-vous vraiment effacer définitive
 L["MENUCUSTAC_CONFIRM_DELETION"] = "Voulez-vous vraiment effacer définitivement le Haut fait personnalisé |cff00ff00%s|r ?"
 
 L["MENUCUSTAC_AWARD"] = "Décerner"
+L["MENUCUSTAC_REVOKE"] = "Révoquer"
+
+L["LOGCUSTAC_AWARD"] = "Haut fait |cff00ff00%s|r décerné à %s."
+L["LOGCUSTAC_REVOKE"] = "Haut fait |cff00ff00%s|r révoqué de %s."
+
+L["SHARECUSTAC_WAIT"] = "Attendez %d secondes avant de récompenser à nouveau ce joueur."
 
 L["MENUOPTIONS_TOOLTIP"] = "Options de Custom Achiever"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Modifier les options de Custom Achiever."

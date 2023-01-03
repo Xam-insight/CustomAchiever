@@ -1,6 +1,7 @@
 ﻿-v1.0.6
-	- Achievements description length increased to 200 characters.
 	- User custom categories.
+	- The "Award" button now becomes "Revoke" button if you already awarded your target.
+	- Achievements description length increased to 200 characters.
 	- New Custom Achiever button in Achievements frame.
 -v1.0.5
 	- Fixed another issue due to GetNormalizedRealmName when you first start the game.

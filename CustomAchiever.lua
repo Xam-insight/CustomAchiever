@@ -144,6 +144,10 @@ function CustAc_fullName(unit)
 	return fullName
 end
 
+function CustAc_isPlayerCharacter(aName)
+	return CustAc_playerCharacter() == CustAc_addRealm(aName)
+end
+
 local CustAc_pc
 function CustAc_playerCharacter()
 	if not CustAc_pc then

@@ -282,9 +282,14 @@
 				self:StopMovingOrSizing()
 				customAchieverSaveWindowPosition()
 			</OnDragStop>
+			<OnEvent function="CustomAchieverFrame_OnEvent" />
 			<OnShow>
-
+				Custac_ChangeAwardButtonText()
+				self:RegisterEvent("PLAYER_TARGET_CHANGED")
 			</OnShow>
+			<OnHide>
+				self:UnregisterEvent("PLAYER_TARGET_CHANGED")
+			</OnHide>
 		</Scripts>
 	</Frame>
 	<Frame name="CustAc_IconsPopupFrameTemplate" virtual="true" clampedToScreen="true" mixin="MacroPopupFrameMixin" inherits="IconSelectorPopupFrameTemplate" toplevel="true" frameStrata="HIGH" movable="true" enableMouse="true" hidden="true">

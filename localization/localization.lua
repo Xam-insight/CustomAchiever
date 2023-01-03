@@ -31,6 +31,12 @@ L["MENUCUSTAC_CAT_CONFIRM_DELETION"] = "Are you sure you want to permanently del
 L["MENUCUSTAC_CONFIRM_DELETION"] = "Are you sure you want to permanently delete the Custom Achievement |cff00ff00%s|r?"
 
 L["MENUCUSTAC_AWARD"] = "Award"
+L["MENUCUSTAC_REVOKE"] = "Revoke"
+
+L["LOGCUSTAC_AWARD"] = "|cff00ff00%s|r Achievement awarded to %s."
+L["LOGCUSTAC_REVOKE"] = "|cff00ff00%s|r Achievement revoked from %s."
+
+L["SHARECUSTAC_WAIT"] = "Wait %d seconds before rewarding this player again."
 
 L["MENUOPTIONS_TOOLTIP"] = "Custom Achiever options"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Change Custom Achiever options."
