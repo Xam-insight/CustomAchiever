@@ -18,6 +18,10 @@ function initCustomAchieverBusinessObjects()
 		CustomAchieverData["PersonnalCategories"] = {}
 	end
 
+	if not CustomAchieverData["AwardedPlayers"] then
+		CustomAchieverData["AwardedPlayers"] = {}
+	end
+
 	if not CustomAchieverData["BlackList"] then
 		CustomAchieverData["BlackList"] = {}
 	end
@@ -30,6 +34,10 @@ function initCustomAchieverBusinessObjects()
 
 	if not CustomAchieverData["Tutorial"] then
 		CustomAchieverData["Tutorial"] = {}
+	end
+	
+	if not CustomAchieverLastManualCall then
+		CustomAchieverLastManualCall = {}
 	end
 	
 	-- CustomAchieverOptionsData
@@ -108,7 +116,6 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		data["name_"..dataLocale] = categoryName or data["name_"..dataLocale] or id
 		
 		if isPersonnal then
-			data["name_"..dataLocale] = CustAc_delRealm(id)
 			CustomAchieverData["PersonnalCategories"][id] = true
 		end
 		
@@ -281,9 +288,6 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
 			CustAc_AchievementFrameAchievements_UpdateDataProvider()
 		end
-		if not alreadyEarned then
-			CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_AWARD"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE.."["..earnedByWithRealm.."]"))
-		end
 	end
 end
 
@@ -298,7 +302,9 @@ function CustAc_IsAchievementCompletedBy(id, earnedBy, isSelf)
 			completed = true
 		end
 	else
-	
+		if CustomAchieverData["AwardedPlayers"][id] then
+			completed = CustomAchieverData["AwardedPlayers"][id][earnedBy]
+		end
 	end
 				
 	return completed
@@ -318,7 +324,6 @@ function CustAc_RevokeAchievement(id, earnedBy)--/run CustAc_RevokeAchievement("
 			local newFirstAchieverDate
 			for k,v in pairs(data["date"]) do
 				if not newFirstAchieverDate or C_DateAndTime.CompareCalendarTime(v, newFirstAchieverDate) == 1 then
-					print(k, "Plus récent")
 					newFirstAchiever = k
 					newFirstAchieverDate = v
 				end
@@ -337,7 +342,6 @@ function CustAc_RevokeAchievement(id, earnedBy)--/run CustAc_RevokeAchievement("
 		end
 		
 		local name = CustAc_getLocaleData(data, "name")
-		CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_REVOKE"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE.."["..earnedByWithRealm.."]"))
 	end
 end
 

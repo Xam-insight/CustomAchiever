@@ -8,12 +8,13 @@ local selectedAchievement = {}
 
 local function CustAc_InitSelectedAchievement(achievementId, categoryId)
 	selectedAchievement = {}
-	selectedAchievement.achievementId       =  achievementId or nextCustomAchieverId
-	selectedAchievement.achievementCategory =  categoryId or (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].parent) or nextCustomCategoryId
-	selectedAchievement.achievementName     =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "name")                                 or L["MENUCUSTAC_DEFAULT_NAME"]
-	selectedAchievement.achievementIcon     = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].icon)   or 236376
-	selectedAchievement.achievementDesc     =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "desc")                                 or L["MENUCUSTAC_DESCRIPTION"]
-	selectedAchievement.achievementPoints   = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].points) or 0
+	selectedAchievement.achievementId           =  achievementId or nextCustomAchieverId
+	selectedAchievement.achievementCategory     =  categoryId    or (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].parent) or nextCustomCategoryId
+	selectedAchievement.achievementCategoryName =  CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name") or CustAc_delRealm(selectedAchievement.achievementCategory)
+	selectedAchievement.achievementName         =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "name")                                 or L["MENUCUSTAC_DEFAULT_NAME"]
+	selectedAchievement.achievementIcon         = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].icon)   or 236376
+	selectedAchievement.achievementDesc         =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "desc")                                 or L["MENUCUSTAC_DESCRIPTION"]
+	selectedAchievement.achievementPoints       = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].points) or 0
 end
 
 StaticPopupDialogs["CUSTAC_CAT_DELETE"] = {
@@ -332,10 +333,13 @@ function CustAc_AwardButton_OnClick(self)
 	end
 	
 	if not name or UnitIsPlayer("target") then
+		local data = {}
+		data["Category"] 	= CustomAchieverData["Categories"][CustomAchieverData["Achievements"][selectedAchievement.achievementId]["parent"]]
+		data["Achievement"] = CustomAchieverData["Achievements"][selectedAchievement.achievementId]	
 		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, target, CustAc_isPlayerCharacter(target)) then
-			manualEncodeAndSendAchievementInfo(CustomAchieverData["Achievements"][selectedAchievement.achievementId], target, "Revoke")
+			manualEncodeAndSendAchievementInfo(data, target, "Revoke")
 		else
-			manualEncodeAndSendAchievementInfo(CustomAchieverData["Achievements"][selectedAchievement.achievementId], target, "Award")
+			manualEncodeAndSendAchievementInfo(data, target, "Award")
 		end
 	end
 end
@@ -362,6 +366,7 @@ end
 
 function CustAc_SaveButton_OnClick()
 	if selectedAchievement.achievementId then
+		CustAc_CreateOrUpdateCategory(selectedAchievement.achievementCategory, nil, selectedAchievement.achievementCategoryName, nil, isPersonnal)
 		CustAc_CreateOrUpdateAchievement(selectedAchievement.achievementId, selectedAchievement.achievementCategory, selectedAchievement.achievementIcon, selectedAchievement.achievementPoints, selectedAchievement.achievementName, selectedAchievement.achievementDesc, nil, true)
 		if selectedAchievement.achievementId == nextCustomAchieverId then
 			nextCustomAchieverId = CustAc_playerCharacter()..'-'..tostring(CustAc_getTimeUTCinMS())

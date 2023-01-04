@@ -3,6 +3,6 @@
 ## Version: 1.1.0
 ## Notes: Custom Achievements creator
 ## Author: Xam_insight
-## SavedVariables: CustomAchieverData, CustomAchieverOptionsData
+## SavedVariables: CustomAchieverData, CustomAchieverOptionsData, CustomAchieverLastManualCall
 
 embed.xml
