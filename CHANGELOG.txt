@@ -1,6 +1,6 @@
 ﻿-v1.1.0
 	- User custom categories.
-	- The "Award" button now becomes "Revoke" button if you already awarded your target.
+	- The "Award" button now becomes "Revoke" button if you already rewarded your target.
 	- Achievements description length increased to 200 characters.
 	- New Custom Achiever button in Achievements frame.
 -v1.0.5
