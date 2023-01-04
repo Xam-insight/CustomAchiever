@@ -216,6 +216,8 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	info.text  = CustAc_getLocaleData(CustomAchieverData["Categories"][nextCustomCategoryId], "name") or CustAc_delRealm(nextCustomCategoryId)--L["MENUCUSTAC_NEW"]
 	if CustomAchieverData["Categories"][nextCustomCategoryId] then
 		info.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
+		info.iconXOffset = -5
+		info.padding = 5
 	end
 	info.value = nextCustomCategoryId
 	info.func  = CustAc_SelectCategory
@@ -229,6 +231,8 @@ function CustAc_CategoryDropDownMenu_Update(self)
 			info       = LibDD:UIDropDownMenu_CreateInfo()
 			info.text  = CustAc_getLocaleData(v, "name")
 			info.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
+			info.iconXOffset = -5
+			info.padding = 5
 			info.value = k
 			info.func  = CustAc_SelectCategory
 			info.arg1  = self
@@ -383,6 +387,13 @@ function CustAc_SaveButton_OnClick()
 		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, selectedAchievement.achievementId)
 		
 		CustomAchieverFrame_UpdateAchievementAlertFrame()
+		
+		local name, realm = UnitFullName("target")
+		local target = CustAc_addRealm(name, realm)
+		if CustAc_isPlayerCharacter(target) then
+			target = nil
+		end
+		CustAc_SendUpdatedData(selectedAchievement.achievementId, target)
 	end
 end
 

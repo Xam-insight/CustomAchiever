@@ -33,6 +33,35 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 	encodeAndSendAchievementInfo(aData, aTarget, messageType)
 end
 
+function CustAc_SendUpdatedData(achievementId, alsoSendTo)
+	if CustomAchieverData["AwardedPlayers"][achievementId] then
+		local data = {}
+		local categoryId = CustomAchieverData["Achievements"][achievementId]["parent"]
+		data["Category"] 	= CustomAchieverData["Categories"][categoryId]
+		data["Achievement"] = CustomAchieverData["Achievements"][achievementId]
+		for k,v in pairs(CustomAchieverData["AwardedPlayers"][achievementId]) do
+			if not CustAc_isPlayerCharacter(k) and (not alsoSendTo or k ~= alsoSendTo) then
+				CustAc_SendUpdatedDataTo(k, achievementId, categoryId)
+			end
+		end
+		if alsoSendTo then
+			CustAc_SendUpdatedDataTo(alsoSendTo, achievementId, categoryId)
+		end
+	end
+end
+
+function CustAc_SendUpdatedDataTo(player, achievementId, categoryId)
+	if not CustomAchieverData["PendingUpdates"]["Categories"][categoryId] then
+		CustomAchieverData["PendingUpdates"]["Categories"][categoryId] = {}
+	end
+	CustomAchieverData["PendingUpdates"]["Categories"][categoryId][player] = true
+	if not CustomAchieverData["PendingUpdates"]["Categories"][achievementId] then
+		CustomAchieverData["PendingUpdates"]["Achievements"][achievementId] = {}
+	end
+	CustomAchieverData["PendingUpdates"]["Achievements"][achievementId][player] = true
+	manualEncodeAndSendAchievementInfo(data, player, "Update")
+end
+
 CustomAchieverAcknowledgmentReceived = {}
 function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, sender)
 	if prefix == CustomAchieverGlobal_CommPrefix then
@@ -48,8 +77,14 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 					--local parent = o.Category.parent
 					local name, locale = CustAc_getLocaleData(o.Category,"name")
 					
-					if messageType == "Award" or messageType == "Revoke" then
-						CustAc_CreateOrUpdateCategory(id, nil, name, locale, true)
+					CustAc_CreateOrUpdateCategory(id, nil, name, locale, true)
+					if messageType == "Update" then
+						encodeAndSendAchievementInfo(o, sender, "UpdateAcknowledgment")
+					elseif messageType == "UpdateAcknowledgment" then
+						if CustomAchieverData["PendingUpdates"]["Categories"][id] then
+							CustomAchieverData["PendingUpdates"]["Categories"][id][CustAc_addRealm(sender)] = nil
+						end
+					elseif messageType == "Award" or messageType == "Revoke" then
 						if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
 							CustAc_AchievementFrameCategories_UpdateDataProvider()
 						end
@@ -79,6 +114,12 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 							CustAc_AchievementFrameAchievements_UpdateDataProvider()
 						end
 						encodeAndSendAchievementInfo(o, sender, "RevokeAcknowledgment")
+					elseif messageType == "Update" then
+						encodeAndSendAchievementInfo(o, sender, "UpdateAcknowledgment")
+					elseif messageType == "UpdateAcknowledgment" then
+						if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
+							CustomAchieverData["PendingUpdates"]["Achievements"][id][CustAc_addRealm(sender)] = nil
+						end
 					else
 						if not CustomAchieverData["AwardedPlayers"][id] then
 							CustomAchieverData["AwardedPlayers"][id] = {}
