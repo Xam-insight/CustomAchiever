@@ -131,7 +131,9 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		end
 		
 		CustAc_LoadAchievementsData()
-		CustAc_AchievementFrame_UpdateAndSelectCategory(id)
+		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
+			CustAc_AchievementFrameCategories_UpdateDataProvider()
+		end
 	end
 end
 
@@ -184,16 +186,41 @@ function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, descri
 	end
 end
 
-function CustAc_DeleteCategory(id)
+function CustAc_DeleteCategory(id, newCategory)
 	if id then
 		CustomAchieverData["Categories"][id] = nil
 		CustomAchieverData["PersonnalCategories"][id] = nil
 	end
 	
+	if newCategory then
+		local achievementFound = false
+		for k,v in pairs(CustomAchieverData["Achievements"]) do
+			if v["parent"] == id then
+				achievementFound = true
+				v["parent"] = newCategory
+			end
+		end
+		if achievementFound and not CustomAchieverData["Categories"][newCategory] then
+			CustAc_CreateOrUpdateCategory(newCategory, nil, CustAc_delRealm(newCategory), nil, true)
+		end
+	end
+	
 	CustAc_LoadAchievementsData()
 	if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
+		CustAc_AchievementFrameCategories_UpdateDataProvider()
 		CustAc_AchievementFrameAchievements_UpdateDataProvider()
 	end
+end
+
+function CustAc_DetermineNewCategory(oldCategory, proposedCategory, proposedCategory2)
+	local newCategory = proposedCategory
+	if newCategory == oldCategory or not newCategory then
+		newCategory = proposedCategory2
+	end
+	if newCategory == oldCategory or not newCategory then
+		newCategory = GENERAL
+	end
+	return newCategory
 end
 
 function CustAc_DeleteAchievement(id)

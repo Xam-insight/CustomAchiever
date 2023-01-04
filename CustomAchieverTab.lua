@@ -186,7 +186,7 @@ function CustAc_AchievementFrameCategories_OnCategoryClicked(button)
 	CustAc_AchievementFrameCategories_SelectElementData(button.elementData)
 end
 
-function CustAc_AchievementFrameCategories_OnShow(self)
+function CustAc_AchievementFrameCategories_OnShow()
 	CustAc_AchievementFrameCategories_UpdateDataProvider()
 	CustAc_AchievementFrameCategories_SelectDefaultElementData()
 end

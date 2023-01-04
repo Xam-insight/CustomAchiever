@@ -50,6 +50,9 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 					
 					if messageType == "Award" or messageType == "Revoke" then
 						CustAc_CreateOrUpdateCategory(id, nil, name, locale, true)
+						if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
+							CustAc_AchievementFrameCategories_UpdateDataProvider()
+						end
 					end
 				end
 				

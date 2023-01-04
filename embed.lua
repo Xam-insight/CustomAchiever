@@ -23,7 +23,7 @@ StaticPopupDialogs["CUSTAC_CAT_DELETE"] = {
 	button2 = CANCEL,
 	OnAccept = function (self, data)
 		StaticPopupSpecial_Hide(CustacCategoryCreateDialog)
-		CustAc_DeleteCategory(data.categoryId)
+		CustAc_DeleteCategory(data.categoryId, data.newCategory)
 		if selectedAchievement.achievementCategory and selectedAchievement.achievementCategory == data.categoryId then
 			LibDD:UIDropDownMenu_Initialize(CustomAchieverCategoryDownMenu, CustAc_CategoryDropDownMenu_Update)
 			LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverCategoryDownMenu, nextCustomCategoryId)
@@ -165,24 +165,20 @@ end
 function CustAc_SaveCategory(popup, categoryName, categoryId)
 	local newCategoryName = CustAc_titleFormat(categoryName)
 	if newCategoryName ~= "" then
-		local dropdown = popup:GetAttribute("Dropdown")
 		local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..tostring(CustAc_getTimeUTCinMS())
 		CustAc_CreateOrUpdateCategory(newCategoryId, nil, newCategoryName, nil, true)
 		StaticPopupSpecial_Hide(popup)
-		if dropdown then
-			LibDD:UIDropDownMenu_Initialize(dropdown, CustAc_CategoryDropDownMenu_Update)
-			LibDD:UIDropDownMenu_SetSelectedValue(dropdown, newCategoryId)
-			LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
-			LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
-			CustAc_InitSelectedAchievement(nextCustomAchieverId, newCategoryId)
-			CustomAchieverFrame_UpdateAchievementAlertFrame()
-		end
+		LibDD:UIDropDownMenu_Initialize(CustomAchieverCategoryDownMenu, CustAc_CategoryDropDownMenu_Update)
+		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverCategoryDownMenu, newCategoryId)
+		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
+		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
+		CustAc_InitSelectedAchievement(nextCustomAchieverId, newCategoryId)
+		CustomAchieverFrame_UpdateAchievementAlertFrame()
 	end
 end
 
 function CustAc_CategoryDropDownMenu_Update(self)
 	local function CustAc_CreateCategory(_, dropdown, selectFunc)
-		CustacCategoryCreateDialog:SetAttribute("Dropdown", dropdown);
 		CustacCategoryCreateDialog:SetAttribute("categoryId", nil);
 		StaticPopupSpecial_Show(CustacCategoryCreateDialog)
 	end
@@ -217,7 +213,10 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	LibDD:UIDropDownMenu_AddButton(info)
 
 	local info = LibDD:UIDropDownMenu_CreateInfo()
-	info.text  = CustAc_delRealm(nextCustomCategoryId)--L["MENUCUSTAC_NEW"]
+	info.text  = CustAc_getLocaleData(CustomAchieverData["Categories"][nextCustomCategoryId], "name") or CustAc_delRealm(nextCustomCategoryId)--L["MENUCUSTAC_NEW"]
+	if CustomAchieverData["Categories"][nextCustomCategoryId] then
+		info.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
+	end
 	info.value = nextCustomCategoryId
 	info.func  = CustAc_SelectCategory
 	info.arg1  = self
@@ -345,10 +344,13 @@ function CustAc_AwardButton_OnClick(self)
 end
 
 function CustAc_DeleteCategoryButton_OnClick(categoryId, categoryName)
-	local dialog = StaticPopup_Show("CUSTAC_CAT_DELETE", categoryName)
+	local newCategory = CustAc_DetermineNewCategory(categoryId, selectedAchievement.achievementCategory, nextCustomCategoryId)
+	local newCategoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][newCategory], "name") or newCategory
+	local dialog = StaticPopup_Show("CUSTAC_CAT_DELETE", categoryName, newCategoryName)
 	if (dialog) then
 		dialog.data = {}
 		dialog.data["categoryId"] = categoryId
+		dialog.data["newCategory"] = newCategory
 	end
 end
 
