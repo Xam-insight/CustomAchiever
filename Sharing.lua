@@ -24,6 +24,11 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 				CustomAchieverLastManualCall[aTarget] = callTime
 			end
 		end
+	elseif messageType == "Revoke" and not CustAc_isPlayerCharacter(aTarget) then
+		if not CustomAchieverAcknowledgmentReceived[aTarget] then
+			UIErrorsFrame:AddMessage(L["SHARECUSTAC_NOACKNOWLEDGMENT"], 1, 0, 0, 1)
+			CustomAchiever:Print(L["SHARECUSTAC_NOACKNOWLEDGMENT"])
+		end
 	end
 	encodeAndSendAchievementInfo(aData, aTarget, messageType)
 end
