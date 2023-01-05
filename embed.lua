@@ -59,7 +59,7 @@ StaticPopupDialogs["CUSTAC_DELETE"] = {
 function Custac_ChangeAwardButtonText()
 	if CustomAchieverFrame:IsShown() then
 		local name, realm = UnitFullName("target")
-		local target = CustAc_addRealm(name, realm)
+		local target = (name and CustAc_addRealm(name, realm)) or CustAc_playerCharacter()
 		
 		if UnitIsPlayer("target") then
 			if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, target, CustAc_isPlayerCharacter(target)) then
