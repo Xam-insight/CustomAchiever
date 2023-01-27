@@ -7,21 +7,25 @@ local function encodeAndSendAchievementInfo(aData, aTarget, messageType)
 end
 
 function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
-	if messageType == "Award" and not CustAc_isPlayerCharacter(aTarget) then
+	if (messageType == "Award" or messageType == "Update") and not CustAc_isPlayerCharacter(aTarget) then
+		local timeBetweenCalls = (messageType == "Update" and 10) or 300
 		local callTime = time()
-		if not CustomAchieverLastManualCall[aTarget] then
-			CustomAchieverLastManualCall[aTarget] = callTime
+		if not CustomAchieverLastManualCall[aTarget.."|"..messageType] then
+			CustomAchieverLastManualCall[aTarget.."|"..messageType] = callTime
 		else
-			if callTime < CustomAchieverLastManualCall[aTarget] + 300 then
+			if callTime < CustomAchieverLastManualCall[aTarget.."|"..messageType] + timeBetweenCalls then
 				if CustomAchieverAcknowledgmentReceived[aTarget] then
-					CustomAchiever:Print(string.format(L["SHARECUSTAC_WAIT"], math.ceil((300 - callTime + CustomAchieverLastManualCall[aTarget]) / 60)))
+					local seconds = timeBetweenCalls - callTime + CustomAchieverLastManualCall[aTarget.."|"..messageType]
+					local minutes = math.floor(seconds / 60)
+					seconds = seconds - minutes * 60
+					CustomAchiever:Print(string.format(L["SHARECUSTAC_WAIT"], minutes, seconds))
 				else
 					UIErrorsFrame:AddMessage(L["SHARECUSTAC_NOACKNOWLEDGMENT"], 1, 0, 0, 1)
 					CustomAchiever:Print(L["SHARECUSTAC_NOACKNOWLEDGMENT"])
 				end
 				return
 			else
-				CustomAchieverLastManualCall[aTarget] = callTime
+				CustomAchieverLastManualCall[aTarget.."|"..messageType] = callTime
 			end
 		end
 	elseif messageType == "Revoke" and not CustAc_isPlayerCharacter(aTarget) then
@@ -34,16 +38,18 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 end
 
 function CustAc_SendUpdatedAchievementData(achievementId, alsoSendTo)
-	if CustomAchieverData["AwardedPlayers"][achievementId] then
+	if achievementId then --CustomAchieverData["AwardedPlayers"][achievementId] then
 		local data = {}
 		data["Categories"] = {}
 		data["Achievements"] = {}
-		local categoryId = CustomAchieverData["Achievements"][achievementId]["parent"]
-		data["Categories"][categoryId] 	= CustomAchieverData["Categories"][categoryId]
+		local categoryId = CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId]["parent"]
+		data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
 		data["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId]
-		for k,v in pairs(CustomAchieverData["AwardedPlayers"][achievementId]) do
-			if not CustAc_isPlayerCharacter(k) and (not alsoSendTo or k ~= alsoSendTo) then
-				CustAc_SendUpdatedDataTo(k, achievementId, categoryId, data)
+		if CustomAchieverData["AwardedPlayers"][achievementId] then
+			for k,v in pairs(CustomAchieverData["AwardedPlayers"][achievementId]) do
+				if not CustAc_isPlayerCharacter(k) and (not alsoSendTo or k ~= alsoSendTo) then
+					CustAc_SendUpdatedDataTo(k, achievementId, categoryId, data)
+				end
 			end
 		end
 		if alsoSendTo then
@@ -53,20 +59,22 @@ function CustAc_SendUpdatedAchievementData(achievementId, alsoSendTo)
 end
 
 function CustAc_SendUpdatedCategoryData(categoryId, alsoSendTo)
-	if CustomAchieverData["AwardedPlayers"][categoryId] then
+	if categoryId then --CustomAchieverData["AwardedPlayers"][categoryId] then
 		local data = {}
 		data["Categories"] = {}
 		data["Achievements"] = {}
-		data["Categories"][categoryId] 	= CustomAchieverData["Categories"][categoryId]
+		data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
 		for k,v in pairs(CustomAchieverData["Achievements"]) do
 			if v["parent"] == categoryId then
 				data["Achievements"][k] = v
 			end
 		end
 		
-		for k,v in pairs(CustomAchieverData["AwardedPlayers"][categoryId]) do
-			if not CustAc_isPlayerCharacter(k) and (not alsoSendTo or k ~= alsoSendTo) then
-				CustAc_SendUpdatedDataTo(k, nil, categoryId, data)
+		if CustomAchieverData["AwardedPlayers"][categoryId] then
+			for k,v in pairs(CustomAchieverData["AwardedPlayers"][categoryId]) do
+				if not CustAc_isPlayerCharacter(k) and (not alsoSendTo or k ~= alsoSendTo) then
+					CustAc_SendUpdatedDataTo(k, nil, categoryId, data)
+				end
 			end
 		end
 		if alsoSendTo then
@@ -111,7 +119,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 						local name, locale = CustAc_getLocaleData(v,"name")
 						
 						if updateData then
-							CustAc_CreateOrUpdateCategory(id, nil, name, locale, true)
+							CustAc_CreateOrUpdateCategory(id, nil, name, locale, CustAc_isPlayerCharacter(sender))
 						else
 							if not CustomAchieverData["AwardedPlayers"][id] then
 								CustomAchieverData["AwardedPlayers"][id] = {}
@@ -138,7 +146,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 						local rewardIsTitle = v.rewardIsTitle
 
 						if updateData then
-							CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, rewardText, rewardIsTitle, locale, true)
+							CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, rewardText, rewardIsTitle, locale, CustAc_isPlayerCharacter(sender))
 						end
 						if messageType == "Award" then
 							CustAc_CompleteAchievement(id)
@@ -148,6 +156,11 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 							if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
 								CustomAchieverData["PendingUpdates"]["Achievements"][id][CustAc_addRealm(sender)] = nil
 							end
+							if not CustomAchieverData["AwardedPlayers"][id] then
+								CustomAchieverData["AwardedPlayers"][id] = {}
+								CustomAchieverData["AwardedPlayers"][id][CustAc_addRealm(sender)] = false
+							end
+							CustomAchieverAcknowledgmentReceived[CustAc_addRealm(sender)] = true
 						else
 							if not CustomAchieverData["AwardedPlayers"][id] then
 								CustomAchieverData["AwardedPlayers"][id] = {}
@@ -157,7 +170,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 								CustomAchieverData["AwardedPlayers"][id][CustAc_addRealm(sender)] = true
 								CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_AWARD"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE..GetPlayerLink(sender, ("[%s]"):format(sender))))
 							elseif messageType == "RevokeAcknowledgment" then
-								CustomAchieverData["AwardedPlayers"][id][CustAc_addRealm(sender)] = nil
+								CustomAchieverData["AwardedPlayers"][id][CustAc_addRealm(sender)] = false
 								CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_REVOKE"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE..GetPlayerLink(sender, ("[%s]"):format(sender))))
 							end
 							Custac_ChangeAwardButtonText()

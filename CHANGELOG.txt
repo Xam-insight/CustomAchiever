@@ -1,4 +1,6 @@
-﻿-v1.1.3
+﻿-v1.1.4
+	- Fixed: Received Achievements are no longer editable (not applicable for pre v1.1.4 created ones).
+-v1.1.3
 	- New refresh button to share an entire category to your target and previous targeted users.
 	- New reward field for custom achievements.
 	- Fixed: Custom categories were not visible to other characters in edition frame.
