@@ -29,7 +29,7 @@
 	<Script file="Sharing.lua" />
 	<Script file="embed.lua" />
 	<Frame name="CustomAchieverFrameTemplate" enableMouse="true" clampedToScreen="true" inherits="ButtonFrameTemplate" virtual="true" hidden="true" toplevel="true" movable="true" resizable="true" frameStrata="MEDIUM">
-		<Size x="380" y="285" />
+		<Size x="380" y="315" />
 		<Anchors>
 			<Anchor point="CENTER" x="0" y="0" />
 		</Anchors>
@@ -234,6 +234,32 @@
 					<OnEscapePressed function="HideParentPanel"/>
 				</Scripts>
 			</EditBox>
+			<EditBox parentKey="RewardEditBox" inherits="InputBoxTemplate" letters="100">
+				<Scripts>
+					<OnTextChanged function="CustomAchieverFrameRewardEditBox_OnTextChanged"/>
+					<OnEscapePressed function="HideParentPanel"/>
+				</Scripts>
+			</EditBox>
+			<CheckButton parentKey="TitleCheckButton">
+				<Size x="20" y="20"/>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontHighlightSmall" parentKey="text" text="HONOR_REWARD_TITLE_TOOLTIP">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT" x="1" y="1"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick function="CustomAchieverFrameRewardCheckButton_OnClick"/>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+				<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+				<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+			</CheckButton>
 			<Button parentKey="DeleteButton" inherits="UIPanelButtonTemplate" motionScriptsWhileDisabled="true" text="DELETE">
 				<Size x="80" y="22"/>
 				<Anchors>

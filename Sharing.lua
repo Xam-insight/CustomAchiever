@@ -98,8 +98,10 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 					local points = o.Achievement.points
 					local name, locale = CustAc_getLocaleData(o.Achievement,"name")
 					local description = CustAc_getLocaleData(o.Achievement, "desc")
+					local rewardText = CustAc_getLocaleData(o.Achievement, "rewardText")
+					local rewardIsTitle = o.Achievement.rewardIsTitle
 
-					CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, locale, true)
+					CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, rewardText, rewardIsTitle, locale, true)
 					if messageType == "Award" then
 						CustAc_CompleteAchievement(id)
 						CustomAchieverFrame_UpdateAchievementAlertFrame()

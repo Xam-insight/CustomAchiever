@@ -8,13 +8,15 @@ local selectedAchievement = {}
 
 local function CustAc_InitSelectedAchievement(achievementId, categoryId)
 	selectedAchievement = {}
-	selectedAchievement.achievementId           =  achievementId or nextCustomAchieverId
-	selectedAchievement.achievementCategory     =  categoryId    or (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].parent) or nextCustomCategoryId
-	selectedAchievement.achievementCategoryName =  CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name") or CustAc_delRealm(selectedAchievement.achievementCategory)
-	selectedAchievement.achievementName         =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "name")                                 or L["MENUCUSTAC_DEFAULT_NAME"]
-	selectedAchievement.achievementIcon         = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].icon)   or 236376
-	selectedAchievement.achievementDesc         =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "desc")                                 or L["MENUCUSTAC_DESCRIPTION"]
-	selectedAchievement.achievementPoints       = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].points) or 0
+	selectedAchievement.achievementId            =  achievementId or nextCustomAchieverId
+	selectedAchievement.achievementCategory      =  categoryId    or (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].parent) or nextCustomCategoryId
+	selectedAchievement.achievementCategoryName  =  CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name") or CustAc_delRealm(selectedAchievement.achievementCategory)
+	selectedAchievement.achievementName          =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "name")                                        or L["MENUCUSTAC_DEFAULT_NAME"]
+	selectedAchievement.achievementIcon          = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].icon)          or 236376
+	selectedAchievement.achievementDesc          =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "desc")                                        or DESCRIPTION
+	selectedAchievement.achievementRewardText    =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "rewardText")                                  or ""
+	selectedAchievement.achievementRewardIsTitle = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].rewardIsTitle) or false
+	selectedAchievement.achievementPoints        = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].points)        or 0
 end
 
 StaticPopupDialogs["CUSTAC_CAT_DELETE"] = {
@@ -132,11 +134,20 @@ function CustomAchieverFrame_OnLoad(self)
 	CustomAchieverFrame.PointsEditBox.type = "achievementPoints"
 
 	local descriptionFontstring = CustomAchieverFrame:CreateFontString("DescriptionFontstring", "ARTWORK", "GameFontNormal")
-	descriptionFontstring:SetText(L["MENUCUSTAC_DESCRIPTION"])
+	descriptionFontstring:SetText(DESCRIPTION)
 	descriptionFontstring:SetPoint("TOPLEFT", 30, -227)
 	CustomAchieverFrame.DescriptionEditBox:SetPoint("TOPRIGHT", -30 , -225)
 	CustomAchieverFrame.DescriptionEditBox:SetSize(220, 16)
 	CustomAchieverFrame.DescriptionEditBox:HighlightText()
+	
+	local rewardFontstring = CustomAchieverFrame:CreateFontString("RewardFontstring", "ARTWORK", "GameFontNormal")
+	rewardFontstring:SetText(REWARD)
+	rewardFontstring:SetPoint("TOPLEFT", 30, -257)
+	CustomAchieverFrame.RewardEditBox:SetPoint("TOPRIGHT", -75 , -255)
+	CustomAchieverFrame.RewardEditBox:SetSize(175, 16)
+	CustomAchieverFrame.RewardEditBox:HighlightText()
+	
+	CustomAchieverFrame.TitleCheckButton:SetPoint("TOPRIGHT", -50 , -254)
 	
 	CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_AWARD"])
 	
@@ -289,6 +300,8 @@ function CustomAchieverFrame_UpdateAchievementAlertFrame()
 		--CustomAchieverFrame.PointsEditBox:HighlightText()
 		CustomAchieverFrame.DescriptionEditBox:SetText(selectedAchievement.achievementDesc)
 		--CustomAchieverFrame.DescriptionEditBox:HighlightText()
+		CustomAchieverFrame.RewardEditBox:SetText(selectedAchievement.achievementRewardText)
+		CustomAchieverFrame.TitleCheckButton:SetChecked(selectedAchievement.achievementRewardIsTitle)
 		
 		if selectedAchievement.achievementId == nextCustomAchieverId then
 			CustomAchieverFrame.DeleteButton:Disable()
@@ -308,6 +321,14 @@ end
 
 function CustomAchieverFrameDescriptionEditBox_OnTextChanged(self)
 	selectedAchievement.achievementDesc = CustAc_titleFormat(self:GetText())
+end
+
+function CustomAchieverFrameRewardEditBox_OnTextChanged(self)
+	selectedAchievement.achievementRewardText = CustAc_titleFormat(self:GetText())
+end
+
+function CustomAchieverFrameRewardCheckButton_OnClick(self)
+	selectedAchievement.achievementRewardIsTitle = self:GetChecked()
 end
 
 function CustomAchieverFrameEditBox_OnTextChanged(self)
@@ -372,8 +393,8 @@ end
 
 function CustAc_SaveButton_OnClick()
 	if selectedAchievement.achievementId then
-		CustAc_CreateOrUpdateCategory(selectedAchievement.achievementCategory, nil, selectedAchievement.achievementCategoryName, nil, isPersonnal)
-		CustAc_CreateOrUpdateAchievement(selectedAchievement.achievementId, selectedAchievement.achievementCategory, selectedAchievement.achievementIcon, selectedAchievement.achievementPoints, selectedAchievement.achievementName, selectedAchievement.achievementDesc, nil, true)
+		CustAc_CreateOrUpdateCategory(selectedAchievement.achievementCategory, nil, selectedAchievement.achievementCategoryName, nil, true)
+		CustAc_CreateOrUpdateAchievement(selectedAchievement.achievementId, selectedAchievement.achievementCategory, selectedAchievement.achievementIcon, selectedAchievement.achievementPoints, selectedAchievement.achievementName, selectedAchievement.achievementDesc, selectedAchievement.achievementRewardText, selectedAchievement.achievementRewardIsTitle, nil, true)
 		if selectedAchievement.achievementId == nextCustomAchieverId then
 			nextCustomAchieverId = CustAc_playerCharacter()..'-'..tostring(CustAc_getTimeUTCinMS())
 		end

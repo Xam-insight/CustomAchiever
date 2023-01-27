@@ -121,11 +121,11 @@ function CustAc_AchievementFrame_Load()
 	end
 
 	CustAc_CreateOrUpdateCategory("CustomAchiever", nil, "Custom Achiever")
-	CustAc_CreateOrUpdateAchievement("CustomAchiever1", "CustomAchiever", 975739,  10, "Bonne installation !", "Intaller Custom Achiever.", "frFR")
-	CustAc_CreateOrUpdateAchievement("CustomAchiever1", "CustomAchiever",    nil, nil, "Happy move in!", "Install Custom Achiever.", "enUS")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever1", "CustomAchiever", 975739,  10, "Bonne installation !", "Intaller Custom Achiever.", "", nil, "frFR")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever1", "CustomAchiever",    nil, nil, "Happy move in!", "Install Custom Achiever.",        "", nil,"enUS")
 	CustAc_CompleteAchievement("CustomAchiever1")
-	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever", 133053,  10, "Un petit pas pour Azeroth...", "Créer votre premier Haut fait.", "frFR")
-	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever",    nil, nil, "One small step for Azeroth...", "Create your first Achievement.", "enUS")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever", 133053,  10, "Un petit pas pour Azeroth...",  "Créer votre premier Haut fait.", "", nil,"frFR")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever",    nil, nil, "One small step for Azeroth...", "Create your first Achievement.", "", nil,"enUS")
 	CustAc_LoadAchievementsData()
 end
 

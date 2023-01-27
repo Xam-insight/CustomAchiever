@@ -105,7 +105,7 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		local parentCategory = nil
 		if parentID then
 			if not CustomAchieverData["Categories"][parentID] then
-				CustAc_CreateOrUpdateCategory(parentID)
+				CustAc_CreateOrUpdateCategory(parentID, nil, nil, locale, isPersonnal)
 				parentCategory = parentID
 			elseif not CustomAchieverData["Categories"][parentID]["parent"] or CustomAchieverData["Categories"][parentID]["parent"] == true then
 				parentCategory = parentID
@@ -157,7 +157,7 @@ function CustAc_SaveAchievementDataIntoAddon(achievementId)
 	_G[addOn.."_CustomAchieverData"]["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId]
 end
 
-function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, locale, isPersonnal)
+function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, rewardText, rewardIsTitle, locale, isPersonnal)
 	if id then
 		local parentCategory = parent or "CustomAchiever"
 		if not CustomAchieverData["Categories"][parentCategory] then
@@ -167,18 +167,19 @@ function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, descri
 		if CustomAchieverData["Achievements"][id] then
 			data = CustomAchieverData["Achievements"][id]
 		end
-		data["id"]                = id
-		data["parent"]            = parentCategory
-		local dataLocale          = locale            or GetLocale()
-		data["name_"..dataLocale] = name              or data["name_"..dataLocale] or L["MENUCUSTAC_DEFAULT_NAME"]
-		data["desc_"..dataLocale] = description       or data["desc_"..dataLocale] or L["MENUCUSTAC_DEFAULT_NAME"]
-		data["icon"]              = icon              or data["icon"]                           or 236376
-		data["points"]            = tonumber(points   or data["points"]                         or 10)
-		data["flags"]             = 0
-		data["rewardText"]        = nil
-		data["isGuild"]           = false
-		data["completed"]         = data["completed"] or {}
-		data["date"]              = data["date"]      or {}
+		data["id"]                      = id
+		data["parent"]                  = parentCategory
+		local dataLocale                = locale            or GetLocale()
+		data["name_"..dataLocale]       = name              or data["name_"..dataLocale]       or L["MENUCUSTAC_DEFAULT_NAME"]
+		data["desc_"..dataLocale]       = description       or data["desc_"..dataLocale]       or L["MENUCUSTAC_DEFAULT_NAME"]
+		data["icon"]                    = icon              or data["icon"]                    or 236376
+		data["points"]                  = tonumber(points   or data["points"]                  or 10)
+		data["flags"]                   = 0
+		data["rewardText_"..dataLocale] = rewardText        or data["rewardText_"..dataLocale] or ""
+		data["rewardIsTitle"]           = rewardIsTitle     or false
+		data["isGuild"]                 = false
+		data["completed"]               = data["completed"] or {}
+		data["date"]                    = data["date"]      or {}
 		--data["wasEarnedByMe"] = true
 		--data["earnedBy"] = "Xamena"
 
@@ -257,7 +258,13 @@ function CustAc_GetAchievement(achievement)
 		end
 		data["flags"] = achievement["flags"]
 		data["icon"] = achievement["icon"]
-		data["rewardText"] = achievement["rewardText"]
+		local rewardText = CustAc_getLocaleData(achievement, "rewardText")
+		if rewardText and rewardText ~= "" and rewardText ~= UNKNOWN then
+			rewardText = (achievement["rewardIsTitle"] and format(HONOR_REWARD_TITLE, rewardText)) or format(TITLE_REWARD, rewardText)
+		else
+			rewardText = ""
+		end
+		data["rewardText"] = rewardText
 		data["isGuild"] = achievement["isGuild"]
 		data["wasEarnedByMe"] = achievement["completed"][CustAc_playerCharacter()]
 		data["earnedBy"] = (achievement["completed"][CustAc_playerCharacter()] and CustAc_playerCharacter()) or achievement["firstAchiever"]

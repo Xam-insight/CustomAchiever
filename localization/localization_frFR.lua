@@ -26,7 +26,6 @@ L["MENUCUSTAC_NEW"] = "Créer un nouveau Haut fait"
 L["MENUCUSTAC_DEFAULT_NAME"] = "Haut fait personnalisé"
 L["MENUCUSTAC_ICON"] = "Icône"
 L["MENUCUSTAC_POINTS"] = "Points"
-L["MENUCUSTAC_DESCRIPTION"] = "Description"
 L["MENUCUSTAC_CAT_CONFIRM_DELETION"] = "Voulez-vous vraiment effacer définitivement la Catégorie |cff00ff00%s|r ? Les Hauts faits de cette catégorie seront déplacés dans |cff00ff00%s|r."
 L["MENUCUSTAC_CONFIRM_DELETION"] = "Voulez-vous vraiment effacer définitivement le Haut fait personnalisé |cff00ff00%s|r ?"
 

@@ -26,7 +26,6 @@ L["MENUCUSTAC_NEW"] = "Create a new Achievement"
 L["MENUCUSTAC_DEFAULT_NAME"] = "Custom Achievement"
 L["MENUCUSTAC_ICON"] = "Icon"
 L["MENUCUSTAC_POINTS"] = "Points"
-L["MENUCUSTAC_DESCRIPTION"] = "Description"
 L["MENUCUSTAC_CAT_CONFIRM_DELETION"] = "Are you sure you want to permanently delete the Category |cff00ff00%s|r? This Category Achievements will be moved to |cff00ff00%s|r."
 L["MENUCUSTAC_CONFIRM_DELETION"] = "Are you sure you want to permanently delete the Custom Achievement |cff00ff00%s|r?"
 
