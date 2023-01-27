@@ -34,6 +34,16 @@
 			<Anchor point="CENTER" x="0" y="0" />
 		</Anchors>
 		<Frames>
+			<Button parentKey="RefreshButton" inherits="RefreshButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-10" y="-28" />
+				</Anchors>
+				<Scripts>
+					<OnClick function="CustomAchieverFrameRewardRefreshButton_OnClick"/>
+					<OnEnter function="CustomAchieverButtonEnter"/>
+					<OnLeave function="CustomAchieverButtonLeave"/>
+				</Scripts>
+			</Button>
 			<Frame parentKey="AchievementAlertFrame" name="$parentAchievementAlertFrame">
 				<Size x="310" y="90" />
 				<Anchors>

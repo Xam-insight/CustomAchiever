@@ -93,6 +93,9 @@ function CustomAchieverFrame_OnLoad(self)
 	
 	local custacOptionsButton = createCustomAchieverOptionsButton(self)
 	
+	CustomAchieverFrame.RefreshButton:SetAttribute("tooltip", L["REFRESH_TOOLTIP"])
+	CustomAchieverFrame.RefreshButton:SetAttribute("tooltipDetail", { L["REFRESH_TOOLTIPDETAIL"] })
+	
 	CustomAchieverFrameAchievementAlertFrame.GuildBanner:Hide()
 	CustomAchieverFrameAchievementAlertFrame.OldAchievement:Hide()
 	CustomAchieverFrameAchievementAlertFrame.GuildBorder:Hide()
@@ -171,6 +174,16 @@ function createCustomAchieverOptionsButton(parent)
 	optionsButton:SetAttribute("tooltipDetail", { tooltipDetail })
 
 	return optionsButton
+end
+
+function CustomAchieverFrameRewardRefreshButton_OnClick()
+	local name, realm = UnitFullName("target")
+	local target = CustAc_addRealm(name, realm)
+	if CustAc_isPlayerCharacter(target) then
+		target = nil
+	end
+
+	CustAc_SendUpdatedCategoryData(selectedAchievement.achievementCategory, target)
 end
 
 function CustAc_SaveCategory(popup, categoryName, categoryId)
@@ -358,8 +371,11 @@ function CustAc_AwardButton_OnClick(self)
 	
 	if not name or UnitIsPlayer("target") then
 		local data = {}
-		data["Category"] 	= CustomAchieverData["Categories"][CustomAchieverData["Achievements"][selectedAchievement.achievementId]["parent"]]
-		data["Achievement"] = CustomAchieverData["Achievements"][selectedAchievement.achievementId]	
+		data["Categories"]   = {}
+		data["Achievements"] = {}
+		local categoryId = CustomAchieverData["Achievements"][selectedAchievement.achievementId]["parent"]
+		data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
+		data["Achievements"][selectedAchievement.achievementId] = CustomAchieverData["Achievements"][selectedAchievement.achievementId]	
 		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, target, CustAc_isPlayerCharacter(target)) then
 			manualEncodeAndSendAchievementInfo(data, target, "Revoke")
 		else
@@ -414,7 +430,7 @@ function CustAc_SaveButton_OnClick()
 		if CustAc_isPlayerCharacter(target) then
 			target = nil
 		end
-		CustAc_SendUpdatedData(selectedAchievement.achievementId, target)
+		CustAc_SendUpdatedAchievementData(selectedAchievement.achievementId, target)
 	end
 end
 

@@ -17,6 +17,9 @@ L["WINDOW_SECTION"] = "Options de fenêtre Custom Achiever"
 L["MENUOPTIONS_TOOLTIP"] = "Options de Custom Achiever"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Modifier les options de Custom Achiever."
 
+L["REFRESH_TOOLTIP"] = "Raffraîchir"
+L["REFRESH_TOOLTIPDETAIL"] = "Envoie les hauts faits de la catégorie à la cible|net aux utilisateurs connus de Custom Achiever."
+
 L["MENUCUSTAC_CATEGORY"] = "Catégorie"
 L["MENUCUSTAC_CATEGORIES"] = "Catégories"
 L["MENUCUSTAC_NEWCATEGORY"] = "Créer une Catégorie"

@@ -17,6 +17,9 @@ L["WINDOW_SECTION"] = "Custom Achiever window options"
 L["MENUOPTIONS_TOOLTIP"] = "Custom Achiever options"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Change Custom Achiever options."
 
+L["REFRESH_TOOLTIP"] = "Refresh"
+L["REFRESH_TOOLTIPDETAIL"] = "Send this category achievements to the target|nand to known Custom Achiever users."
+
 L["MENUCUSTAC_CATEGORY"] = "Category"
 L["MENUCUSTAC_CATEGORIES"] = "Categories"
 L["MENUCUSTAC_NEWCATEGORY"] = "Create Category"
