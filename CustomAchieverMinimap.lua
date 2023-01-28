@@ -92,10 +92,11 @@ local function createCustacButton(object)
 	button.fadeOut:SetToFinalAlpha(true)
 end
 
-local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("ADDON_LOADED")
-eventFrame:SetScript("OnEvent", function(self, event, addon)
-	if not strmatch(addon,"CustomAchiever") then return end
+--local eventFrame = CreateFrame("Frame")
+--eventFrame:RegisterEvent("ADDON_LOADED")
+--eventFrame:SetScript("OnEvent", function(self, event, addon)
+function CustAc_CreateMinimapButton()
+	--if not strmatch(addon,"CustomAchiever") then return end
 	-- Initialize the saved variables
 	local defaults = {
 		minimapIcon = {
@@ -149,7 +150,7 @@ eventFrame:SetScript("OnEvent", function(self, event, addon)
 	createCustacButton(obj)
 
 	-- Clean up after ourselves
-	self:UnregisterEvent("ADDON_LOADED")
-	self:SetScript("OnEvent", nil)
-end)
+	--self:UnregisterEvent("ADDON_LOADED")
+	--self:SetScript("OnEvent", nil)
+end
 

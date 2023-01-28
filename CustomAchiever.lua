@@ -58,6 +58,7 @@ function CustomAchiever:OnEnable()
 		CustomAchiever:Print(L["CUSTOMACHIEVER_WELCOME"])
 		CustomAchiever:LoadAddonsData()
 	end
+	CustAc_CreateMinimapButton()
 end
 
 function CustomAchiever:LoadAddonsData()
