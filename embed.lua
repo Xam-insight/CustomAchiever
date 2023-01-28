@@ -192,13 +192,26 @@ function CustAc_SaveCategory(popup, categoryName, categoryId)
 		local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..tostring(CustAc_getTimeUTCinMS())
 		CustAc_CreateOrUpdateCategory(newCategoryId, nil, newCategoryName, nil, true)
 		StaticPopupSpecial_Hide(popup)
-		LibDD:UIDropDownMenu_Initialize(CustomAchieverCategoryDownMenu, CustAc_CategoryDropDownMenu_Update)
-		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverCategoryDownMenu, newCategoryId)
-		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
-		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
-		CustAc_InitSelectedAchievement(nextCustomAchieverId, newCategoryId)
-		CustomAchieverFrame_UpdateAchievementAlertFrame()
+		CustAc_RefreshCustomAchiementFrame(nextCustomAchieverId, newCategoryId)
 	end
+end
+
+function CustAc_RefreshCustomAchiementFrame(achievementId, categoryId, avoidedCategoryId)
+	local newCategoryId    = categoryId    or selectedAchievement.achievementCategory
+	local newAchievementId = achievementId or selectedAchievement.achievementId
+	if avoidedCategoryId and newCategoryId == avoidedCategoryId then
+		newCategoryId = nextCustomCategoryId
+		newAchievementId = nextCustomAchieverId
+	end
+	if newAchievementId ~= selectedAchievement.achievementId then
+		CustAc_IconsPopupFrame:Hide()
+	end
+	LibDD:UIDropDownMenu_Initialize(CustomAchieverCategoryDownMenu, CustAc_CategoryDropDownMenu_Update)
+	LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverCategoryDownMenu, newCategoryId)
+	LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
+	LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, newAchievementId)
+	CustAc_InitSelectedAchievement(newAchievementId, newCategoryId)
+	CustomAchieverFrame_UpdateAchievementAlertFrame()
 end
 
 function CustAc_CategoryDropDownMenu_Update(self)

@@ -123,6 +123,8 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		
 		if isPersonnal then
 			CustomAchieverData["PersonnalCategories"][id] = true
+		elseif CustomAchieverData["PersonnalCategories"][id] then
+			CustomAchieverData["PersonnalCategories"][id] = nil
 		end
 		
 		CustomAchieverData["Categories"][id] = data

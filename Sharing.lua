@@ -120,6 +120,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 						
 						if updateData then
 							CustAc_CreateOrUpdateCategory(id, nil, name, locale, CustAc_isPlayerCharacter(sender))
+							CustAc_RefreshCustomAchiementFrame(nil, nil, id)
 						else
 							if not CustomAchieverData["AwardedPlayers"][id] then
 								CustomAchieverData["AwardedPlayers"][id] = {}
@@ -183,7 +184,6 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 						CustAc_AchievementFrameCategories_UpdateDataProvider()
 						CustAc_AchievementFrameAchievements_UpdateDataProvider()
 					end
-					CustomAchieverFrame_UpdateAchievementAlertFrame()
 					encodeAndSendAchievementInfo(o, sender, messageType.."Acknowledgment")
 				end
 			end
