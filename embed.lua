@@ -203,7 +203,7 @@ function CustAc_RefreshCustomAchiementFrame(achievementId, categoryId, avoidedCa
 		newCategoryId = nextCustomCategoryId
 		newAchievementId = nextCustomAchieverId
 	end
-	if newAchievementId ~= selectedAchievement.achievementId then
+	if CustAc_IconsPopupFrame and newAchievementId ~= selectedAchievement.achievementId then
 		CustAc_IconsPopupFrame:Hide()
 	end
 	LibDD:UIDropDownMenu_Initialize(CustomAchieverCategoryDownMenu, CustAc_CategoryDropDownMenu_Update)
