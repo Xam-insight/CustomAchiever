@@ -260,8 +260,8 @@ function CustAc_GetAchievement(achievement)
 		end
 		data["flags"] = achievement["flags"]
 		data["icon"] = achievement["icon"]
-		local rewardText = CustAc_getLocaleData(achievement, "rewardText")
-		if rewardText and rewardText ~= "" and rewardText ~= UNKNOWN then
+		local rewardText = CustAc_getLocaleData(achievement, "rewardText", "")
+		if rewardText and rewardText ~= "" then
 			rewardText = (achievement["rewardIsTitle"] and format(HONOR_REWARD_TITLE, rewardText)) or format(TITLE_REWARD, rewardText)
 		else
 			rewardText = ""
@@ -387,7 +387,7 @@ function CustAc_RevokeAchievement(id, earnedBy)--/run CustAc_RevokeAchievement("
 	end
 end
 
-function CustAc_getLocaleData(data, name)
+function CustAc_getLocaleData(data, name, valueIfNotFound)
 	if data then
 		local localeData = data[name.."_"..GetLocale()]
 		if localeData then
@@ -399,7 +399,7 @@ function CustAc_getLocaleData(data, name)
 				return localeData, k
 			end
 		end
-		return UNKNOWN
+		return valueIfNotFound or UNKNOWN
 	end
 	return nil
 end

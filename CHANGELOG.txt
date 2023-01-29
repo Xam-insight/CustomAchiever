@@ -1,4 +1,7 @@
-﻿-v1.1.8
+﻿-v1.1.9
+	- The saving, awarding or revoking target is now shown under Custom Achiever frame.
+	- Fixed: Achievement selection is not reset when saving, awarding or revoking.
+-v1.1.8
 	- Fixed: Error when loading another Custom Achiever addon.
 -v1.1.7
 	- Fixed: Error when saving category name.

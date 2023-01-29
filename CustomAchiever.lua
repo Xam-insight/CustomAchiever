@@ -54,9 +54,13 @@ function CustomAchiever:OnEnable()
 
 		--NewCustomAchieverFrame
 		CustomAchieverFrame = CreateFrame("Frame", "CustomAchieverFrame", UIParent, "CustomAchieverFrameTemplate")
+		CustomAchieverTargetTooltip:SetScale(0.8)
+		CustomAchieverTargetTooltip:SetParent(CustomAchieverFrame)
 
 		CustomAchiever:Print(L["CUSTOMACHIEVER_WELCOME"])
 		CustomAchiever:LoadAddonsData()
+		
+		hooksecurefunc("TargetUnit", CustAc_TargetUnit)
 	end
 	CustAc_CreateMinimapButton()
 end

@@ -306,6 +306,71 @@
 					<OnClick function="HideParentPanel"/>
 				</Scripts>
 			</Button>
+			<Frame parentKey="DetailsPanel" frameLevel="501" hidden="true">
+				<Size x="163" y="253"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-6" y="-29"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture parentKey="BlackBackground">
+							<Anchors>
+								<Anchor point="TOPLEFT" x="2" y="-12"/>
+								<Anchor point="BOTTOMRIGHT" x="-2" y="4"/>
+							</Anchors>
+							<Color color="BLACK_FONT_COLOR"/>
+						</Texture>
+					</Layer>
+					<Layer level="BORDER">
+						<Texture parentKey="ClassBackground">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeKey="$parentKey.BlackBackground"/>
+								<Anchor point="BOTTOMRIGHT" relativeKey="$parentKey.BlackBackground"/>
+							</Anchors>
+							<TexCoords left="0.1599099099099099" right="0.8378378378378378" top="0" bottom="0.9612068965517241"/>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture atlas="dressingroom-sideframe" setAllPoints="true"/>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame parentKey="Details" setAllPoints="true">
+						<Frames>
+							<ScrollFrame parentKey="ScrollFrame" inherits="UIPanelScrollFrameTemplate" >
+								<Anchors>
+									<Anchor point="TOPLEFT" x="5" y="-13"/>
+									<Anchor point="BOTTOMRIGHT" x="-26" y="5"/>
+								</Anchors>
+								<ScrollChild>
+									<EditBox parentKey="Text" multiLine="true" letters="4000" autoFocus="false">
+										<Size x="165" y="194"/>
+										<Scripts>
+											<OnLoad function="ScrollingEdit_OnLoad"/>
+											<OnCursorChanged function="ScrollingEdit_OnCursorChanged"/>
+											<OnUpdate>
+												ScrollingEdit_OnUpdate(self, elapsed, self:GetParent())
+											</OnUpdate>
+											<OnEditFocusGained>
+												self:HighlightText(0)
+											</OnEditFocusGained>
+											<OnEscapePressed function="EditBox_ClearFocus"/>
+										</Scripts>
+										<FontString inherits="GameFontHighlightSmall"/>
+									</EditBox>
+								</ScrollChild>
+							</ScrollFrame>
+						</Frames>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad/>
+					<OnShow/>
+					<OnHide/>
+					<OnEvent/>
+					<OnKeyDown/>
+				</Scripts>
+			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad function="CustomAchieverFrame_OnLoad"/>
@@ -468,6 +533,7 @@
 		</Scripts>
 	</Frame>
 	<GameTooltip name="CustomAchieverTooltip" frameStrata="TOOLTIP" hidden="true" parent="UIParent" inherits="GameTooltipTemplate" />
+	<GameTooltip name="CustomAchieverTargetTooltip" frameStrata="TOOLTIP" hidden="true" parent="UIParent" inherits="GameTooltipTemplate" />
 	<!--Frame name="GreenScreen" hidden="false" parent="UIParent" setAllPoints="true">
 		<Layers>
 			<Layer>

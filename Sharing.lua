@@ -120,7 +120,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 						
 						if updateData then
 							CustAc_CreateOrUpdateCategory(id, nil, name, locale, CustAc_isPlayerCharacter(sender))
-							CustAc_RefreshCustomAchiementFrame(nil, nil, id)
+							--CustAc_RefreshCustomAchiementFrame(nil, nil, id)
 						else
 							if not CustomAchieverData["AwardedPlayers"][id] then
 								CustomAchieverData["AwardedPlayers"][id] = {}
@@ -143,7 +143,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 						local points = v.points
 						local name, locale = CustAc_getLocaleData(v,"name")
 						local description = CustAc_getLocaleData(v, "desc")
-						local rewardText = CustAc_getLocaleData(v, "rewardText")
+						local rewardText = CustAc_getLocaleData(v, "rewardText", "")
 						local rewardIsTitle = v.rewardIsTitle
 
 						if updateData then

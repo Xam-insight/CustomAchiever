@@ -14,7 +14,7 @@ local function CustAc_InitSelectedAchievement(achievementId, categoryId)
 	selectedAchievement.achievementName          =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "name")                                        or L["MENUCUSTAC_DEFAULT_NAME"]
 	selectedAchievement.achievementIcon          = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].icon)          or 236376
 	selectedAchievement.achievementDesc          =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "desc")                                        or DESCRIPTION
-	selectedAchievement.achievementRewardText    =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "rewardText")                                  or ""
+	selectedAchievement.achievementRewardText    =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "rewardText", "")                              or ""
 	selectedAchievement.achievementRewardIsTitle = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].rewardIsTitle) or false
 	selectedAchievement.achievementPoints        = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].points)        or 0
 end
@@ -58,25 +58,46 @@ StaticPopupDialogs["CUSTAC_DELETE"] = {
 	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
 }
 
+local dataTarget = UNKNOWN
+function Custac_DetermineTarget()
+	local name, realm = UnitFullName("target")
+	local target = (name and CustAc_addRealm(name, realm)) or CustAc_playerCharacter()
+	
+	if UnitIsPlayer("target") then
+		dataTarget = target
+	else
+		dataTarget = CustAc_playerCharacter()
+	end
+end
+
 function Custac_ChangeAwardButtonText()
 	if CustomAchieverFrame:IsShown() then
-		local name, realm = UnitFullName("target")
-		local target = (name and CustAc_addRealm(name, realm)) or CustAc_playerCharacter()
-		
-		if UnitIsPlayer("target") then
-			if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, target, CustAc_isPlayerCharacter(target)) then
-				CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_REVOKE"])
-			else
-				CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_AWARD"])
-			end
+		if dataTarget == UNKNOWN then
+			Custac_DetermineTarget()
+		end
+	
+		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, dataTarget, CustAc_isPlayerCharacter(dataTarget)) then
+			CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_REVOKE"])
 		else
 			CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_AWARD"])
 		end
+		CustomAchieverFrame_UpdateTargetTooltip()
 	end
 end
 
 function CustomAchieverFrame_OnEvent(self, event)
 	if event == "PLAYER_TARGET_CHANGED" then
+		Custac_DetermineTarget()
+		Custac_ChangeAwardButtonText()
+	end
+end
+
+function CustAc_TargetUnit(name, exactMatch)
+	if exactMatch then
+		dataTarget = CustAc_addRealm(name)
+		Custac_ChangeAwardButtonText()
+	elseif UnitIsPlayer(name) then
+		Custac_DetermineTarget()
 		Custac_ChangeAwardButtonText()
 	end
 end
@@ -177,13 +198,7 @@ function createCustomAchieverOptionsButton(parent)
 end
 
 function CustomAchieverFrameRewardRefreshButton_OnClick()
-	local name, realm = UnitFullName("target")
-	local target = CustAc_addRealm(name, realm)
-	if CustAc_isPlayerCharacter(target) then
-		target = nil
-	end
-
-	CustAc_SendUpdatedCategoryData(selectedAchievement.achievementCategory, target)
+	CustAc_SendUpdatedCategoryData(selectedAchievement.achievementCategory, dataTarget)
 end
 
 function CustAc_SaveCategory(popup, categoryName, categoryId)
@@ -345,6 +360,13 @@ function CustomAchieverFrame_UpdateAchievementAlertFrame()
 	Custac_ChangeAwardButtonText()
 end
 
+function CustomAchieverFrame_UpdateTargetTooltip()
+	CustomAchieverTargetTooltip:SetOwner(CustomAchieverFrame, "ANCHOR_BOTTOM", 0, 0)
+	CustomAchieverTargetTooltip:ClearLines()
+	CustomAchieverTargetTooltip:AddDoubleLine(STATUS_TEXT_TARGET, dataTarget or UNKNOWN, 1.0, 0.82, 0.0, 1.0, 1.0, 1.0)
+	CustomAchieverTargetTooltip:Show()
+end
+
 function CustomAchieverFrameDescriptionEditBox_OnTextChanged(self)
 	selectedAchievement.achievementDesc = CustAc_titleFormat(self:GetText())
 end
@@ -375,14 +397,7 @@ end
 
 
 function CustAc_AwardButton_OnClick(self)
-	local name, realm = UnitFullName("target")
-	local target = CustAc_addRealm(name, realm)
-	
-	if not target then
-		target = CustAc_playerCharacter()
-	end
-	
-	if not name or UnitIsPlayer("target") then
+	if dataTarget then
 		local data = {}
 		data["Categories"]   = {}
 		data["Achievements"] = {}
@@ -390,9 +405,9 @@ function CustAc_AwardButton_OnClick(self)
 		data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
 		data["Achievements"][selectedAchievement.achievementId] = CustomAchieverData["Achievements"][selectedAchievement.achievementId]	
 		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, target, CustAc_isPlayerCharacter(target)) then
-			manualEncodeAndSendAchievementInfo(data, target, "Revoke")
+			manualEncodeAndSendAchievementInfo(data, dataTarget, "Revoke")
 		else
-			manualEncodeAndSendAchievementInfo(data, target, "Award")
+			manualEncodeAndSendAchievementInfo(data, dataTarget, "Award")
 		end
 	end
 end
@@ -438,12 +453,7 @@ function CustAc_SaveButton_OnClick()
 		
 		CustomAchieverFrame_UpdateAchievementAlertFrame()
 		
-		local name, realm = UnitFullName("target")
-		local target = CustAc_addRealm(name, realm)
-		if CustAc_isPlayerCharacter(target) then
-			target = nil
-		end
-		CustAc_SendUpdatedAchievementData(selectedAchievement.achievementId, target)
+		CustAc_SendUpdatedAchievementData(selectedAchievement.achievementId, dataTarget)
 	end
 end
 
