@@ -29,6 +29,7 @@ function CustomAchiever:OnInitialize()
 	self:RegisterComm(CustomAchieverGlobal_CommPrefix, "ReceiveDataFrame_OnEvent")
 	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
 	self:RegisterEvent("IGNORELIST_UPDATE", "ApplyIgnoreList")
+	self:RegisterEvent("GUILD_ROSTER_UPDATE", "CallForUsers")
 
 	self:RegisterEvent("ADDON_LOADED", function(event, arg)
 		if(arg == "Krowi_AchievementFilter") then
@@ -44,6 +45,11 @@ end
 
 function CustomAchiever:ApplyIgnoreList()
 	CustAc_ApplyIgnoreList()
+end
+
+function CustomAchiever:CallForUsers()
+	CustAc_SendCallForUsers()
+	self:UnregisterEvent("GUILD_ROSTER_UPDATE")
 end
 
 function CustomAchiever:OnEnable()

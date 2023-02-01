@@ -403,8 +403,8 @@ function CustAc_AwardButton_OnClick(self)
 		data["Achievements"] = {}
 		local categoryId = CustomAchieverData["Achievements"][selectedAchievement.achievementId]["parent"]
 		data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
-		data["Achievements"][selectedAchievement.achievementId] = CustomAchieverData["Achievements"][selectedAchievement.achievementId]	
-		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, target, CustAc_isPlayerCharacter(target)) then
+		data["Achievements"][selectedAchievement.achievementId] = CustomAchieverData["Achievements"][selectedAchievement.achievementId]
+		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, dataTarget, CustAc_isPlayerCharacter(dataTarget)) then
 			manualEncodeAndSendAchievementInfo(data, dataTarget, "Revoke")
 		else
 			manualEncodeAndSendAchievementInfo(data, dataTarget, "Award")

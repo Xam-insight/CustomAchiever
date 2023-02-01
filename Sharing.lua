@@ -1,9 +1,18 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true);
 
 local function encodeAndSendAchievementInfo(aData, aTarget, messageType)
+	aData["Version"] = GetAddOnMetadata("CustomAchiever", "Version")
 	local s = CustomAchiever:Serialize(aData)
 	local text = messageType.."#"..s
 	CustomAchiever:SendCommMessage(CustomAchieverGlobal_CommPrefix, text, "WHISPER", aTarget)
+end
+
+local function sendInfo(info, aTarget, messageType)
+	CustomAchiever:SendCommMessage(CustomAchieverGlobal_CommPrefix, messageType.."#"..info, aTarget and "WHISPER" or "GUILD", aTarget)
+end
+
+function CustAc_SendCallForUsers()
+	sendInfo(GetAddOnMetadata("CustomAchiever", "Version"), nil, "CallUsers")
 end
 
 function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
@@ -107,10 +116,17 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 		--CustomAchiever:Print(time().." - Received message from "..sender..".")
 		local messageType, messageMessage = strsplit("#", message, 2)
 		--if not isPlayerCharacter(sender) then
+		if messageType == "CallUsers" then
+			sendInfo(GetAddOnMetadata("CustomAchiever", "Version"), sender, "AnswerUsers")
+			CustomAchieverData["Users"][CustAc_addRealm(sender)] = messageMessage
+		elseif messageType == "AnswerUsers" then
+			CustomAchieverData["Users"][CustAc_addRealm(sender)] = messageMessage
+		else
 			local success, o = self:Deserialize(messageMessage)
 			if success == false then
 				CustomAchiever:Print(time().." - Received corrupted data from "..sender..".")
 			else
+				CustomAchieverData["Users"][CustAc_addRealm(sender)] = o.Version or "UnknownVersion"
 				local updateData = messageType == "Award" or messageType == "Revoke" or messageType == "Update"
 				if o.Categories then
 					for k,v in pairs(o.Categories) do
@@ -187,7 +203,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 					encodeAndSendAchievementInfo(o, sender, messageType.."Acknowledgment")
 				end
 			end
-		--end
+		end
 	end
 end
 

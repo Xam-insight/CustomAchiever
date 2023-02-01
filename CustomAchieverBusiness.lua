@@ -28,6 +28,10 @@ function initCustomAchieverBusinessObjects()
 		CustomAchieverData["PendingUpdates"]["Achievements"] = {}
 	end
 
+	if not CustomAchieverData["Users"] then
+		CustomAchieverData["Users"] = {}
+	end
+	
 	if not CustomAchieverData["BlackList"] then
 		CustomAchieverData["BlackList"] = {}
 	end
