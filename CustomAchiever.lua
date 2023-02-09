@@ -29,7 +29,7 @@ function CustomAchiever:OnInitialize()
 	self:RegisterComm(CustomAchieverGlobal_CommPrefix, "ReceiveDataFrame_OnEvent")
 	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
 	self:RegisterEvent("IGNORELIST_UPDATE", "ApplyIgnoreList")
-	self:RegisterEvent("GUILD_ROSTER_UPDATE", "CallForUsers")
+	self:RegisterEvent("GUILD_ROSTER_UPDATE", "OnGuildRosterUpdate")
 
 	self:RegisterEvent("ADDON_LOADED", function(event, arg)
 		if(arg == "Krowi_AchievementFilter") then
@@ -47,7 +47,7 @@ function CustomAchiever:ApplyIgnoreList()
 	CustAc_ApplyIgnoreList()
 end
 
-function CustomAchiever:CallForUsers()
+function CustomAchiever:OnGuildRosterUpdate()
 	CustAc_SendCallForUsers()
 	self:UnregisterEvent("GUILD_ROSTER_UPDATE")
 end
@@ -67,8 +67,29 @@ function CustomAchiever:OnEnable()
 		CustomAchiever:LoadAddonsData()
 		
 		hooksecurefunc("TargetUnit", CustAc_TargetUnit)
+		
+		--TODO--TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, CustAc_OnTooltipUnit)
+		--TODO--GameTooltip:HookScript("OnShow", CustAc_CommunitiesMemberOnEnter)
 	end
 	CustAc_CreateMinimapButton()
+end
+
+function CustAc_CommunitiesMemberOnEnter()
+	if GetMouseFocus()["memberInfo"] and GetMouseFocus()["memberInfo"]["clubType"] == 2 and GetMouseFocus()["memberInfo"]["name"] then
+		local unitFullName = CustAc_addRealm(GetMouseFocus()["memberInfo"]["name"])
+		if CustomAchieverData["Users"][unitFullName] then
+			GameTooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][unitFullName], 0, 1, 0, 0, 1, 0)
+			GameTooltip:Show()
+		end
+	end
+end
+
+function CustAc_OnTooltipUnit(tooltip, data)
+	local unitName, unitId = GameTooltip:GetUnit()
+	local unitFullName = CustAc_addRealm(unitName)
+	if CustomAchieverData["Users"][unitFullName] then
+		tooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][unitFullName])
+	end
 end
 
 function CustomAchiever:LoadAddonsData()

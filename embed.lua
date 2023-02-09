@@ -109,7 +109,7 @@ function CustomAchieverFrame_OnLoad(self)
 
 	applyCustomAchieverWindowOptions()
 	
-	self:SetTitle(GetAddOnMetadata("CustomAchiever", "Title"))
+	self:SetTitle("CustomAchiever")
 	SetPortraitToTexture(self.PortraitContainer.portrait, "Interface\\Friendsframe\\friendsframescrollicon")
 	
 	local custacOptionsButton = createCustomAchieverOptionsButton(self)

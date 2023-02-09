@@ -1,18 +1,18 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true);
 
 local function encodeAndSendAchievementInfo(aData, aTarget, messageType)
-	aData["Version"] = GetAddOnMetadata("CustomAchiever", "Version")
+	aData["Version"] = GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version")
 	local s = CustomAchiever:Serialize(aData)
 	local text = messageType.."#"..s
 	CustomAchiever:SendCommMessage(CustomAchieverGlobal_CommPrefix, text, "WHISPER", aTarget)
 end
 
 local function sendInfo(info, aTarget, messageType)
-	CustomAchiever:SendCommMessage(CustomAchieverGlobal_CommPrefix, messageType.."#"..info, aTarget and "WHISPER" or "GUILD", aTarget)
+	CustomAchiever:SendCommMessage(CustomAchieverGlobal_CommPrefix, (info and messageType.."#"..info) or messageType.."#NoData", (aTarget and "WHISPER") or "GUILD", aTarget)
 end
 
 function CustAc_SendCallForUsers()
-	sendInfo(GetAddOnMetadata("CustomAchiever", "Version"), nil, "CallUsers")
+	sendInfo(GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version"), nil, "CallUsers")
 end
 
 function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
@@ -117,7 +117,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 		local messageType, messageMessage = strsplit("#", message, 2)
 		--if not isPlayerCharacter(sender) then
 		if messageType == "CallUsers" then
-			sendInfo(GetAddOnMetadata("CustomAchiever", "Version"), sender, "AnswerUsers")
+			sendInfo(GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version"), sender, "AnswerUsers")
 			CustomAchieverData["Users"][CustAc_addRealm(sender)] = messageMessage
 		elseif messageType == "AnswerUsers" then
 			CustomAchieverData["Users"][CustAc_addRealm(sender)] = messageMessage
