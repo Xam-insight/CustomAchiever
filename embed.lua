@@ -47,6 +47,7 @@ StaticPopupDialogs["CUSTAC_DELETE"] = {
 	button2 = CANCEL,
 	OnAccept = function (self, data)
 		CustAc_DeleteAchievement(data.achievementId)
+		CustAc_SendUpdatedAchievementData(data.achievementId, custacDataTarget)
 		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
 		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
 		CustAc_InitSelectedAchievement(nextCustomAchieverId, selectedAchievement.achievementCategory)
@@ -58,25 +59,25 @@ StaticPopupDialogs["CUSTAC_DELETE"] = {
 	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
 }
 
-local dataTarget = UNKNOWN
+custacDataTarget = UNKNOWN
 function Custac_DetermineTarget()
 	local name, realm = UnitFullName("target")
 	local target = (name and CustAc_addRealm(name, realm)) or CustAc_playerCharacter()
 	
 	if UnitIsPlayer("target") then
-		dataTarget = target
+		custacDataTarget = target
 	else
-		dataTarget = CustAc_playerCharacter()
+		custacDataTarget = CustAc_playerCharacter()
 	end
 end
 
 function Custac_ChangeAwardButtonText()
 	if CustomAchieverFrame:IsShown() then
-		if dataTarget == UNKNOWN then
+		if custacDataTarget == UNKNOWN then
 			Custac_DetermineTarget()
 		end
 	
-		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, dataTarget, CustAc_isPlayerCharacter(dataTarget)) then
+		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, custacDataTarget, CustAc_isPlayerCharacter(custacDataTarget)) then
 			CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_REVOKE"])
 		else
 			CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_AWARD"])
@@ -94,7 +95,7 @@ end
 
 function CustAc_TargetUnit(name, exactMatch)
 	if exactMatch then
-		dataTarget = CustAc_addRealm(name)
+		custacDataTarget = CustAc_addRealm(name)
 		Custac_ChangeAwardButtonText()
 	elseif UnitIsPlayer(name) then
 		Custac_DetermineTarget()
@@ -198,7 +199,7 @@ function createCustomAchieverOptionsButton(parent)
 end
 
 function CustomAchieverFrameRewardRefreshButton_OnClick()
-	CustAc_SendUpdatedCategoryData(selectedAchievement.achievementCategory, dataTarget)
+	CustAc_SendUpdatedCategoryData(selectedAchievement.achievementCategory, custacDataTarget)
 end
 
 function CustAc_SaveCategory(popup, categoryName, categoryId)
@@ -363,7 +364,7 @@ end
 function CustomAchieverFrame_UpdateTargetTooltip()
 	CustomAchieverTargetTooltip:SetOwner(CustomAchieverFrame, "ANCHOR_BOTTOM", 0, 0)
 	CustomAchieverTargetTooltip:ClearLines()
-	CustomAchieverTargetTooltip:AddDoubleLine(STATUS_TEXT_TARGET, dataTarget or UNKNOWN, 1.0, 0.82, 0.0, 1.0, 1.0, 1.0)
+	CustomAchieverTargetTooltip:AddDoubleLine(STATUS_TEXT_TARGET, custacDataTarget or UNKNOWN, 1.0, 0.82, 0.0, 1.0, 1.0, 1.0)
 	CustomAchieverTargetTooltip:Show()
 end
 
@@ -397,17 +398,17 @@ end
 
 
 function CustAc_AwardButton_OnClick(self)
-	if dataTarget then
+	if custacDataTarget then
 		local data = {}
 		data["Categories"]   = {}
 		data["Achievements"] = {}
 		local categoryId = CustomAchieverData["Achievements"][selectedAchievement.achievementId]["parent"]
 		data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
 		data["Achievements"][selectedAchievement.achievementId] = CustomAchieverData["Achievements"][selectedAchievement.achievementId]
-		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, dataTarget, CustAc_isPlayerCharacter(dataTarget)) then
-			manualEncodeAndSendAchievementInfo(data, dataTarget, "Revoke")
+		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, custacDataTarget, CustAc_isPlayerCharacter(custacDataTarget)) then
+			manualEncodeAndSendAchievementInfo(data, custacDataTarget, "Revoke")
 		else
-			manualEncodeAndSendAchievementInfo(data, dataTarget, "Award")
+			manualEncodeAndSendAchievementInfo(data, custacDataTarget, "Award")
 		end
 	end
 end
@@ -453,7 +454,7 @@ function CustAc_SaveButton_OnClick()
 		
 		CustomAchieverFrame_UpdateAchievementAlertFrame()
 		
-		CustAc_SendUpdatedAchievementData(selectedAchievement.achievementId, dataTarget)
+		CustAc_SendUpdatedAchievementData(selectedAchievement.achievementId, custacDataTarget)
 	end
 end
 

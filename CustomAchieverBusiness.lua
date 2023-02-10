@@ -8,6 +8,31 @@ function initCustomAchieverBusinessObjects()
 	-- CustomAchieverData
 	if not CustomAchieverData then
 		CustomAchieverData = {}
+	elseif not CustomAchieverData["DataCleaning_1.1.12"] then
+		if CustomAchieverData["AwardedPlayers"] then
+			for k,v in pairs(CustomAchieverData["AwardedPlayers"]) do
+				if CustAc_countTableElements(v) == 0 then
+					CustomAchieverData["AwardedPlayers"][k] = nil
+				end
+			end
+		end
+		if CustomAchieverData["PendingUpdates"] then
+			if CustomAchieverData["PendingUpdates"]["Categories"] then
+				for k,v in pairs(CustomAchieverData["PendingUpdates"]["Categories"]) do
+					if CustAc_countTableElements(v) == 0 then
+						CustomAchieverData["PendingUpdates"]["Categories"][k] = nil
+					end
+				end
+			end
+			if CustomAchieverData["PendingUpdates"]["Achievements"] then
+				for k,v in pairs(CustomAchieverData["PendingUpdates"]["Achievements"]) do
+					if CustAc_countTableElements(v) == 0 then
+						CustomAchieverData["PendingUpdates"]["Achievements"][k] = nil
+					end
+				end
+			end
+		end
+		CustomAchieverData["DataCleaning_1.1.12"] = true
 	end
 
 	if not CustomAchieverData["Categories"] then
@@ -514,4 +539,14 @@ end
 
 function CustAc_getTimeUTCinMS()
 	return tostring(time(date("!*t")))
+end
+
+function CustAc_countTableElements(table)
+	local count = 0
+	if table then
+		for _ in pairs(table) do
+			count = count + 1
+		end
+	end
+	return count
 end
