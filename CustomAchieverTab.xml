@@ -1,5 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Script file="CustomAchieverTab.lua" />
+	<Frame name="CustAc_LoadingSpinnerTemplate" toplevel="true" inherits="LoadingSpinnerTemplate" virtual="true">
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+	</Frame>
 	<Frame name="CustAc_CategoriesTemplate" hidden="true" virtual="true" inherits="AchivementGoldBorderBackdrop">
 		<Anchors>
 			<Anchor point="TOPLEFT" x="21" y="-19"/>
@@ -24,6 +29,7 @@
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="1" y="1"/>
 				</Anchors>
 			</EventFrame>
+			<Frame parentKey="LoadingSpinner" toplevel="true" inherits="CustAc_LoadingSpinnerTemplate"/>
 		</Frames>
 	</Frame>
 	<Frame name="CustAc_AchievementFrameAchievementsTemplate" hidden="true" virtual="true">

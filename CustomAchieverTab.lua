@@ -30,16 +30,48 @@ end
 
 local g_achievementSelectionBehavior = nil
 
+local custacLastTableGeneration
+local custacGenerationPending
 function CustAc_LoadAchievementsData()
 	if AchievementFrame then
-
+		local callTime = time()
+		if not custacLastTableGeneration then
+			custacLastTableGeneration = callTime
+		else
+			if callTime < custacLastTableGeneration + 2 then
+				if not custacGenerationPending then
+					custacGenerationPending = true
+					CustAc_Categories.LoadingSpinner:Show()
+					C_Timer.After(2 - (callTime - custacLastTableGeneration), function()
+						custacGenerationPending = nil
+						CustAc_LoadAchievementsData()
+					end)
+				end
+				return
+			else
+				custacLastTableGeneration = callTime
+			end
+		end
+		
+		local loadTime = time()
+		
 		CUSTOMACHIEVER_ACHIEVEMENTUI_CATEGORIES = {}
 		CUSTOMACHIEVER_CATEGORIES = {}
 		CUSTOMACHIEVER_ACHIEVEMENTS = {}
 
 		local categoriesId = {}
-		for k,v in pairs(CustomAchieverData["Categories"]) do
-			categoriesId[ #categoriesId + 1 ] = k
+		local categories = {}
+		for k,v in pairs(CustomAchieverData["Achievements"]) do
+			if v["parent"] and not categories[v["parent"]] then
+				categories[v["parent"]] = true
+				categoriesId[ #categoriesId + 1 ] = v["parent"]
+			end
+		end
+		for k,v in pairs(categories) do
+			if CustomAchieverData["Categories"][k]["parent"] and not categories[CustomAchieverData["Categories"][k]["parent"]] then
+				categories[CustomAchieverData["Categories"][k]["parent"]] = true
+				categoriesId[ #categoriesId + 1 ] = CustomAchieverData["Categories"][k]["parent"]
+			end
 		end
 		table.sort(categoriesId)
 
@@ -69,7 +101,9 @@ function CustAc_LoadAchievementsData()
 			if not CustomAchieverData["Achievements"][v]["firstAchiever"] then
 				CustAc_GetAchievement(CustomAchieverData["Achievements"][v])
 			end
-		end		
+		end
+		
+		CustAc_Categories.LoadingSpinner:Hide()
 	end
 end
 

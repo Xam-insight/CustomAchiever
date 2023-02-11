@@ -8,31 +8,49 @@ function initCustomAchieverBusinessObjects()
 	-- CustomAchieverData
 	if not CustomAchieverData then
 		CustomAchieverData = {}
-	elseif not CustomAchieverData["DataCleaning_1.1.12"] then
-		if CustomAchieverData["AwardedPlayers"] then
-			for k,v in pairs(CustomAchieverData["AwardedPlayers"]) do
-				if CustAc_countTableElements(v) == 0 then
-					CustomAchieverData["AwardedPlayers"][k] = nil
-				end
-			end
-		end
-		if CustomAchieverData["PendingUpdates"] then
-			if CustomAchieverData["PendingUpdates"]["Categories"] then
-				for k,v in pairs(CustomAchieverData["PendingUpdates"]["Categories"]) do
+	else
+		local playerCharacter = CustAc_fullName("player")
+		if not CustomAchieverData["DataCleaning_1.1.12"..playerCharacter] then
+			if CustomAchieverData["AwardedPlayers"] then
+				for k,v in pairs(CustomAchieverData["AwardedPlayers"]) do
+					for k2,v2 in pairs(v) do
+						if CustAc_isPlayerCharacter(k2) then
+							CustomAchieverData["AwardedPlayers"][k][k2] = nil
+						end
+					end
 					if CustAc_countTableElements(v) == 0 then
-						CustomAchieverData["PendingUpdates"]["Categories"][k] = nil
+						CustomAchieverData["AwardedPlayers"][k] = nil
 					end
 				end
 			end
-			if CustomAchieverData["PendingUpdates"]["Achievements"] then
-				for k,v in pairs(CustomAchieverData["PendingUpdates"]["Achievements"]) do
-					if CustAc_countTableElements(v) == 0 then
-						CustomAchieverData["PendingUpdates"]["Achievements"][k] = nil
+			if CustomAchieverData["PendingUpdates"] then
+				if CustomAchieverData["PendingUpdates"]["Categories"] then
+					for k,v in pairs(CustomAchieverData["PendingUpdates"]["Categories"]) do
+						for k2,v2 in pairs(v) do
+							if CustAc_isPlayerCharacter(k2) then
+								CustomAchieverData["PendingUpdates"]["Categories"][k][k2] = nil
+							end
+						end
+						if CustAc_countTableElements(v) == 0 then
+							CustomAchieverData["PendingUpdates"]["Categories"][k] = nil
+						end
+					end
+				end
+				if CustomAchieverData["PendingUpdates"]["Achievements"] then
+					for k,v in pairs(CustomAchieverData["PendingUpdates"]["Achievements"]) do
+						for k2,v2 in pairs(v) do
+							if CustAc_isPlayerCharacter(k2) then
+								CustomAchieverData["PendingUpdates"]["Achievements"][k][k2] = nil
+							end
+						end
+						if CustAc_countTableElements(v) == 0 then
+							CustomAchieverData["PendingUpdates"]["Achievements"][k] = nil
+						end
 					end
 				end
 			end
+			CustomAchieverData["DataCleaning_1.1.12_"..playerCharacter] = true
 		end
-		CustomAchieverData["DataCleaning_1.1.12"] = true
 	end
 
 	if not CustomAchieverData["Categories"] then
