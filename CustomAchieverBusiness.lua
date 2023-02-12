@@ -67,7 +67,13 @@ function initCustomAchieverBusinessObjects()
 
 	if not CustomAchieverData["PendingUpdates"] then
 		CustomAchieverData["PendingUpdates"] = {}
+	end
+
+	if not CustomAchieverData["PendingUpdates"]["Categories"] then
 		CustomAchieverData["PendingUpdates"]["Categories"] = {}
+	end
+
+	if not CustomAchieverData["PendingUpdates"]["Achievements"] then
 		CustomAchieverData["PendingUpdates"]["Achievements"] = {}
 	end
 

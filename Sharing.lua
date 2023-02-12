@@ -59,12 +59,12 @@ function CustAc_SendUpdatedAchievementData(achievementId, alsoSendTo)
 		if CustomAchieverData["AwardedPlayers"][achievementId] then
 			for k,v in pairs(CustomAchieverData["AwardedPlayers"][achievementId]) do
 				if not CustAc_isPlayerCharacter(k) and (not alsoSendTo or k ~= alsoSendTo) then
-					CustAc_SendUpdatedDataTo(k, achievementId, categoryId, data)
+					CustAc_SendUpdatedDataTo(k, data)
 				end
 			end
 		end
 		if alsoSendTo then
-			CustAc_SendUpdatedDataTo(alsoSendTo, achievementId, categoryId, data)
+			CustAc_SendUpdatedDataTo(alsoSendTo, data)
 		end
 	end
 end
@@ -96,33 +96,59 @@ function CustAc_SendUpdatedCategoryData(categoryId, alsoSendTo)
 		
 		for k,v in pairs(CustomAchieverData["PendingUpdates"]["Achievements"]) do
 			for k2,v2 in pairs(v) do
-				if not CustAc_isPlayerCharacter(k2) and CustomAchieverData["AwardedPlayers"][k][k2] then
-					data["Achievements"][k] = CustomAchieverData["Achievements"][k] or "DELETE"
-					targets[k2] = true
+				if not CustAc_isPlayerCharacter(k2) then
+					if CustomAchieverData["AwardedPlayers"][k] and CustomAchieverData["AwardedPlayers"][k][k2] then
+						data["Achievements"][k] = CustomAchieverData["Achievements"][k] or "DELETE"
+						targets[k2] = true
+					else
+						CustomAchieverData["PendingUpdates"]["Achievements"][k][k2] = nil
+						if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][k]) == 0 then
+							CustomAchieverData["PendingUpdates"]["Achievements"][k] = nil
+						end
+					end
+				end
+			end
+		end
+		
+		for k,v in pairs(CustomAchieverData["PendingUpdates"]["Categories"]) do
+			for k2,v2 in pairs(v) do
+				if not CustAc_isPlayerCharacter(k2) then
+					if CustomAchieverData["AwardedPlayers"][k] and CustomAchieverData["AwardedPlayers"][k][k2] then
+						data["Categories"][k] = CustomAchieverData["Categories"][k]
+						targets[k2] = true
+					else
+						CustomAchieverData["PendingUpdates"]["Categories"][k][k2] = nil
+						if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Categories"][k]) == 0 then
+							CustomAchieverData["PendingUpdates"]["Categories"][k] = nil
+						end
+					end
 				end
 			end
 		end
 		
 		for k,v in pairs(targets) do
-			CustAc_SendUpdatedDataTo(k, nil, nil, data)
+			CustAc_SendUpdatedDataTo(k, data)
 		end
 	end
 end
 
-function CustAc_SendUpdatedDataTo(player, achievementId, categoryId, data)
+function CustAc_SendUpdatedDataTo(player, data)
 	if not CustAc_isPlayerCharacter(sender) then
-		if categoryId then
-			if not CustomAchieverData["PendingUpdates"]["Categories"][categoryId] then
-				CustomAchieverData["PendingUpdates"]["Categories"][categoryId] = {}
+		if data["Categories"] then
+			for k,v in pairs(data["Categories"]) do
+				if not CustomAchieverData["PendingUpdates"]["Categories"][k] then
+					CustomAchieverData["PendingUpdates"]["Categories"][k] = {}
+				end
+				CustomAchieverData["PendingUpdates"]["Categories"][k][player] = true
 			end
-			CustomAchieverData["PendingUpdates"]["Categories"][categoryId][player] = true
 		end
-		
-		if achievementId then
-			if not CustomAchieverData["PendingUpdates"]["Achievements"][achievementId] then
-				CustomAchieverData["PendingUpdates"]["Achievements"][achievementId] = {}
+		if data["Achievements"] then
+			for k,v in pairs(data["Achievements"]) do
+				if not CustomAchieverData["PendingUpdates"]["Achievements"][k] then
+					CustomAchieverData["PendingUpdates"]["Achievements"][k] = {}
+				end
+				CustomAchieverData["PendingUpdates"]["Achievements"][k][player] = true
 			end
-			CustomAchieverData["PendingUpdates"]["Achievements"][achievementId][player] = true
 		end
 	end
 	
