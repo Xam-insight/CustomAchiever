@@ -274,14 +274,6 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 						end
 					end
 				end
-				
-				if updateData then
-					if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
-						CustAc_AchievementFrameCategories_UpdateDataProvider()
-						CustAc_AchievementFrameAchievements_UpdateDataProvider()
-					end
-					encodeAndSendAchievementInfo(o, sender, messageType.."Acknowledgment")
-				end
 			end
 		end
 	end

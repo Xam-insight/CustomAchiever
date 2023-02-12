@@ -134,7 +134,7 @@ function CustAc_ApplyIgnoreList()
 		end
 	end
 	if dataFound then
-		CustAc_LoadAchievementsData()
+		CustAc_LoadAchievementsData("CustAc_ApplyIgnoreList")
 		CustAc_AchievementFrame_UpdateAndSelectCategory(id)
 	end
 end
@@ -191,10 +191,7 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 			CustAc_SaveCategoryDataIntoAddon(id)
 		end
 		
-		CustAc_LoadAchievementsData()
-		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
-			CustAc_AchievementFrameCategories_UpdateDataProvider()
-		end
+		CustAc_LoadAchievementsData("CustAc_CreateOrUpdateCategory")
 	end
 end
 
@@ -241,10 +238,7 @@ function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, descri
 		CustomAchieverData["Achievements"][id] = data
 		CustAc_SaveAchievementDataIntoAddon(id)
 		
-		CustAc_LoadAchievementsData()
-		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
-			CustAc_AchievementFrameAchievements_UpdateDataProvider()
-		end
+		CustAc_LoadAchievementsData("CustAc_CreateOrUpdateAchievement")
 	end
 end
 
@@ -267,11 +261,7 @@ function CustAc_DeleteCategory(id, newCategory)
 		end
 	end
 	
-	CustAc_LoadAchievementsData()
-	if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
-		CustAc_AchievementFrameCategories_UpdateDataProvider()
-		CustAc_AchievementFrameAchievements_UpdateDataProvider()
-	end
+	CustAc_LoadAchievementsData("CustAc_DeleteCategory")
 end
 
 function CustAc_DetermineNewCategory(oldCategory, proposedCategory, proposedCategory2)
@@ -290,10 +280,7 @@ function CustAc_DeleteAchievement(id)
 		CustomAchieverData["Achievements"][id] = nil
 	end
 	
-	CustAc_LoadAchievementsData()
-	if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
-		CustAc_AchievementFrameAchievements_UpdateDataProvider()
-	end
+	CustAc_LoadAchievementsData("CustAc_DeleteAchievement")
 end
 
 function CustAc_GetAchievement(achievement)
@@ -379,10 +366,7 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif then
 			EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, name, 5208, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, "Custom Achiever", function() CustAc_ShowAchievement(id) end, data["icon"])
 		end
-		CustAc_LoadAchievementsData()
-		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
-			CustAc_AchievementFrameAchievements_UpdateDataProvider()
-		end
+		CustAc_LoadAchievementsData("CustAc_CompleteAchievement")
 	end
 end
 
@@ -431,10 +415,7 @@ function CustAc_RevokeAchievement(id, earnedBy)--/run CustAc_RevokeAchievement("
 		CustomAchieverData["Achievements"][id] = data
 		CustAc_SaveAchievementDataIntoAddon(id)
 
-		CustAc_LoadAchievementsData()
-		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
-			CustAc_AchievementFrameAchievements_UpdateDataProvider()
-		end
+		CustAc_LoadAchievementsData("CustAc_RevokeAchievement")
 		
 		local name = CustAc_getLocaleData(data, "name")
 	end

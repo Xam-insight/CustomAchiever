@@ -32,19 +32,20 @@ local g_achievementSelectionBehavior = nil
 
 local custacLastTableGeneration
 local custacGenerationPending
-function CustAc_LoadAchievementsData()
+function CustAc_LoadAchievementsData(callOrigin)
+	--CustomAchiever:Print("Debug CustAc_LoadAchievementsData: ", callOrigin)
 	if AchievementFrame then
 		local callTime = time()
 		if not custacLastTableGeneration then
 			custacLastTableGeneration = callTime
 		else
-			if callTime < custacLastTableGeneration + 2 then
+			if callTime < custacLastTableGeneration + 1 then
 				if not custacGenerationPending then
 					custacGenerationPending = true
 					CustAc_Categories.LoadingSpinner:Show()
-					C_Timer.After(2 - (callTime - custacLastTableGeneration), function()
+					C_Timer.After(1 - (callTime - custacLastTableGeneration), function()
 						custacGenerationPending = nil
-						CustAc_LoadAchievementsData()
+						CustAc_LoadAchievementsData("CustAc_LoadAchievementsData")
 					end)
 				end
 				return
@@ -101,6 +102,11 @@ function CustAc_LoadAchievementsData()
 			if not CustomAchieverData["Achievements"][v]["firstAchiever"] then
 				CustAc_GetAchievement(CustomAchieverData["Achievements"][v])
 			end
+		end
+		
+		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
+			CustAc_AchievementFrameCategories_UpdateDataProvider()
+			CustAc_AchievementFrameAchievements_UpdateDataProvider()
 		end
 		
 		CustAc_Categories.LoadingSpinner:Hide()
@@ -160,7 +166,6 @@ function CustAc_AchievementFrame_Load()
 	CustAc_CompleteAchievement("CustomAchiever1")
 	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever", 133053,  10, "Un petit pas pour Azeroth...",  "Créer votre premier Haut fait.", "", nil,"frFR")
 	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever",    nil, nil, "One small step for Azeroth...", "Create your first Achievement.", "", nil,"enUS")
-	CustAc_LoadAchievementsData()
 end
 
 function CustAc_AchievementFrameCategories_OnLoad(self)
