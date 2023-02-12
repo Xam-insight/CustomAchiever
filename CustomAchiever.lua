@@ -68,8 +68,8 @@ function CustomAchiever:OnEnable()
 		
 		hooksecurefunc("TargetUnit", CustAc_TargetUnit)
 		
-		--TODO--TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, CustAc_OnTooltipUnit)
-		--TODO--GameTooltip:HookScript("OnShow", CustAc_CommunitiesMemberOnEnter)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, CustAc_OnTooltipUnit)
+		GameTooltip:HookScript("OnShow", CustAc_CommunitiesMemberOnEnter)
 	end
 	CustAc_CreateMinimapButton()
 end
