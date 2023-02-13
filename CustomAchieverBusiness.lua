@@ -10,7 +10,7 @@ function initCustomAchieverBusinessObjects()
 		CustomAchieverData = {}
 	else
 		local playerCharacter = CustAc_fullName("player")
-		if not CustomAchieverData["DataCleaning_1.1.12"..playerCharacter] then
+		if not CustomAchieverData["DataCleaning_1.2"..playerCharacter] then
 			if CustomAchieverData["AwardedPlayers"] then
 				for k,v in pairs(CustomAchieverData["AwardedPlayers"]) do
 					for k2,v2 in pairs(v) do

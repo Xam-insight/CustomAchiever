@@ -595,4 +595,5 @@ function CustacCategoryCreateDialogAcceptButton_OnClick(self)
 		local achievementId = self:GetParent():GetAttribute("achievementId")
 		CustAc_CreateOrUpdateAchievement(achievementId, categoryId)
 	end
+	CustAc_SendUpdatedCategoryData(categoryId, custacDataTarget)
 end
