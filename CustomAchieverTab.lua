@@ -71,7 +71,9 @@ function CustAc_LoadAchievementsData(callOrigin)
 		for k,v in pairs(categories) do
 			if CustomAchieverData["Categories"][k]["parent"] and not categories[CustomAchieverData["Categories"][k]["parent"]] then
 				categories[CustomAchieverData["Categories"][k]["parent"]] = true
-				categoriesId[ #categoriesId + 1 ] = CustomAchieverData["Categories"][k]["parent"]
+				if CustomAchieverData["Categories"][k]["parent"] and CustomAchieverData["Categories"][k]["parent"] ~= true then
+					categoriesId[ #categoriesId + 1 ] = CustomAchieverData["Categories"][k]["parent"]
+				end
 			end
 		end
 		table.sort(categoriesId)
