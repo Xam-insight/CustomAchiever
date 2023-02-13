@@ -414,7 +414,7 @@
 		<KeyValues>
 			<KeyValue key="titleText" value="CATEGORY" type="global"/>
 		</KeyValues>
-		<Size x="460" y="150"/>
+		<Size x="460" y="170"/>
 		<Anchors>
 			<Anchor point="CENTER"/>
 		</Anchors>
@@ -471,6 +471,38 @@
 							</OnEscapePressed>
 						</Scripts>
 					</EditBox>
+					<Frame parentKey="MoveAchievement">
+						<Size y="20"/>
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.ContentArea" y="-50"/>
+							<Anchor point="LEFT" relativeKey="$parent.ContentArea" x="20"/>
+							<Anchor point="RIGHT" relativeKey="$parent.ContentArea" x="0"/>
+						</Anchors>
+						<Frames>
+							<CheckButton parentKey="CheckButton">
+								<Size x="20" y="20"/>
+								<Anchors>
+									<Anchor point="TOPLEFT"/>
+								</Anchors>
+								<NormalTexture atlas="checkbox-minimal" useAtlasSize="true"/>
+								<PushedTexture atlas="checkbox-minimal" useAtlasSize="true"/>
+								<CheckedTexture atlas="checkmark-minimal" useAtlasSize="true"/>
+								<DisabledCheckedTexture atlas="checkmark-minimal-disabled" useAtlasSize="true"/>
+							</CheckButton>
+						</Frames>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString parentKey="Label" inherits="GameFontNormal">
+									<Anchors>
+										<Anchor point="LEFT" relativeKey="$parent.CheckButton" relativePoint="RIGHT" x="10" y="0"/>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad function="CustAc_MoveAchievement_OnLoad"/>
+						</Scripts>
+					</Frame>
 				</Frames>
 				<Scripts>
 					<OnLoad>
@@ -485,9 +517,7 @@
 					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ContentArea"/>
 				</Anchors>
 				<Scripts>
-					<OnClick>
-						CustAc_SaveCategory(self:GetParent(), self:GetParent().NameControl.EditBox:GetText(), self:GetParent():GetAttribute("categoryId"))
-					</OnClick>
+					<OnClick function="CustacCategoryCreateDialogAcceptButton_OnClick" />
 				</Scripts>
 			</Button>
 			<Button parentKey="DeleteButton" inherits="UIPanelButtonTemplate, UIButtonTemplate" text="DELETE">
@@ -520,16 +550,8 @@
 			<OnLoad>
 				self.Title:SetText(self.titleText)
 			</OnLoad>
-			<OnShow>
-				local categoryId = self:GetAttribute("categoryId")
-				if categoryId then
-					self.NameControl.EditBox:SetText(CustAc_getLocaleData(CustomAchieverData["Categories"][categoryId], "name"))
-					self.DeleteButton:Enable()
-				else
-					self.NameControl.EditBox:SetText("")
-					self.DeleteButton:Disable()
-				end
-			</OnShow>
+			<OnShow function="CustacCategoryCreateDialog_OnShow" />
+			<OnHide function="CustacCategoryCreateDialog_OnHide" />
 		</Scripts>
 	</Frame>
 	<GameTooltip name="CustomAchieverTooltip" frameStrata="TOOLTIP" hidden="true" parent="UIParent" inherits="GameTooltipTemplate" />

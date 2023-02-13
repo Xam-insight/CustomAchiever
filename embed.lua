@@ -240,6 +240,7 @@ function CustAc_CategoryDropDownMenu_Update(self)
 		local gearIcon = button.Icon;
 		if button.mouseOverIcon and gearIcon:IsMouseOver() then
 			CustacCategoryCreateDialog:SetAttribute("categoryId", id);
+			CustacCategoryCreateDialog:SetAttribute("achievementId", selectedAchievement.achievementId ~= nextCustomAchieverId and selectedAchievement.achievementId);
 			StaticPopupSpecial_Show(CustacCategoryCreateDialog)
 		else
 			LibDD:UIDropDownMenu_SetSelectedValue(dropdown, id)
@@ -281,7 +282,6 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	for k,v in pairs(CustomAchieverData["Categories"]) do
 		if k ~= nextCustomCategoryId and CustomAchieverData["PersonnalCategories"][k] then
 			local info = LibDD:UIDropDownMenu_CreateInfo()
-			info       = LibDD:UIDropDownMenu_CreateInfo()
 			info.text  = CustAc_getLocaleData(v, "name")
 			info.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
 			info.iconXOffset = -5
@@ -320,7 +320,6 @@ function CustAc_AchievementDropDownMenu_Update(self)
 	for k,v in pairs(CustomAchieverData["Achievements"]) do
 		if v["parent"] == LibDD:UIDropDownMenu_GetSelectedValue(CustomAchieverCategoryDownMenu) then
 			local info = LibDD:UIDropDownMenu_CreateInfo()
-			info       = LibDD:UIDropDownMenu_CreateInfo()
 			info.text  = CustAc_getLocaleData(v, "name")
 			info.value = k
 			info.func  = CustAc_SelectAchievement
@@ -554,4 +553,46 @@ end
 
 function CustomAchieverButtonLeave(self)
 	CustomAchieverTooltip:Hide()
+end
+
+function CustacCategoryCreateDialog_OnShow(self)
+	LibDD:UIDropDownMenu_DisableDropDown(CustomAchieverCategoryDownMenu)
+	LibDD:UIDropDownMenu_DisableDropDown(CustomAchieverAchievementsDownMenu)
+	
+	local categoryId = self:GetAttribute("categoryId")
+	if categoryId then
+		self.NameControl.EditBox:SetText(CustAc_getLocaleData(CustomAchieverData["Categories"][categoryId], "name"))
+		self.DeleteButton:Enable()
+	else
+		self.NameControl.EditBox:SetText("")
+		self.DeleteButton:Disable()
+	end
+	
+	self.NameControl.MoveAchievement.CheckButton:SetChecked(false)
+	local achievementId = self:GetAttribute("achievementId")
+	if achievementId and categoryId and CustomAchieverData["Achievements"][achievementId]["parent"] ~= categoryId then
+		self.NameControl.MoveAchievement.CheckButton:Show()
+		self.NameControl.MoveAchievement.Label:Show()
+	else
+		self.NameControl.MoveAchievement.CheckButton:Hide()
+		self.NameControl.MoveAchievement.Label:Hide()
+	end
+end
+
+function CustacCategoryCreateDialog_OnHide(self)
+	LibDD:UIDropDownMenu_EnableDropDown(CustomAchieverCategoryDownMenu)
+	LibDD:UIDropDownMenu_EnableDropDown(CustomAchieverAchievementsDownMenu)
+end
+
+function CustAc_MoveAchievement_OnLoad(self)
+	self.Label:SetText(L["MENUCUSTAC_MOVE_ACHIEVEMENT"])
+end
+
+function CustacCategoryCreateDialogAcceptButton_OnClick(self)
+	local categoryId = self:GetParent():GetAttribute("categoryId")
+	CustAc_SaveCategory(self:GetParent(), self:GetParent().NameControl.EditBox:GetText(), categoryId)
+	if self:GetParent().NameControl.MoveAchievement.CheckButton:GetChecked() then
+		local achievementId = self:GetParent():GetAttribute("achievementId")
+		CustAc_CreateOrUpdateAchievement(achievementId, categoryId)
+	end
 end
