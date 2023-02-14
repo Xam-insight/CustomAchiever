@@ -1,10 +1,24 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true);
 
+local messageTypeColors = {
+	["CallUsers"] = "FFD2B4DE",
+	["AnswerUsers"] = "FFD2B4DE",
+	["Award"] = "FFABEBC6",
+	["Revoke"] = "FFF5B7B1",
+	["Update"] = "FF85C1E9",
+	["AwardAcknowledgment"] = "FFABEBC6",
+	["RevokeAcknowledgment"] = "FFF5B7B1",
+	["UpdateAcknowledgment"] = "FF85C1E9",
+}
+
 local function encodeAndSendAchievementInfo(aData, aTarget, messageType)
 	aData["Version"] = GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version")
 	local s = CustomAchiever:Serialize(aData)
 	local text = messageType.."#"..s
 	CustomAchiever:SendCommMessage(CustomAchieverGlobal_CommPrefix, text, "WHISPER", aTarget)
+	if not CustAc_isPlayerCharacter(aTarget) then
+		CustomAchieverLogs_SetText("%s sent to %s.", "|c"..messageTypeColors[messageType]..messageType.."|r", CustAc_delRealm(aTarget))
+	end
 end
 
 local function sendInfo(info, aTarget, messageType)
@@ -158,14 +172,15 @@ end
 CustomAchieverAcknowledgmentReceived = {}
 function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, sender)
 	if prefix == CustomAchieverGlobal_CommPrefix then
+		local senderFullName = CustAc_addRealm(sender)
 		--CustomAchiever:Print(time().." - Received message from "..sender..".")
 		local messageType, messageMessage = strsplit("#", message, 2)
 		--if not isPlayerCharacter(sender) then
 		if messageType == "CallUsers" then
 			sendInfo(GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version"), sender, "AnswerUsers")
-			CustomAchieverData["Users"][CustAc_addRealm(sender)] = messageMessage
+			CustomAchieverData["Users"][senderFullName] = messageMessage
 		elseif messageType == "AnswerUsers" then
-			CustomAchieverData["Users"][CustAc_addRealm(sender)] = messageMessage
+			CustomAchieverData["Users"][senderFullName] = messageMessage
 		else
 			local isSenderSelf = CustAc_isPlayerCharacter(sender)
 			
@@ -173,7 +188,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 			if success == false then
 				CustomAchiever:Print(time().." - Received corrupted data from "..sender..".")
 			else
-				CustomAchieverData["Users"][CustAc_addRealm(sender)] = o.Version or "UnknownVersion"
+				CustomAchieverData["Users"][senderFullName] = o.Version or "UnknownVersion"
 				local updateData = messageType == "Award" or messageType == "Revoke" or messageType == "Update"
 				if o.Categories then
 					for k,v in pairs(o.Categories) do
@@ -189,11 +204,11 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 								if not CustomAchieverData["AwardedPlayers"][id] then
 									CustomAchieverData["AwardedPlayers"][id] = {}
 								end
-								CustomAchieverData["AwardedPlayers"][id][CustAc_addRealm(sender)] = true
+								CustomAchieverData["AwardedPlayers"][id][senderFullName] = true
 							end
 							if messageType == "UpdateAcknowledgment" then
 								if CustomAchieverData["PendingUpdates"]["Categories"][id] then
-									CustomAchieverData["PendingUpdates"]["Categories"][id][CustAc_addRealm(sender)] = nil
+									CustomAchieverData["PendingUpdates"]["Categories"][id][senderFullName] = nil
 									if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Categories"][id]) == 0 then
 										CustomAchieverData["PendingUpdates"]["Categories"][id] = nil
 									end
@@ -209,18 +224,18 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 							local id = k
 							if messageType == "UpdateAcknowledgment" then
 								if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
-									CustomAchieverData["PendingUpdates"]["Achievements"][id][CustAc_addRealm(sender)] = nil
+									CustomAchieverData["PendingUpdates"]["Achievements"][id][senderFullName] = nil
 									if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][id]) == 0 then
 										CustomAchieverData["PendingUpdates"]["Achievements"][id] = nil
 									end
 								end
 								if CustomAchieverData["AwardedPlayers"][id] then
-									CustomAchieverData["AwardedPlayers"][id][CustAc_addRealm(sender)] = nil
+									CustomAchieverData["AwardedPlayers"][id][senderFullName] = nil
 									if CustAc_countTableElements(CustomAchieverData["AwardedPlayers"][id]) == 0 then
 										CustomAchieverData["AwardedPlayers"][id] = nil
 									end
 								end
-								CustomAchieverAcknowledgmentReceived[CustAc_addRealm(sender)] = true
+								CustomAchieverAcknowledgmentReceived[senderFullName] = true
 							else
 								CustAc_DeleteAchievement(id)
 							end
@@ -243,7 +258,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 								CustAc_RevokeAchievement(id)
 							elseif messageType == "UpdateAcknowledgment" then
 								if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
-									CustomAchieverData["PendingUpdates"]["Achievements"][id][CustAc_addRealm(sender)] = nil
+									CustomAchieverData["PendingUpdates"]["Achievements"][id][senderFullName] = nil
 									if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][id]) == 0 then
 										CustomAchieverData["PendingUpdates"]["Achievements"][id] = nil
 									end
@@ -251,22 +266,22 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 								if not isSenderSelf then
 									if not CustomAchieverData["AwardedPlayers"][id] then
 										CustomAchieverData["AwardedPlayers"][id] = {}
-										CustomAchieverData["AwardedPlayers"][id][CustAc_addRealm(sender)] = false
+										CustomAchieverData["AwardedPlayers"][id][senderFullName] = false
 									end
-									CustomAchieverAcknowledgmentReceived[CustAc_addRealm(sender)] = true
+									CustomAchieverAcknowledgmentReceived[senderFullName] = true
 								end
 							else
 								if not isSenderSelf then
 									if not CustomAchieverData["AwardedPlayers"][id] then
 										CustomAchieverData["AwardedPlayers"][id] = {}
 									end
-									CustomAchieverAcknowledgmentReceived[CustAc_addRealm(sender)] = true
+									CustomAchieverAcknowledgmentReceived[senderFullName] = true
 								end
 								if messageType == "AwardAcknowledgment" then
-									if not isSenderSelf then CustomAchieverData["AwardedPlayers"][id][CustAc_addRealm(sender)] = true end
+									if not isSenderSelf then CustomAchieverData["AwardedPlayers"][id][senderFullName] = true end
 									CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_AWARD"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE..GetPlayerLink(sender, ("[%s]"):format(sender))))
 								elseif messageType == "RevokeAcknowledgment" then
-									if not isSenderSelf then CustomAchieverData["AwardedPlayers"][id][CustAc_addRealm(sender)] = false end
+									if not isSenderSelf then CustomAchieverData["AwardedPlayers"][id][senderFullName] = false end
 									CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_REVOKE"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE..GetPlayerLink(sender, ("[%s]"):format(sender))))
 								end
 								Custac_ChangeAwardButtonText()
@@ -274,8 +289,13 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 						end
 					end
 				end
+				
+				if updateData then
+					encodeAndSendAchievementInfo(o, sender, messageType.."Acknowledgment")
+				elseif not isSenderSelf then
+					CustomAchieverLogs_SetText("%s received from %s.", "|c"..messageTypeColors[messageType]..messageType.."|r", CustAc_delRealm(sender))
+				end
 			end
 		end
 	end
 end
-

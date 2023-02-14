@@ -10,6 +10,10 @@ function initCustomAchieverBusinessObjects()
 		CustomAchieverData = {}
 	else
 		local playerCharacter = CustAc_fullName("player")
+		if not CustomAchieverData["DataCleaning_1.2"] then
+			CustomAchieverDataBackup = CustomAchieverData
+			CustomAchieverData["DataCleaning_1.2"] = true
+		end
 		if not CustomAchieverData["DataCleaning_1.2"..playerCharacter] then
 			if CustomAchieverData["AwardedPlayers"] then
 				for k,v in pairs(CustomAchieverData["AwardedPlayers"]) do
@@ -49,7 +53,7 @@ function initCustomAchieverBusinessObjects()
 					end
 				end
 			end
-			CustomAchieverData["DataCleaning_1.1.12_"..playerCharacter] = true
+			CustomAchieverData["DataCleaning_1.2_"..playerCharacter] = true
 		end
 	end
 
@@ -554,4 +558,12 @@ function CustAc_countTableElements(table)
 		end
 	end
 	return count
+end
+
+function CustomAchieverLogs_SetText(logLine, info1, info2)
+	if CustomAchieverLogs then
+		local logsText = CustomAchieverLogs:GetText()
+		local newLog = format(logLine, info1, "|cFFF4D03F["..info2.."]|r").."|n"
+		CustomAchieverLogs:Insert(newLog)
+	end
 end

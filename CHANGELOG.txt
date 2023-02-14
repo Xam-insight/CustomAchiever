@@ -2,6 +2,7 @@
 	- When editing a Category, you can move the selected achievement into it.
 	- Deletion of Achievements is now shared with other users.
 	- Target tooltip now shows user CustomAchiever version if available.
+	- New log window to track data shared with users.
 - v1.1.11
 	- Fixed: DeadpoolGithubIssue#1 - Lua error. Lua error on Calling For Users in Deadpool_CustomAchiever Addon.
 - v1.1.10

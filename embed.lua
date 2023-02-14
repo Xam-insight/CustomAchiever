@@ -114,6 +114,8 @@ function CustomAchieverFrame_OnLoad(self)
 	SetPortraitToTexture(self.PortraitContainer.portrait, "Interface\\Friendsframe\\friendsframescrollicon")
 	
 	local custacOptionsButton = createCustomAchieverOptionsButton(self)
+	local custacLogsButton = createCustomAchieverLogsButton(self)
+	CustomAchieverLogs:Disable()
 	
 	CustomAchieverFrame.RefreshButton:SetAttribute("tooltip", L["REFRESH_TOOLTIP"])
 	CustomAchieverFrame.RefreshButton:SetAttribute("tooltipDetail", { L["REFRESH_TOOLTIPDETAIL"] })
@@ -191,6 +193,21 @@ function createCustomAchieverOptionsButton(parent)
 
 	local optionsButton = CreateFrame("Button", name, parent, "CustomAchieverOptionsButtonTemplate")
 	optionsButton:SetPoint("TOPRIGHT", -24, -4)
+	optionsButton:SetNormalTexture(iconPath)
+	optionsButton:SetAttribute("tooltip", tooltip)
+	optionsButton:SetAttribute("tooltipDetail", { tooltipDetail })
+
+	return optionsButton
+end
+
+function createCustomAchieverLogsButton(parent)
+	local name = "CustomAchieverLogsButton"
+	local iconPath = "Interface\\GossipFrame\\WorkorderGossipIcon"
+	local tooltip = L["LOGS_TOOLTIP"]
+	local tooltipDetail = L["LOGS_TOOLTIPDETAIL"]
+
+	local optionsButton = CreateFrame("Button", name, parent, "CustomAchieverLogsButtonTemplate")
+	optionsButton:SetPoint("TOPRIGHT", -41, -4)
 	optionsButton:SetNormalTexture(iconPath)
 	optionsButton:SetAttribute("tooltip", tooltip)
 	optionsButton:SetAttribute("tooltipDetail", { tooltipDetail })
@@ -596,4 +613,14 @@ function CustacCategoryCreateDialogAcceptButton_OnClick(self)
 		CustAc_CreateOrUpdateAchievement(achievementId, categoryId)
 	end
 	CustAc_SendUpdatedCategoryData(categoryId, custacDataTarget)
+end
+
+function CustomAchieverLogsButton_OnClick()
+	if CustomAchieverFrame then
+		if CustomAchieverFrame.DetailsPanel:IsShown() then
+			CustomAchieverFrame.DetailsPanel:Hide()
+		else
+			CustomAchieverFrame.DetailsPanel:Show()
+		end
+	end
 end

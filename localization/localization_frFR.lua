@@ -16,6 +16,8 @@ L["ENABLE_MINIMAPBUTTON_DESC"] = "Affiche / cache le bouton de la Minimap"
 L["WINDOW_SECTION"] = "Options de fenêtre Custom Achiever"
 L["MENUOPTIONS_TOOLTIP"] = "Options de Custom Achiever"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Modifier les options de Custom Achiever."
+L["LOGS_TOOLTIP"] = "Journaux"
+L["LOGS_TOOLTIPDETAIL"] = "Affiche / cache les journaux."
 
 L["REFRESH_TOOLTIP"] = "Raffraîchir"
 L["REFRESH_TOOLTIPDETAIL"] = "Envoie les hauts faits de la catégorie à la cible|net aux utilisateurs connus de Custom Achiever."

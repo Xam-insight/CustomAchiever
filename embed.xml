@@ -307,15 +307,15 @@
 				</Scripts>
 			</Button>
 			<Frame parentKey="DetailsPanel" frameLevel="501" hidden="true">
-				<Size x="163" y="253"/>
+				<Size x="183" y="253"/>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-6" y="-29"/>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-4" y="-29"/>
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
 						<Texture parentKey="BlackBackground">
 							<Anchors>
-								<Anchor point="TOPLEFT" x="2" y="-12"/>
+								<Anchor point="TOPLEFT" x="5" y="-12"/>
 								<Anchor point="BOTTOMRIGHT" x="-2" y="4"/>
 							</Anchors>
 							<Color color="BLACK_FONT_COLOR"/>
@@ -339,12 +339,12 @@
 						<Frames>
 							<ScrollFrame parentKey="ScrollFrame" inherits="UIPanelScrollFrameTemplate" >
 								<Anchors>
-									<Anchor point="TOPLEFT" x="5" y="-13"/>
-									<Anchor point="BOTTOMRIGHT" x="-26" y="5"/>
+									<Anchor point="TOPLEFT" x="10" y="-14"/>
+									<Anchor point="BOTTOMRIGHT" x="-26" y="6"/>
 								</Anchors>
 								<ScrollChild>
-									<EditBox parentKey="Text" multiLine="true" letters="4000" autoFocus="false">
-										<Size x="165" y="194"/>
+									<EditBox parentKey="Text" name="CustomAchieverLogs" multiLine="true" letters="4000" autoFocus="false">
+										<Size x="150" y="194"/>
 										<Scripts>
 											<OnLoad function="ScrollingEdit_OnLoad"/>
 											<OnCursorChanged function="ScrollingEdit_OnCursorChanged"/>
@@ -356,7 +356,7 @@
 											</OnEditFocusGained>
 											<OnEscapePressed function="EditBox_ClearFocus"/>
 										</Scripts>
-										<FontString inherits="GameFontHighlightSmall"/>
+										<FontString inherits="GameFontWhiteTiny"/>
 									</EditBox>
 								</ScrollChild>
 							</ScrollFrame>
@@ -406,6 +406,14 @@
 		<Size x="16" y="16" />
 		<Scripts>
 			<OnClick function="CustomAchieverOptions"/>
+			<OnEnter function="CustomAchieverButtonEnter"/>
+			<OnLeave function="CustomAchieverButtonLeave"/>
+		</Scripts>
+	</Button>
+	<Button name="CustomAchieverLogsButtonTemplate" frameStrata="HIGH" virtual="true">
+		<Size x="16" y="16" />
+		<Scripts>
+			<OnClick function="CustomAchieverLogsButton_OnClick"/>
 			<OnEnter function="CustomAchieverButtonEnter"/>
 			<OnLeave function="CustomAchieverButtonLeave"/>
 		</Scripts>

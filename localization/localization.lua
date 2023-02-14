@@ -16,6 +16,8 @@ L["ENABLE_MINIMAPBUTTON_DESC"] = "Shows / hides Minimap button"
 L["WINDOW_SECTION"] = "Custom Achiever window options"
 L["MENUOPTIONS_TOOLTIP"] = "Custom Achiever options"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Change Custom Achiever options."
+L["LOGS_TOOLTIP"] = "Logs"
+L["LOGS_TOOLTIPDETAIL"] = "Shows / hides logs."
 
 L["REFRESH_TOOLTIP"] = "Refresh"
 L["REFRESH_TOOLTIPDETAIL"] = "Send this category achievements to the target|nand to known Custom Achiever users."
