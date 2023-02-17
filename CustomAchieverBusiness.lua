@@ -56,6 +56,7 @@ function initCustomAchieverBusinessObjects()
 			CustomAchieverData["DataCleaning_1.2_"..playerCharacter] = true
 		end
 	end
+	CustomAchieverData["MainAddon"] = CustAcAddon or "CustomAchiever"
 
 	if not CustomAchieverData["Categories"] then
 		CustomAchieverData["Categories"] = {}
@@ -101,6 +102,13 @@ function initCustomAchieverBusinessObjects()
 	
 	if not CustomAchieverLastManualCall then
 		CustomAchieverLastManualCall = {}
+	else
+		local now = time()
+		for k,v in pairs(CustomAchieverLastManualCall) do
+			if now > v + 300 then
+				CustomAchieverLastManualCall[k] = nil
+			end
+		end
 	end
 	
 	-- CustomAchieverOptionsData
@@ -143,19 +151,19 @@ function CustAc_ApplyIgnoreList()
 	end
 end
 
-function CustAc_SaveCategoryDataIntoAddon(categoryId)
-	local addOn = CustomAchieverData["Categories"][categoryId]["parent"]
-	if not addOn or addOn == true then
-		addOn = categoryId
-	end
-	if not _G[addOn.."_CustomAchieverData"] then
-		_G[addOn.."_CustomAchieverData"] = {}
-	end
-	if not _G[addOn.."_CustomAchieverData"]["Categories"] then
-		_G[addOn.."_CustomAchieverData"]["Categories"] = {}
-	end
-	_G[addOn.."_CustomAchieverData"]["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
-end
+--function CustAc_SaveCategoryDataIntoAddon(categoryId)
+--	local addOn = CustomAchieverData["Categories"][categoryId]["parent"]
+--	if not addOn or addOn == true then
+--		addOn = categoryId
+--	end
+--	if not _G[addOn.."_CustomAchieverData"] then
+--		_G[addOn.."_CustomAchieverData"] = {}
+--	end
+--	if not _G[addOn.."_CustomAchieverData"]["Categories"] then
+--		_G[addOn.."_CustomAchieverData"]["Categories"] = {}
+--	end
+--	_G[addOn.."_CustomAchieverData"]["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
+--end
 
 function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPersonnal)
 	if id then
@@ -177,6 +185,7 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		data["hidden"]   = (data["parentID"] ~= nil)
 		local dataLocale = locale or GetLocale()
 		data["name_"..dataLocale] = categoryName or data["name_"..dataLocale] or id
+		data["dataTime"] = time()
 		
 		if isPersonnal then
 			CustomAchieverData["PersonnalCategories"][id] = true
@@ -190,28 +199,28 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 			CustomAchieverData["Categories"][id]["hidden"]                = true
 			CustomAchieverData["Categories"][parentCategory]["parent"]    = true
 			CustomAchieverData["Categories"][parentCategory]["collapsed"] = true
-			CustAc_SaveCategoryDataIntoAddon(parentCategory)
+			--CustAc_SaveCategoryDataIntoAddon(parentCategory)
 		else
-			CustAc_SaveCategoryDataIntoAddon(id)
+			--CustAc_SaveCategoryDataIntoAddon(id)
 		end
 		
 		CustAc_LoadAchievementsData("CustAc_CreateOrUpdateCategory")
 	end
 end
 
-function CustAc_SaveAchievementDataIntoAddon(achievementId)
-	local addOn = CustomAchieverData["Categories"][CustomAchieverData["Achievements"][achievementId]["parent"]]["parent"]
-	if not addOn or addOn == true then
-		addOn = CustomAchieverData["Achievements"][achievementId]["parent"]
-	end
-	if not _G[addOn.."_CustomAchieverData"] then
-		_G[addOn.."_CustomAchieverData"] = {}
-	end
-	if not _G[addOn.."_CustomAchieverData"]["Achievements"] then
-		_G[addOn.."_CustomAchieverData"]["Achievements"] = {}
-	end
-	_G[addOn.."_CustomAchieverData"]["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId]
-end
+--function CustAc_SaveAchievementDataIntoAddon(achievementId)
+--	local addOn = CustomAchieverData["Categories"][CustomAchieverData["Achievements"][achievementId]["parent"]]["parent"]
+--	if not addOn or addOn == true then
+--		addOn = CustomAchieverData["Achievements"][achievementId]["parent"]
+--	end
+--	if not _G[addOn.."_CustomAchieverData"] then
+--		_G[addOn.."_CustomAchieverData"] = {}
+--	end
+--	if not _G[addOn.."_CustomAchieverData"]["Achievements"] then
+--		_G[addOn.."_CustomAchieverData"]["Achievements"] = {}
+--	end
+--	_G[addOn.."_CustomAchieverData"]["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId]
+--end
 
 function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, rewardText, rewardIsTitle, locale, isPersonnal)
 	if id then
@@ -219,10 +228,7 @@ function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, descri
 		if not CustomAchieverData["Categories"][parentCategory] then
 			CustAc_CreateOrUpdateCategory(parentCategory, nil, parentCategory, locale, isPersonnal)
 		end
-		local data = {}
-		if CustomAchieverData["Achievements"][id] then
-			data = CustomAchieverData["Achievements"][id]
-		end
+		local data = CustomAchieverData["Achievements"][id] or {}
 		data["id"]                      = id
 		data["parent"]                  = parentCategory
 		local dataLocale                = locale            or GetLocale()
@@ -236,11 +242,12 @@ function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, descri
 		data["isGuild"]                 = false
 		data["completed"]               = data["completed"] or {}
 		data["date"]                    = data["date"]      or {}
+		data["dataTime"] = time()
 		--data["wasEarnedByMe"] = true
 		--data["earnedBy"] = "Xamena"
 
 		CustomAchieverData["Achievements"][id] = data
-		CustAc_SaveAchievementDataIntoAddon(id)
+		--CustAc_SaveAchievementDataIntoAddon(id)
 		
 		CustAc_LoadAchievementsData("CustAc_CreateOrUpdateAchievement")
 	end
@@ -360,11 +367,12 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 		data["completed"][earnedByWithRealm] = data["completed"][earnedByWithRealm] or true
 		data["date"][earnedByWithRealm] = data["date"][earnedByWithRealm] or C_DateAndTime.GetCurrentCalendarTime()
 		data["firstAchiever"] = data["firstAchiever"] or earnedByWithRealm
+		data["dataTime"] = time()
 		--data["wasEarnedByMe"] = true
 		--data["earnedBy"] = "Xamena"
 
 		CustomAchieverData["Achievements"][id] = data
-		CustAc_SaveAchievementDataIntoAddon(id)
+		--CustAc_SaveAchievementDataIntoAddon(id)
 
 		local name = CustAc_getLocaleData(data, "name")
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif then
@@ -413,11 +421,12 @@ function CustAc_RevokeAchievement(id, earnedBy)--/run CustAc_RevokeAchievement("
 			end
 			data["firstAchiever"] = newFirstAchiever
 		end
+		data["dataTime"] = time()
 		--data["wasEarnedByMe"] = true
 		--data["earnedBy"] = "Xamena"
 
 		CustomAchieverData["Achievements"][id] = data
-		CustAc_SaveAchievementDataIntoAddon(id)
+		--CustAc_SaveAchievementDataIntoAddon(id)
 
 		CustAc_LoadAchievementsData("CustAc_RevokeAchievement")
 		
@@ -534,17 +543,17 @@ function CustAc_PlaySoundFileId(soundFileId, channel, forcePlay)
 	return soundHandle
 end
 
-function CustAc_saveCustomAchieverOptionsDataForAddon()
-	local dataTime = CustAc_getTimeUTCinMS()
-	for i=1, GetNumAddOns() do
-		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
-		if strmatch(name,"_CustomAchiever") then
-			_G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"] = CustomAchieverOptionsData
-			_G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"]["dataTime"] = dataTime
-		end
-	end
-	CustomAchieverOptionsData["dataTime"] = dataTime
-end
+--function CustAc_saveCustomAchieverOptionsDataForAddon()
+--	local dataTime = CustAc_getTimeUTCinMS()
+--	for i=1, GetNumAddOns() do
+--		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
+--		if strmatch(name,"_CustomAchiever") then
+--			_G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"] = CustomAchieverOptionsData
+--			_G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"]["dataTime"] = dataTime
+--		end
+--	end
+--	CustomAchieverOptionsData["dataTime"] = dataTime
+--end
 
 function CustAc_getTimeUTCinMS()
 	return tostring(time(date("!*t")))

@@ -25,7 +25,7 @@ function loadCustomAchieverOptions()
 							else
 								libDBIcon:Show("CustomAchiever")
 							end
-							CustAc_saveCustomAchieverOptionsDataForAddon()
+							--CustAc_saveCustomAchieverOptionsDataForAddon()
 						end,
 						get = function(info)
 							return not CustomAchieverOptionsData["CustomAchieverMIcon"].minimapIcon.hide
@@ -38,7 +38,7 @@ function loadCustomAchieverOptions()
 						desc = L["ENABLE_SOUND_DESC"],
 						set = function(info, val) 
 							CustomAchieverOptionsData["CustomAchieverSoundsDisabled"] = not val
-							CustAc_saveCustomAchieverOptionsDataForAddon()
+							--CustAc_saveCustomAchieverOptionsDataForAddon()
 						end,
 						get = function(info)
 							local enabled = true
@@ -55,7 +55,7 @@ function loadCustomAchieverOptions()
 						desc = L["ENABLE_ACHIEVEMENT_ANNOUNCE_DESC"],
 						set = function(info, val) 
 							CustomAchieverOptionsData["CustomAchieverAchievementAnnounceDisabled"] = not val
-							CustAc_saveCustomAchieverOptionsDataForAddon()
+							--CustAc_saveCustomAchieverOptionsDataForAddon()
 						end,
 						get = function(info)
 							local enabled = true

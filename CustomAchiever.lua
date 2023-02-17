@@ -19,9 +19,6 @@ local CUSTOMACHIEVER_ALLCOLS_WIDTH = CUSTOMACHIEVER_COL1_WIDTH -- + Portrait !
 	+ CUSTOMACHIEVER_COL2_WIDTH
 	+ CUSTOMACHIEVER_COL4_WIDTH
 
-customAchieverList = {}
-local customAchieverLines = {}
-
 CustAc_Krowi_Loaded = false
 function CustomAchiever:OnInitialize()
 	-- Called when the addon is loaded
@@ -30,6 +27,7 @@ function CustomAchiever:OnInitialize()
 	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
 	self:RegisterEvent("IGNORELIST_UPDATE", "ApplyIgnoreList")
 	self:RegisterEvent("GUILD_ROSTER_UPDATE", "OnGuildRosterUpdate")
+	self:RegisterEvent("PLAYER_LOGOUT", "OnPlayerLogout")
 
 	self:RegisterEvent("ADDON_LOADED", function(event, arg)
 		if(arg == "Krowi_AchievementFilter") then
@@ -50,6 +48,20 @@ end
 function CustomAchiever:OnGuildRosterUpdate()
 	CustAc_SendCallForUsers()
 	self:UnregisterEvent("GUILD_ROSTER_UPDATE")
+end
+
+function CustomAchiever:OnPlayerLogout()
+	for i=1, GetNumAddOns() do
+		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
+		if strmatch(name,"_CustomAchiever") then
+			local addOn    = gsub(name, "_CustomAchiever", "")
+			local dataTime = time()
+			_G[addOn.."_CustomAchieverData"]                    = CustomAchieverData
+			_G[addOn.."_CustomAchieverData"]["dataTime"]        = dataTime
+			_G[addOn.."_CustomAchieverOptionsData"]             = CustomAchieverOptionsData
+			_G[addOn.."_CustomAchieverOptionsData"]["dataTime"] = dataTime
+		end
+	end
 end
 
 function CustomAchiever:OnEnable()
@@ -93,27 +105,81 @@ function CustAc_OnTooltipUnit(tooltip, data)
 end
 
 function CustomAchiever:LoadAddonsData()
+	local newCustomAchieverData, optionsDataToMerge
 	for i=1, GetNumAddOns() do
 		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
 		if strmatch(name,"_CustomAchiever") then
-			local data = _G[gsub(name, "_CustomAchiever", "").."_CustomAchieverData"]
+			local sourceAddonName = gsub(name, "_CustomAchiever", "")
+			local data = _G[sourceAddonName.."_CustomAchieverData"]
 			if data then
-				for key, value in pairs(data["Categories"]) do
-					CustomAchieverData["Categories"][key] = value
-				end
-				for key, value in pairs(data["Achievements"]) do
-					CustomAchieverData["Achievements"][key] = value
+				local dataTime        = data["dataTime"] or time()
+				local currentDataTime = CustomAchieverData["dataTime"] or 0
+				if dataTime ~= currentDataTime then
+					newCustomAchieverData = newCustomAchieverData or CustomAchieverData
+					for k,v in pairs(data["Categories"]) do
+						local import
+						if newCustomAchieverData["Categories"][k] then
+							local thisDataTime        = v["dataTime"] or dataTime
+							local thisCurrentDataTime = (newCustomAchieverData[k] and newCustomAchieverData[k]["dataTime"]) or currentDataTime
+							if thisDataTime > thisCurrentDataTime then
+								import = true
+							end
+						else
+							import = true
+						end
+						if import then
+							newCustomAchieverData["Categories"][k] = v
+							if data["PendingUpdates"][k]      then newCustomAchieverData["PendingUpdates"][k]      = data["PendingUpdates"][k] end
+							if data["AwardedPlayers"][k]      then newCustomAchieverData["AwardedPlayers"][k]      = data["AwardedPlayers"][k] end
+							if data["PersonnalCategories"][k] then newCustomAchieverData["PersonnalCategories"][k] = data["PersonnalCategories"][k] end
+						end
+					end
+					
+					for k,v in pairs(data["Achievements"]) do
+						local import
+						if newCustomAchieverData["Achievements"][k] then
+							local thisDataTime        = v["dataTime"] or dataTime
+							local thisCurrentDataTime = (newCustomAchieverData[k] and newCustomAchieverData[k]["dataTime"]) or currentDataTime
+							if thisDataTime > thisCurrentDataTime then
+								import = true
+							end
+						else
+							import = true
+						end
+						if import then
+							newCustomAchieverData["Achievements"][k] = v
+							if data["PendingUpdates"][k] then newCustomAchieverData["PendingUpdates"][k] = data["PendingUpdates"][k] end
+							if data["AwardedPlayers"][k] then newCustomAchieverData["AwardedPlayers"][k] = data["AwardedPlayers"][k] end
+						end
+					end
+
+					for k,v in pairs(data["Users"]) do
+						if not newCustomAchieverData["Users"][k] then
+							newCustomAchieverData["Users"][k] = v
+						end
+					end
+
 				end
 			end
-			local optionsData = _G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"]
+			local optionsData = _G[sourceAddonName.."_CustomAchieverOptionsData"]
 			if optionsData then
-				local addonDataTime = optionsData["dataTime"]
+				local addonDataTime  = optionsData["dataTime"]
 				local custacDataTime = CustomAchieverOptionsData["dataTime"]
-				if addonDataTime and (not custacDataTime or custacDataTime < addonDataTime) then
-					CustomAchieverOptionsData = optionsData
+				local optionsDataToMergeDataTime = optionsDataToMerge and optionsDataToMerge["dataTime"]
+				if addonDataTime and (not custacDataTime or custacDataTime < addonDataTime) and (not optionsDataToMergeDataTime or optionsDataToMergeDataTime < addonDataTime) then
+					optionsDataToMerge = optionsData
 				end
 			end
 		end
+	end
+	if optionsDataToMerge then
+		CustomAchieverOptionsData = optionsDataToMerge
+		applyCustomAchieverWindowOptions()
+	end
+	if newCustomAchieverData then
+		CustomAchieverData = newCustomAchieverData
+		CustAc_LoadAchievementsData("CustAc_CreateOrUpdateAchievement")
+		CustAc_RefreshCustomAchiementFrame()
 	end
 end
 
@@ -157,7 +223,7 @@ function customAchieverSaveWindowPosition()
 		CustomAchieverOptionsData["CustomAchieverWindow"]["xOffset"] = xOffset
 		CustomAchieverOptionsData["CustomAchieverWindow"]["yOffset"] = yOffset
 	end
-	CustAc_saveCustomAchieverOptionsDataForAddon()
+	--CustAc_saveCustomAchieverOptionsDataForAddon()
 end
 
 function CustAc_fullName(unit)

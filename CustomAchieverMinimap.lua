@@ -138,9 +138,9 @@ function CustAc_CreateMinimapButton()
 			tooltip:AddLine(L["MINIMAP_TOOLTIP1"])
 			tooltip:AddLine(L["MINIMAP_TOOLTIP2"])
 		end,
-		OnLeave = function()
-			CustAc_saveCustomAchieverOptionsDataForAddon()
-		end,
+		--OnLeave = function()
+		--	CustAc_saveCustomAchieverOptionsDataForAddon()
+		--end,
 	})
  
 	-- Register the data object for a minimap button
