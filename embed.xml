@@ -385,7 +385,7 @@
 			</OnDragStop>
 			<OnEvent function="CustomAchieverFrame_OnEvent" />
 			<OnShow>
-				Custac_ChangeAwardButtonText()
+				Custac_ChangeAwardButtonText(true)
 				self:RegisterEvent("PLAYER_TARGET_CHANGED")
 			</OnShow>
 			<OnHide>

@@ -71,9 +71,9 @@ function Custac_DetermineTarget()
 	end
 end
 
-function Custac_ChangeAwardButtonText()
+function Custac_ChangeAwardButtonText(force)
 	if CustomAchieverFrame:IsShown() then
-		if custacDataTarget == UNKNOWN then
+		if custacDataTarget == UNKNOWN or force then
 			Custac_DetermineTarget()
 		end
 	
