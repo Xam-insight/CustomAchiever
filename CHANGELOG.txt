@@ -5,6 +5,7 @@
 	- New log window to track data shared with users.
 	- Fixed: Data is now well shared between CustomAchiever and CustomAchiever sub addons.
 	- Fixed: When the CustomAchiever creation frame is shown, the target is now well shown.
+	- Fixed: Helptip is now well shown above target tooltip.
 - v1.1.11
 	- Fixed: DeadpoolGithubIssue#1 - Lua error. Lua error on Calling For Users in Deadpool_CustomAchiever Addon.
 - v1.1.10

@@ -563,7 +563,7 @@
 		</Scripts>
 	</Frame>
 	<GameTooltip name="CustomAchieverTooltip" frameStrata="TOOLTIP" hidden="true" parent="UIParent" inherits="GameTooltipTemplate" />
-	<GameTooltip name="CustomAchieverTargetTooltip" frameStrata="TOOLTIP" hidden="true" parent="UIParent" inherits="GameTooltipTemplate" />
+	<GameTooltip name="CustomAchieverTargetTooltip" frameStrata="LOW" hidden="true" parent="UIParent" inherits="GameTooltipTemplate" />
 	<!--Frame name="GreenScreen" hidden="false" parent="UIParent" setAllPoints="true">
 		<Layers>
 			<Layer>

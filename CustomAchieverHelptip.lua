@@ -168,7 +168,7 @@ if HelpTip then
 			},
 			["relativeRegion"] = "CustomAchieverFrameAwardButton",
 			["group"] = "CustomAchieverFrame",
-			["parent"] = "custacHelpToolTipFrame"
+			["parent"] = "CustomAchieverFrame"
 		},
 	}
 end
@@ -181,35 +181,12 @@ local custacPlayerSpecFrame_HelpPlate = {
 	[3] = { ButtonPos = { x = 355,	y = -409}, HighLightBox = { x = 268, y = -418, width = 109, height = 26 },	ToolTipDir = "RIGHT",	ToolTipText = SPEC_FRAME_HELP_3 },
 }
 
-custacHelpToolTipFrame = CreateFrame("Frame", "CustomAchieverHelpToolTipFrame", UIParent)
-custacHelpToolTipFrame:SetFrameStrata("LOW")
-
-custacHelpToolTipFrameMouseOver = CreateFrame("Frame", "CustomAchieverHelpToolTipFrame", UIParent)
-custacHelpToolTipFrameMouseOver:SetFrameStrata("LOW")
-
-function custacSetHelpTipFramesStrata(strata)
-	custacHelpToolTipFrame:SetFrameStrata(strata)
-	custacHelpToolTipFrameMouseOver:SetFrameStrata(strata)
-end
-
 function custacInitializeHelp()
 	--custacShowHelpTip("DEADPOOLTUTO_MINIMIZE")
 end
 
-function custacIsShowingHelpTips()
-	if HelpTip then
-		return CustomAchieverHelpTip:IsShowingAny(custacHelpToolTipFrame)
-	end
-end
-
 function custacShowAllHelpTips()
 	--custacShowHelpTip("DEADPOOLTUTO_MINIMIZE", true)
-end
-
-function custacHideAllHelpTips()
-	if HelpTip then
-		CustomAchieverHelpTip:HideAll(custacHelpToolTipFrame)
-	end
 end
 
 function custacShowHelpTip(helpTip, force, relativeRegion, hideOther)
