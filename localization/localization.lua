@@ -43,7 +43,7 @@ L["LOGCUSTAC_AWARD"] = "|cff00ff00%s|r Achievement awarded to %s."
 L["LOGCUSTAC_REVOKE"] = "|cff00ff00%s|r Achievement revoked from %s."
 
 L["SHARECUSTAC_WAIT"] = "Wait %d |4minute:minutes; %d |4second:seconds; before sending Achievements to this player again."
-L["SHARECUSTAC_NOACKNOWLEDGMENT"] = "This player does not seem to have Custom Achiever installed."
+L["SHARECUSTAC_NOACKNOWLEDGMENT"] = "%s does not seem to have Custom Achiever installed or is offline."
 
 L["MENUOPTIONS_TOOLTIP"] = "Custom Achiever options"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Change Custom Achiever options."

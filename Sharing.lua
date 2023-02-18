@@ -43,8 +43,8 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 					seconds = seconds - minutes * 60
 					CustomAchiever:Print(string.format(L["SHARECUSTAC_WAIT"], minutes, seconds))
 				else
-					UIErrorsFrame:AddMessage(L["SHARECUSTAC_NOACKNOWLEDGMENT"], 1, 0, 0, 1)
-					CustomAchiever:Print(L["SHARECUSTAC_NOACKNOWLEDGMENT"])
+					UIErrorsFrame:AddMessage(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], aTarget), 1, 0, 0, 1)
+					CustomAchiever:Print(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], aTarget))
 				end
 				return
 			else
@@ -53,8 +53,8 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 		end
 	elseif messageType == "Revoke" and not CustAc_isPlayerCharacter(aTarget) then
 		if not CustomAchieverAcknowledgmentReceived[aTarget] then
-			UIErrorsFrame:AddMessage(L["SHARECUSTAC_NOACKNOWLEDGMENT"], 1, 0, 0, 1)
-			CustomAchiever:Print(L["SHARECUSTAC_NOACKNOWLEDGMENT"])
+			UIErrorsFrame:AddMessage(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], aTarget), 1, 0, 0, 1)
+			CustomAchiever:Print(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], aTarget))
 		end
 	end
 	encodeAndSendAchievementInfo(aData, aTarget, messageType)

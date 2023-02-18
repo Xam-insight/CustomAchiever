@@ -43,7 +43,7 @@ L["LOGCUSTAC_AWARD"] = "Haut fait |cff00ff00%s|r décerné à %s."
 L["LOGCUSTAC_REVOKE"] = "Haut fait |cff00ff00%s|r révoqué de %s."
 
 L["SHARECUSTAC_WAIT"] = "Attendez %d |4minute:minutes; %d |4seconde:secondes; avant d'envoyer à nouveau des Hauts faits ce joueur."
-L["SHARECUSTAC_NOACKNOWLEDGMENT"] = "Ce joueur ne semble pas avoir Custom Achiever."
+L["SHARECUSTAC_NOACKNOWLEDGMENT"] = "%s ne semble pas avoir Custom Achiever ou est hors ligne."
 
 L["MENUOPTIONS_TOOLTIP"] = "Options de Custom Achiever"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Modifier les options de Custom Achiever."
