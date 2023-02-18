@@ -100,7 +100,7 @@ function CustAc_OnTooltipUnit(tooltip, data)
 	local unitName, unitId = GameTooltip:GetUnit()
 	local unitFullName = CustAc_addRealm(unitName)
 	if CustomAchieverData["Users"][unitFullName] then
-		tooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][unitFullName])
+		tooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][unitFullName], 0, 1, 0, 0, 1, 0)
 	end
 end
 

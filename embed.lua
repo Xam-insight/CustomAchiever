@@ -381,6 +381,9 @@ function CustomAchieverFrame_UpdateTargetTooltip()
 	CustomAchieverTargetTooltip:SetOwner(CustomAchieverFrame, "ANCHOR_BOTTOM", 0, 0)
 	CustomAchieverTargetTooltip:ClearLines()
 	CustomAchieverTargetTooltip:AddDoubleLine(STATUS_TEXT_TARGET, custacDataTarget or UNKNOWN, 1.0, 0.82, 0.0, 1.0, 1.0, 1.0)
+	if CustomAchieverData["Users"][custacDataTarget] then
+		CustomAchieverTargetTooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][custacDataTarget], 0, 1, 0, 0, 1, 0)
+	end
 	CustomAchieverTargetTooltip:Show()
 end
 

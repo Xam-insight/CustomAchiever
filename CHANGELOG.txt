@@ -1,7 +1,7 @@
 ﻿- v1.2
 	- When editing a Category, you can move the selected achievement into it.
 	- Deletion of Achievements is now shared with other users.
-	- Target tooltip now shows user CustomAchiever version if available.
+	- Target tooltips now show user CustomAchiever version if available.
 	- New log window to track data shared with users.
 	- Fixed: Data is now well shared between CustomAchiever and CustomAchiever sub addons.
 	- Fixed: When the CustomAchiever creation frame is shown, the target is now well shown.
