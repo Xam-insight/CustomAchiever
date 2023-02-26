@@ -25,7 +25,6 @@ function CustomAchiever:OnInitialize()
 	self:RegisterChatCommand("custac", "CustomAchieverChatCommand")
 	self:RegisterComm(CustomAchieverGlobal_CommPrefix, "ReceiveDataFrame_OnEvent")
 	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
-	self:RegisterEvent("IGNORELIST_UPDATE", "ApplyIgnoreList")
 	self:RegisterEvent("GUILD_ROSTER_UPDATE", "OnGuildRosterUpdate")
 	self:RegisterEvent("PLAYER_LOGOUT", "OnPlayerLogout")
 
@@ -39,10 +38,6 @@ function CustomAchiever:OnInitialize()
 			CustAc_AchievementFrame_Load()
 		end
 	end)
-end
-
-function CustomAchiever:ApplyIgnoreList()
-	CustAc_ApplyIgnoreList()
 end
 
 function CustomAchiever:OnGuildRosterUpdate()

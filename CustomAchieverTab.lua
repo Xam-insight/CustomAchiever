@@ -59,7 +59,9 @@ function CustAc_LoadAchievementsData(callOrigin)
 		CUSTOMACHIEVER_ACHIEVEMENTUI_CATEGORIES = {}
 		CUSTOMACHIEVER_CATEGORIES = {}
 		CUSTOMACHIEVER_ACHIEVEMENTS = {}
-
+		
+		CustAc_ApplyIgnoreList()
+		
 		local categoriesId = {}
 		local categories = {}
 		for k,v in pairs(CustomAchieverData["Achievements"]) do
@@ -79,7 +81,8 @@ function CustAc_LoadAchievementsData(callOrigin)
 		table.sort(categoriesId)
 
 		for _,v in pairs(categoriesId) do
-			if CustomAchieverData["Categories"][v] and (not CustomAchieverData["Categories"][v]["parent"] or CustomAchieverData["Categories"][v]["parent"] == true) then
+			if CustomAchieverData["Categories"][v] and (not CustomAchieverData["Categories"][v]["parent"] or CustomAchieverData["Categories"][v]["parent"] == true) and
+					(not CustomAchieverData["Categories"][v]["author"] or not CustomAchieverData["BlackList"][CustomAchieverData["Categories"][v]["author"]]) then
 				insertCategory(v)
 				for _,v2 in pairs(categoriesId) do
 					if CustomAchieverData["Categories"][v2] and CustomAchieverData["Categories"][v2]["parent"] == v then

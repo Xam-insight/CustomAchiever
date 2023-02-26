@@ -90,8 +90,6 @@ function initCustomAchieverBusinessObjects()
 		CustomAchieverData["BlackList"] = {}
 	end
 	
-	CustAc_ApplyIgnoreList()
-
 	if not CustomAchieverData["Achievements"] then
 		CustomAchieverData["Achievements"] = {}
 	end
@@ -128,26 +126,12 @@ function initCustomAchieverBusinessObjects()
 end
 
 function CustAc_ApplyIgnoreList()
-	local dataFound = false
+	CustomAchieverData["BlackList"] = {}
 	for i = 1, C_FriendList.GetNumIgnores() do
 		local user = CustAc_addRealm(C_FriendList.GetIgnoreName(i))
 		if user then
 			CustomAchieverData["BlackList"][user] = "IgnoreList"
-			if CustomAchieverData["Categories"][user] then
-				CustomAchieverData["Categories"][user] = nil
-				dataFound = true
-			end
-			for k,v in pairs(CustomAchieverData["Achievements"]) do
-				if v.parent == user then
-					CustomAchieverData["Achievements"][k] = nil
-					dataFound = true
-				end
-			end
 		end
-	end
-	if dataFound then
-		CustAc_LoadAchievementsData("CustAc_ApplyIgnoreList")
-		CustAc_AchievementFrame_UpdateAndSelectCategory(id)
 	end
 end
 
@@ -182,6 +166,7 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		data["dataTime"] = time()
 		
 		if isPersonnal then
+			data["author"] = CustAc_playerCharacter()
 			CustomAchieverData["PersonnalCategories"][id] = true
 		elseif CustomAchieverData["PersonnalCategories"][id] then
 			CustomAchieverData["PersonnalCategories"][id] = nil
