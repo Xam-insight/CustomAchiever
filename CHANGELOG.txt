@@ -1,4 +1,6 @@
-﻿- v1.2
+﻿- v1.3
+	- Sub-categories!
+- v1.2
 	- When editing a Category, you can move the selected achievement into it.
 	- Deletion of Achievements is now shared with other users.
 	- Target tooltips now show user CustomAchiever version if available.

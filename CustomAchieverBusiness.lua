@@ -151,24 +151,10 @@ function CustAc_ApplyIgnoreList()
 	end
 end
 
---function CustAc_SaveCategoryDataIntoAddon(categoryId)
---	local addOn = CustomAchieverData["Categories"][categoryId]["parent"]
---	if not addOn or addOn == true then
---		addOn = categoryId
---	end
---	if not _G[addOn.."_CustomAchieverData"] then
---		_G[addOn.."_CustomAchieverData"] = {}
---	end
---	if not _G[addOn.."_CustomAchieverData"]["Categories"] then
---		_G[addOn.."_CustomAchieverData"]["Categories"] = {}
---	end
---	_G[addOn.."_CustomAchieverData"]["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
---end
-
 function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPersonnal)
 	if id then
 		local parentCategory = nil
-		if parentID then
+		if parentID and parentID ~= "" then
 			if not CustomAchieverData["Categories"][parentID] then
 				CustAc_CreateOrUpdateCategory(parentID, nil, nil, locale, isPersonnal)
 				parentCategory = parentID
@@ -178,11 +164,19 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 				parentCategory = CustomAchieverData["Categories"][parentID]["parent"]
 			end
 		end
+		
+		local previousCategoryParent = CustomAchieverData["Categories"][id] and CustomAchieverData["Categories"][id]["parent"]
+		if previousCategoryParent and previousCategoryParent ~= true and previousCategoryParent ~= parentID then
+			CustAc_UnparentCategoryIfNoChild(previousCategoryParent)
+		end
 
 		local data = CustomAchieverData["Categories"][id] or {}
 		data["id"]       = id or data["id"]
-		data["parent"]   = parentCategory or data["parent"]
-		data["hidden"]   = (data["parentID"] ~= nil)
+		if parentID == "" then
+			data["parent"] = nil
+		else
+			data["parent"]   = parentCategory or data["parent"]
+		end
 		local dataLocale = locale or GetLocale()
 		data["name_"..dataLocale] = categoryName or data["name_"..dataLocale] or id
 		data["dataTime"] = time()
@@ -196,31 +190,12 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		CustomAchieverData["Categories"][id] = data
 
 		if parentCategory then
-			CustomAchieverData["Categories"][id]["hidden"]                = true
 			CustomAchieverData["Categories"][parentCategory]["parent"]    = true
-			CustomAchieverData["Categories"][parentCategory]["collapsed"] = true
-			--CustAc_SaveCategoryDataIntoAddon(parentCategory)
-		else
-			--CustAc_SaveCategoryDataIntoAddon(id)
 		end
 		
 		CustAc_LoadAchievementsData("CustAc_CreateOrUpdateCategory")
 	end
 end
-
---function CustAc_SaveAchievementDataIntoAddon(achievementId)
---	local addOn = CustomAchieverData["Categories"][CustomAchieverData["Achievements"][achievementId]["parent"]]["parent"]
---	if not addOn or addOn == true then
---		addOn = CustomAchieverData["Achievements"][achievementId]["parent"]
---	end
---	if not _G[addOn.."_CustomAchieverData"] then
---		_G[addOn.."_CustomAchieverData"] = {}
---	end
---	if not _G[addOn.."_CustomAchieverData"]["Achievements"] then
---		_G[addOn.."_CustomAchieverData"]["Achievements"] = {}
---	end
---	_G[addOn.."_CustomAchieverData"]["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId]
---end
 
 function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, rewardText, rewardIsTitle, locale, isPersonnal)
 	if id then
@@ -255,8 +230,24 @@ end
 
 function CustAc_DeleteCategory(id, newCategory)
 	if id then
+		local categoryParent = CustomAchieverData["Categories"][id]["parent"]
 		CustomAchieverData["Categories"][id] = nil
 		CustomAchieverData["PersonnalCategories"][id] = nil
+		
+		if categoryParent and categoryParent ~= true then
+			CustAc_UnparentCategoryIfNoChild(categoryParent)
+		end
+	end
+	
+	local categoryFound = false
+	for k,v in pairs(CustomAchieverData["Categories"]) do
+		if v["parent"] == id then
+			categoryFound = true
+			v["parent"] = newCategory
+		end
+	end
+	if categoryFound and newCategory and CustomAchieverData["Categories"][newCategory] then
+		CustomAchieverData["Categories"][newCategory]["parent"] = true
 	end
 	
 	if newCategory then
@@ -268,11 +259,27 @@ function CustAc_DeleteCategory(id, newCategory)
 			end
 		end
 		if achievementFound and not CustomAchieverData["Categories"][newCategory] then
-			CustAc_CreateOrUpdateCategory(newCategory, nil, CustAc_delRealm(newCategory), nil, true)
+			local categoryName = (newCategory == "GENERAL" and GENERAL) or CustAc_delRealm(newCategory)
+			CustAc_CreateOrUpdateCategory(newCategory, nil, categoryName, nil, true)
 		end
 	end
 	
 	CustAc_LoadAchievementsData("CustAc_DeleteCategory")
+end
+
+function CustAc_UnparentCategoryIfNoChild(categoryId)
+	if CustomAchieverData["Categories"][categoryId] then
+		local childFound = false
+		for k,v in pairs(CustomAchieverData["Categories"]) do
+			if v["parent"] == categoryId then
+				childFound = true
+				break
+			end
+		end
+		if not childFound then
+			CustomAchieverData["Categories"][categoryId]["parent"] = nil
+		end
+	end
 end
 
 function CustAc_DetermineNewCategory(oldCategory, proposedCategory, proposedCategory2)
@@ -281,7 +288,7 @@ function CustAc_DetermineNewCategory(oldCategory, proposedCategory, proposedCate
 		newCategory = proposedCategory2
 	end
 	if newCategory == oldCategory or not newCategory then
-		newCategory = GENERAL
+		newCategory = "GENERAL"
 	end
 	return newCategory
 end

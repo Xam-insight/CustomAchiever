@@ -68,21 +68,21 @@ function CustAc_LoadAchievementsData(callOrigin)
 				categoriesId[ #categoriesId + 1 ] = v["parent"]
 			end
 		end
+
 		for k,v in pairs(categories) do
-			if CustomAchieverData["Categories"][k]["parent"] and not categories[CustomAchieverData["Categories"][k]["parent"]] then
+			if CustomAchieverData["Categories"][k]["parent"] and CustomAchieverData["Categories"][k]["parent"] ~= true
+					and not categories[CustomAchieverData["Categories"][k]["parent"]] then
 				categories[CustomAchieverData["Categories"][k]["parent"]] = true
-				if CustomAchieverData["Categories"][k]["parent"] and CustomAchieverData["Categories"][k]["parent"] ~= true then
-					categoriesId[ #categoriesId + 1 ] = CustomAchieverData["Categories"][k]["parent"]
-				end
+				categoriesId[ #categoriesId + 1 ] = CustomAchieverData["Categories"][k]["parent"]
 			end
 		end
 		table.sort(categoriesId)
 
 		for _,v in pairs(categoriesId) do
-			if not CustomAchieverData["Categories"][v]["parent"] or CustomAchieverData["Categories"][v]["parent"] == true then
+			if CustomAchieverData["Categories"][v] and (not CustomAchieverData["Categories"][v]["parent"] or CustomAchieverData["Categories"][v]["parent"] == true) then
 				insertCategory(v)
 				for _,v2 in pairs(categoriesId) do
-					if CustomAchieverData["Categories"][v2]["parent"] == v then
+					if CustomAchieverData["Categories"][v2] and CustomAchieverData["Categories"][v2]["parent"] == v then
 						insertCategory(v2)
 					end
 				end

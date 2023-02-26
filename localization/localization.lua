@@ -34,7 +34,9 @@ L["MENUCUSTAC_POINTS"] = "Points"
 L["MENUCUSTAC_CAT_CONFIRM_DELETION"] = "Are you sure you want to permanently delete the Category |cff00ff00%s|r? This Category Achievements will be moved to |cff00ff00%s|r."
 L["MENUCUSTAC_CONFIRM_DELETION"] = "Are you sure you want to permanently delete the Custom Achievement |cff00ff00%s|r?"
 
-L["MENUCUSTAC_MOVE_ACHIEVEMENT"] = "Move selected Achievement to this category."
+L["MENUCUSTAC_MOVE_ACHIEVEMENT"] = "Move selected Achievement into this Category."
+L["MENUCUSTAC_MOVE_CATEGORY"] = "Move selected Category into this Category."
+L["MENUCUSTAC_EXTRACT_CATEGORY"] = "Extract the subcategory."
 
 L["MENUCUSTAC_AWARD"] = "Award"
 L["MENUCUSTAC_REVOKE"] = "Revoke"

@@ -34,7 +34,9 @@ L["MENUCUSTAC_POINTS"] = "Points"
 L["MENUCUSTAC_CAT_CONFIRM_DELETION"] = "Voulez-vous vraiment effacer définitivement la Catégorie |cff00ff00%s|r ? Les Hauts faits de cette catégorie seront déplacés dans |cff00ff00%s|r."
 L["MENUCUSTAC_CONFIRM_DELETION"] = "Voulez-vous vraiment effacer définitivement le Haut fait personnalisé |cff00ff00%s|r ?"
 
-L["MENUCUSTAC_MOVE_ACHIEVEMENT"] = "Déplacer le Haut fait sélectionné vers cette catégorie."
+L["MENUCUSTAC_MOVE_ACHIEVEMENT"] = "Déplacer le Haut fait sélectionné vers cette Catégorie."
+L["MENUCUSTAC_MOVE_CATEGORY"] = "Déplacer la Catégorie sélectionnée dans cette Catégorie."
+L["MENUCUSTAC_EXTRACT_CATEGORY"] = "Extraire la sous catégorie."
 
 L["MENUCUSTAC_AWARD"] = "Décerner"
 L["MENUCUSTAC_REVOKE"] = "Révoquer"
