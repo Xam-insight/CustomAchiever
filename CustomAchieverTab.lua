@@ -19,11 +19,6 @@ local function GetSelectedCategory(categoryIndex)
 	return g_categorySelections[categoryIndex].id or 0
 end
 
-local function SetSelectedAchievement(elementData)
-	local categoryIndex = achievementFunctions.categoryIndex;
-	g_achievementSelections[categoryIndex] = elementData or {};
-end
-
 local function ClearSelectedCategories()
 	g_categorySelections = {{},{},{},{}}
 end
@@ -34,6 +29,7 @@ local custacLastTableGeneration
 local custacGenerationPending
 function CustAc_LoadAchievementsData(callOrigin)
 	--CustomAchiever:Print("Debug CustAc_LoadAchievementsData: ", callOrigin)
+	
 	if AchievementFrame then
 		local callTime = time()
 		if not custacLastTableGeneration then
@@ -123,7 +119,9 @@ function insertCategory(cat)
 	for key, value in pairs(CustomAchieverData["Categories"][cat]) do
 		data[key] = value
 	end
+	data["selected"] = g_categorySelections[4] and cat == g_categorySelections[4].id
 	data["isChild"] = (type(CustomAchieverData["Categories"][cat]["parent"]) == "string")
+	data["hidden"] = data["isChild"] and (not g_categorySelections[4].id or CustomAchieverData["Categories"][cat]["parent"] ~= g_categorySelections[4].id)
 	tinsert(CUSTOMACHIEVER_ACHIEVEMENTUI_CATEGORIES, data)
 	CUSTOMACHIEVER_CATEGORIES[cat] = {}
 	CUSTOMACHIEVER_CATEGORIES[cat]["categoryName"] = CustAc_getLocaleData(CustomAchieverData["Categories"][cat], "name")
@@ -246,9 +244,9 @@ function CustAc_AchievementFrameCategories_SelectDefaultElementData()
 	else
 		elementData = CustAc_Categories.ScrollBox:ScrollToElementDataIndex(1, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
 	end
-	                    
+	
 	if elementData then
-		CustAc_AchievementFrameCategories_SelectElementData(elementData)
+		CustAc_AchievementFrameCategories_SelectElementData(elementData, true)
 	end
 end
 
@@ -281,12 +279,10 @@ function CustAc_AchievementFrameCategories_SelectElementData(elementData, ignore
 	end
 
 	if not isChild then
-		local newCollapsed = newCollapsed
+		local newCollapsed
 		if changeCollapsed then
 			newCollapsed = not oldCollapsed
-			if not elementData.isChild then
-				elementData.collapsed = newCollapsed
-			end
+			elementData.collapsed = newCollapsed
 		end
 
 		for index, iterElementData in ipairs(categories) do
@@ -641,10 +637,10 @@ end
 function CustAc_ShowAchievement(id)
 	if id and CustomAchieverData["Achievements"][id] and AchievementFrame then
 		AchievementFrame:Show()
-		AchievementFrameTab_OnClick(1) -- to prevent IN_GUILD_VIEW
 		CustAc_AchievementFrame_OnClick(CustAc_AchievementTabId)
 		CustAc_AchievementFrame_UpdateAndSelectCategory(CustomAchieverData["Achievements"][id]["parent"])
 		--CustAc_AchievementFrame_SelectAndScrollToAchievementId(CustAc_AchievementFrameAchievements.ScrollBox, id)
+		CustAc_LoadAchievementsData("CustAc_ShowAchievement")
 	end
 end
 
