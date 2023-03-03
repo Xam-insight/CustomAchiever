@@ -150,9 +150,6 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		end
 		
 		local previousCategoryParent = CustomAchieverData["Categories"][id] and CustomAchieverData["Categories"][id]["parent"]
-		if previousCategoryParent and previousCategoryParent ~= true and previousCategoryParent ~= parentID then
-			CustAc_UnparentCategoryIfNoChild(previousCategoryParent)
-		end
 
 		local data = CustomAchieverData["Categories"][id] or {}
 		data["id"]       = id or data["id"]
@@ -176,6 +173,10 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 
 		if parentCategory then
 			CustomAchieverData["Categories"][parentCategory]["parent"]    = true
+		end
+		
+		if previousCategoryParent and previousCategoryParent ~= true and previousCategoryParent ~= parentID then
+			CustAc_UnparentCategoryIfNoChild(previousCategoryParent)
 		end
 		
 		CustAc_LoadAchievementsData("CustAc_CreateOrUpdateCategory")
