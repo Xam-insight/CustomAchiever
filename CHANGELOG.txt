@@ -1,5 +1,6 @@
 ﻿- v1.3
 	- Sub-categories!
+	- Fixed: Ignore list is taken into account again.
 - v1.2
 	- When editing a Category, you can move the selected achievement into it.
 	- Deletion of Achievements is now shared with other users.

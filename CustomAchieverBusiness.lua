@@ -135,14 +135,14 @@ function CustAc_ApplyIgnoreList()
 	end
 end
 
-function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPersonnal)
+function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPersonnal, author)
 	if id then
 		local parentCategory = nil
 		if parentID and parentID ~= "" then
-			if not CustomAchieverData["Categories"][parentID] then
+			if parentID ~= true and not CustomAchieverData["Categories"][parentID] then
 				CustAc_CreateOrUpdateCategory(parentID, nil, nil, locale, isPersonnal)
 				parentCategory = parentID
-			elseif not CustomAchieverData["Categories"][parentID]["parent"] or CustomAchieverData["Categories"][parentID]["parent"] == true then
+			elseif parentID == true or not CustomAchieverData["Categories"][parentID]["parent"] or CustomAchieverData["Categories"][parentID]["parent"] == true then
 				parentCategory = parentID
 			else
 				parentCategory = CustomAchieverData["Categories"][parentID]["parent"]
@@ -163,16 +163,21 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		data["dataTime"] = time()
 		
 		if isPersonnal then
-			data["author"] = CustAc_playerCharacter()
+			data["author"] = data["author"] or CustAc_playerCharacter()
 			CustomAchieverData["PersonnalCategories"][id] = true
-		elseif CustomAchieverData["PersonnalCategories"][id] then
-			CustomAchieverData["PersonnalCategories"][id] = nil
+		else
+			if author then
+				data["author"] = author
+			end
+			if CustomAchieverData["PersonnalCategories"][id] then
+				CustomAchieverData["PersonnalCategories"][id] = nil
+			end
 		end
 		
 		CustomAchieverData["Categories"][id] = data
 
-		if parentCategory then
-			CustomAchieverData["Categories"][parentCategory]["parent"]    = true
+		if parentCategory and parentCategory ~= true then
+			CustomAchieverData["Categories"][parentCategory]["parent"] = true
 		end
 		
 		if previousCategoryParent and previousCategoryParent ~= true and previousCategoryParent ~= parentID then
@@ -535,18 +540,6 @@ function CustAc_PlaySoundFileId(soundFileId, channel, forcePlay)
 	end
 	return soundHandle
 end
-
---function CustAc_saveCustomAchieverOptionsDataForAddon()
---	local dataTime = CustAc_getTimeUTCinMS()
---	for i=1, GetNumAddOns() do
---		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
---		if strmatch(name,"_CustomAchiever") then
---			_G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"] = CustomAchieverOptionsData
---			_G[gsub(name, "_CustomAchiever", "").."_CustomAchieverOptionsData"]["dataTime"] = dataTime
---		end
---	end
---	CustomAchieverOptionsData["dataTime"] = dataTime
---end
 
 function CustAc_getTimeUTCinMS()
 	return tostring(time(date("!*t")))

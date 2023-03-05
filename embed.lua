@@ -303,6 +303,9 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	end
 	
 	for k,v in pairs(CustomAchieverData["Categories"]) do
+		if v["author"] and v["author"] == CustAc_playerCharacter() then
+			CustomAchieverData["PersonnalCategories"][k] = true
+		end
 		if (k ~= nextCustomCategoryId or CustomAchieverData["Categories"][nextCustomCategoryId]) and CustomAchieverData["PersonnalCategories"][k] then
 			if not v["parent"] or v["parent"] == true then
 				local info = LibDD:UIDropDownMenu_CreateInfo()
@@ -445,7 +448,12 @@ function CustAc_AwardButton_OnClick(self)
 		data["Categories"]   = {}
 		data["Achievements"] = {}
 		local categoryId = CustomAchieverData["Achievements"][selectedAchievement.achievementId]["parent"]
-		data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
+		if categoryId then
+			data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
+			if CustomAchieverData["Categories"][categoryId] and CustomAchieverData["Categories"][categoryId]["parent"] and CustomAchieverData["Categories"][categoryId]["parent"] ~= true then
+				data["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]] = CustomAchieverData["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]]
+			end
+		end
 		data["Achievements"][selectedAchievement.achievementId] = CustomAchieverData["Achievements"][selectedAchievement.achievementId]
 		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, custacDataTarget, CustAc_isPlayerCharacter(custacDataTarget)) then
 			manualEncodeAndSendAchievementInfo(data, custacDataTarget, "Revoke")
@@ -622,13 +630,13 @@ function CustacCategoryCreateDialog_OnShow(self)
 	local selectedCategoryId = self:GetAttribute("selectedCategoryId")
 	if selectedCategoryId and
 		selectedCategoryId ~= "GENERAL" and
-		(not CustomAchieverData["Categories"][selectedCategoryId]["parent"] or CustomAchieverData["Categories"][selectedCategoryId]["parent"] ~= true) and
+		(not CustomAchieverData["Categories"][selectedCategoryId] or not CustomAchieverData["Categories"][selectedCategoryId]["parent"] or CustomAchieverData["Categories"][selectedCategoryId]["parent"] ~= true) and
 			(
 				not categoryId or (
 					selectedCategoryId ~= categoryId and
 					(
 						(not CustomAchieverData["Categories"][categoryId]["parent"] or CustomAchieverData["Categories"][categoryId]["parent"] == true) and
-						CustomAchieverData["Categories"][selectedCategoryId]["parent"] ~= categoryId
+						(not CustomAchieverData["Categories"][selectedCategoryId] or CustomAchieverData["Categories"][selectedCategoryId]["parent"] ~= categoryId)
 					)
 				)
 			)
@@ -690,7 +698,7 @@ function CustacCategoryCreateDialogAcceptButton_OnClick(self)
 		CustAc_CreateOrUpdateCategory(selectedCategoryId, categoryId, selectedCategoryName, nil, true)
 	end
 	if self:GetParent().NameControl.ExtractCategory.CheckButton:GetChecked() then
-		CustAc_CreateOrUpdateCategory(categoryId, "")
+		CustAc_CreateOrUpdateCategory(categoryId, "", nil, nil, true)
 	end
 	CustAc_SendUpdatedCategoryData(categoryId, custacDataTarget)
 end

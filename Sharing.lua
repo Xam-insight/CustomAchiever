@@ -68,6 +68,9 @@ function CustAc_SendUpdatedAchievementData(achievementId, alsoSendTo)
 		local categoryId = CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId]["parent"]
 		if categoryId then
 			data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
+			if CustomAchieverData["Categories"][categoryId] and CustomAchieverData["Categories"][categoryId]["parent"] and CustomAchieverData["Categories"][categoryId]["parent"] ~= true then
+				data["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]] = CustomAchieverData["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]]
+			end
 		end
 		data["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId] or "DELETE"
 		if CustomAchieverData["AwardedPlayers"][achievementId] then
@@ -94,8 +97,16 @@ function CustAc_SendUpdatedCategoryData(categoryId, alsoSendTo)
 		data["Categories"] = {}
 		data["Achievements"] = {}
 		data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
-		for k,v in pairs(CustomAchieverData["Achievements"]) do
+		if CustomAchieverData["Categories"][categoryId] and CustomAchieverData["Categories"][categoryId]["parent"] and CustomAchieverData["Categories"][categoryId]["parent"] ~= true then
+			data["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]] = CustomAchieverData["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]]
+		end
+		for k,v in pairs(CustomAchieverData["Categories"]) do
 			if v["parent"] == categoryId then
+				data["Categories"][k] = v
+			end
+		end
+		for k,v in pairs(CustomAchieverData["Achievements"]) do
+			if data["Categories"][v["parent"]] then
 				data["Achievements"][k] = v
 			end
 		end
@@ -193,12 +204,11 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 				if o.Categories then
 					for k,v in pairs(o.Categories) do
 						local id = v.id
-						--local parent = v.parent
-						local name, locale = CustAc_getLocaleData(v,"name")
+						local parent = v.parent or ""
+						local name, locale = CustAc_getLocaleData(v, "name")
 						
 						if updateData then
-							CustAc_CreateOrUpdateCategory(id, nil, name, locale, isSenderSelf)
-							--CustAc_RefreshCustomAchiementFrame(nil, nil, id)
+							CustAc_CreateOrUpdateCategory(id, parent, name, locale, isSenderSelf, not isSenderSelf and senderFullName)
 						else
 							if not isSenderSelf then
 								if not CustomAchieverData["AwardedPlayers"][id] then
