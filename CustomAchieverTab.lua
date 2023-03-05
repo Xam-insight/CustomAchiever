@@ -276,6 +276,10 @@ function CustAc_AchievementFrameCategories_SelectElementData(elementData, ignore
 				iterElementData.collapsed = true
 			end
 		end
+		
+		if not iterElementData.isChild and iterElementData.collapsed == nil then
+			iterElementData.collapsed = true
+		end
 	end
 
 	if not isChild then
