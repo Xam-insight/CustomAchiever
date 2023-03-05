@@ -124,9 +124,9 @@ function CustomAchiever:LoadAddonsData()
 						end
 						if import then
 							newCustomAchieverData["Categories"][k] = v
-							if data["PendingUpdates"][k]      then newCustomAchieverData["PendingUpdates"][k]      = data["PendingUpdates"][k] end
-							if data["AwardedPlayers"][k]      then newCustomAchieverData["AwardedPlayers"][k]      = data["AwardedPlayers"][k] end
-							if data["PersonnalCategories"][k] then newCustomAchieverData["PersonnalCategories"][k] = data["PersonnalCategories"][k] end
+							if data["PendingUpdates"] and data["PendingUpdates"][k]           then newCustomAchieverData["PendingUpdates"][k]      = data["PendingUpdates"][k] end
+							if data["AwardedPlayers"] and data["AwardedPlayers"][k]           then newCustomAchieverData["AwardedPlayers"][k]      = data["AwardedPlayers"][k] end
+							if data["PersonnalCategories"] and data["PersonnalCategories"][k] then newCustomAchieverData["PersonnalCategories"][k] = data["PersonnalCategories"][k] end
 						end
 					end
 					
@@ -143,17 +143,18 @@ function CustomAchiever:LoadAddonsData()
 						end
 						if import then
 							newCustomAchieverData["Achievements"][k] = v
-							if data["PendingUpdates"][k] then newCustomAchieverData["PendingUpdates"][k] = data["PendingUpdates"][k] end
-							if data["AwardedPlayers"][k] then newCustomAchieverData["AwardedPlayers"][k] = data["AwardedPlayers"][k] end
+							if data["PendingUpdates"] and data["PendingUpdates"][k] then newCustomAchieverData["PendingUpdates"][k] = data["PendingUpdates"][k] end
+							if data["AwardedPlayers"] and data["AwardedPlayers"][k] then newCustomAchieverData["AwardedPlayers"][k] = data["AwardedPlayers"][k] end
 						end
 					end
 
-					for k,v in pairs(data["Users"]) do
-						if not newCustomAchieverData["Users"][k] then
-							newCustomAchieverData["Users"][k] = v
+					if data["Users"] then
+						for k,v in pairs(data["Users"]) do
+							if not newCustomAchieverData["Users"][k] then
+								newCustomAchieverData["Users"][k] = v
+							end
 						end
 					end
-
 				end
 			end
 			local optionsData = _G[sourceAddonName.."_CustomAchieverOptionsData"]
