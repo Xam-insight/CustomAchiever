@@ -82,8 +82,9 @@ function CustomAchiever:OnEnable()
 end
 
 function CustAc_CommunitiesMemberOnEnter()
-	if GetMouseFocus()["memberInfo"] and GetMouseFocus()["memberInfo"]["clubType"] == 2 and GetMouseFocus()["memberInfo"]["name"] then
-		local unitFullName = CustAc_addRealm(GetMouseFocus()["memberInfo"]["name"])
+	local mouseFocus = GetMouseFocus()
+	if mouseFocus and mouseFocus["memberInfo"] and mouseFocus["memberInfo"]["clubType"] == 2 and mouseFocus["memberInfo"]["name"] then
+		local unitFullName = CustAc_addRealm(mouseFocus["memberInfo"]["name"])
 		if CustomAchieverData["Users"][unitFullName] then
 			GameTooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][unitFullName], 0, 1, 0, 0, 1, 0)
 			GameTooltip:Show()
