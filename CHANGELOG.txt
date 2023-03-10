@@ -1,5 +1,6 @@
 ﻿- v1.3
 	- Sub-categories!
+	- More noticeable loading spinner.
 	- Fixed: Ignore list is taken into account again.
 - v1.2
 	- When editing a Category, you can move the selected achievement into it.

@@ -39,6 +39,7 @@ function CustAc_LoadAchievementsData(callOrigin)
 				if not custacGenerationPending then
 					custacGenerationPending = true
 					CustAc_Categories.LoadingSpinner:Show()
+					CustAc_Categories.ScrollBox:SetAlpha(0.5)
 					C_Timer.After(1 - (callTime - custacLastTableGeneration), function()
 						custacGenerationPending = nil
 						CustAc_LoadAchievementsData("CustAc_LoadAchievementsData")
@@ -111,6 +112,7 @@ function CustAc_LoadAchievementsData(callOrigin)
 		end
 		
 		CustAc_Categories.LoadingSpinner:Hide()
+		CustAc_Categories.ScrollBox:SetAlpha(1.0)
 	end
 end
 

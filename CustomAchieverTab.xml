@@ -29,7 +29,7 @@
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="1" y="1"/>
 				</Anchors>
 			</EventFrame>
-			<Frame parentKey="LoadingSpinner" toplevel="true" inherits="CustAc_LoadingSpinnerTemplate"/>
+			<Frame parentKey="LoadingSpinner" frameStrata="HIGH" toplevel="true" inherits="CustAc_LoadingSpinnerTemplate"/>
 		</Frames>
 	</Frame>
 	<Frame name="CustAc_AchievementFrameAchievementsTemplate" hidden="true" virtual="true">
