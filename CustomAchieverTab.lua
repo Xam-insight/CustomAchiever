@@ -75,13 +75,21 @@ function CustAc_LoadAchievementsData(callOrigin)
 		end
 		table.sort(categoriesId)
 
+		local selectedCategory = g_categorySelections[CustAc_AchievementTabId]
 		for _,v in pairs(categoriesId) do
 			if CustomAchieverData["Categories"][v] and (not CustomAchieverData["Categories"][v]["parent"] or CustomAchieverData["Categories"][v]["parent"] == true) and
 					(not CustomAchieverData["Categories"][v]["author"] or not CustomAchieverData["BlackList"][CustomAchieverData["Categories"][v]["author"]]) then
-				insertCategory(v)
+				local categoryCollapsed = true
+				if selectedCategory.id == v and selectedCategory.collapsed ~= nil then
+					categoryCollapsed = selectedCategory.collapsed
+				end
+				if selectedCategory.id and CustomAchieverData["Categories"][selectedCategory.id]["parent"] == v then
+					categoryCollapsed = false
+				end
+				insertCategory(v, categoryCollapsed)
 				for _,v2 in pairs(categoriesId) do
 					if CustomAchieverData["Categories"][v2] and CustomAchieverData["Categories"][v2]["parent"] == v then
-						insertCategory(v2)
+						insertCategory(v2, nil, categoryCollapsed)
 					end
 				end
 			end
@@ -114,17 +122,15 @@ function CustAc_LoadAchievementsData(callOrigin)
 	end
 end
 
-function insertCategory(cat)
+function insertCategory(cat, collapsed, parentCollapsed)
 	local data = {}
 	for key, value in pairs(CustomAchieverData["Categories"][cat]) do
 		data[key] = value
 	end
-	data.selected = g_categorySelections[CustAc_AchievementTabId] and cat == g_categorySelections[CustAc_AchievementTabId].id
-	data.isChild  = (type(CustomAchieverData["Categories"][cat]["parent"]) == "string")
-	data.hidden   = data["isChild"] and (
-			not g_categorySelections[CustAc_AchievementTabId].id or
-			(CustomAchieverData["Categories"][cat]["parent"] ~= g_categorySelections[CustAc_AchievementTabId].id and cat ~= g_categorySelections[4].id)
-		)
+	data.selected  = g_categorySelections[CustAc_AchievementTabId] and cat == g_categorySelections[CustAc_AchievementTabId].id
+	data.collapsed = collapsed
+	data.isChild   = (type(CustomAchieverData["Categories"][cat]["parent"]) == "string")
+	data.hidden    = data.isChild and parentCollapsed
 	tinsert(CUSTOMACHIEVER_ACHIEVEMENTUI_CATEGORIES, data)
 	CUSTOMACHIEVER_CATEGORIES[cat] = {}
 	CUSTOMACHIEVER_CATEGORIES[cat]["categoryName"] = CustAc_getLocaleData(CustomAchieverData["Categories"][cat], "name")
@@ -242,8 +248,7 @@ function CustAc_AchievementFrameCategories_SelectDefaultElementData()
 	end
 	
 	local elementData = g_categorySelections[CustAc_AchievementTabId]
-	local selectionExistsAtFirst = elementData.id and CustomAchieverData["Categories"][elementData.id]
-	if selectionExistsAtFirst then
+	if elementData.id and CustomAchieverData["Categories"][elementData.id] then
 		CustAc_Categories.ScrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
 	else
 		elementData = CustAc_Categories.ScrollBox:ScrollToElementDataIndex(1, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
@@ -251,10 +256,6 @@ function CustAc_AchievementFrameCategories_SelectDefaultElementData()
 	
 	if elementData then
 		CustAc_AchievementFrameCategories_SelectElementData(elementData, true)
-	end
-	
-	if not selectionExistsAtFirst then
-		CustAc_AchievementFrameCategories_UpdateDataProvider()
 	end
 end
 
