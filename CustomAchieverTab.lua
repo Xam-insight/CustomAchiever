@@ -83,7 +83,7 @@ function CustAc_LoadAchievementsData(callOrigin)
 				if selectedCategory.id == v and selectedCategory.collapsed ~= nil then
 					categoryCollapsed = selectedCategory.collapsed
 				end
-				if selectedCategory.id and CustomAchieverData["Categories"][selectedCategory.id]["parent"] == v then
+				if selectedCategory.id and CustomAchieverData["Categories"][selectedCategory.id] and CustomAchieverData["Categories"][selectedCategory.id]["parent"] == v then
 					categoryCollapsed = false
 				end
 				insertCategory(v, categoryCollapsed)
@@ -243,6 +243,8 @@ function CustAc_AchievementFrameCategories_OnShow()
 end
 
 function CustAc_AchievementFrameCategories_SelectDefaultElementData()
+	local ignoreCollapse = true
+	
 	if not CustAc_Categories.ScrollBox:HasDataProvider() then
 		CustAc_AchievementFrameCategories_UpdateDataProvider()
 	end
@@ -252,10 +254,11 @@ function CustAc_AchievementFrameCategories_SelectDefaultElementData()
 		CustAc_Categories.ScrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
 	else
 		elementData = CustAc_Categories.ScrollBox:ScrollToElementDataIndex(1, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
+		ignoreCollapse = false
 	end
 	
 	if elementData then
-		CustAc_AchievementFrameCategories_SelectElementData(elementData, true)
+		CustAc_AchievementFrameCategories_SelectElementData(elementData, ignoreCollapse)
 	end
 end
 
