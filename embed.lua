@@ -302,34 +302,42 @@ function CustAc_CategoryDropDownMenu_Update(self)
 		LibDD:UIDropDownMenu_AddButton(info)
 	end
 	
+	local categoriesId = {}
 	for k,v in pairs(CustomAchieverData["Categories"]) do
 		if v["author"] and v["author"] == CustAc_playerCharacter() then
 			CustomAchieverData["PersonnalCategories"][k] = true
 		end
-		if (k ~= nextCustomCategoryId or CustomAchieverData["Categories"][nextCustomCategoryId]) and CustomAchieverData["PersonnalCategories"][k] then
-			if not v["parent"] or v["parent"] == true then
+		if CustomAchieverData["PersonnalCategories"][k] == true then
+			categoriesId[ #categoriesId + 1 ] = k
+		end
+	end
+	table.sort(categoriesId)
+	
+	for _,v in pairs(categoriesId) do
+		if (v ~= nextCustomCategoryId or CustomAchieverData["Categories"][nextCustomCategoryId]) and CustomAchieverData["PersonnalCategories"][v] then
+			if not CustomAchieverData["Categories"][v]["parent"] or CustomAchieverData["Categories"][v]["parent"] == true then
 				local info = LibDD:UIDropDownMenu_CreateInfo()
-				info.text  = CustAc_getLocaleData(v, "name")
+				info.text  = CustAc_getLocaleData(CustomAchieverData["Categories"][v], "name")
 				info.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
 				info.iconXOffset = -5
 				info.padding = 5
-				info.value = k
+				info.value = v
 				info.func  = CustAc_SelectCategory
 				info.arg1  = self
-				info.arg2  = k
+				info.arg2  = v
 				LibDD:UIDropDownMenu_AddButton(info)
-				for k2,v2 in pairs(CustomAchieverData["Categories"]) do
-					if v2["parent"] and v2["parent"] == k then
+				for _,v2 in pairs(categoriesId) do
+					if CustomAchieverData["Categories"][v2]["parent"] and CustomAchieverData["Categories"][v2]["parent"] == v then
 						local info2 = LibDD:UIDropDownMenu_CreateInfo()
-						info2.text  = "  "..CustAc_getLocaleData(v2, "name")
+						info2.text  = "  "..CustAc_getLocaleData(CustomAchieverData["Categories"][v2], "name")
 						info2.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
 						info2.iconXOffset = -10
 						info2.padding = 10
 						info2.leftPadding = 5
-						info2.value = k2
+						info2.value = v2
 						info2.func  = CustAc_SelectCategory
 						info2.arg1  = self
-						info2.arg2  = k2
+						info2.arg2  = v2
 						LibDD:UIDropDownMenu_AddButton(info2)
 					end
 				end
