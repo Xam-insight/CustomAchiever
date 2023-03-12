@@ -136,7 +136,7 @@ function CustomAchieverFrame_OnLoad(self)
 	LibDD:UIDropDownMenu_Initialize(categoryDropDown, CustAc_CategoryDropDownMenu_Update)
 	LibDD:UIDropDownMenu_SetSelectedValue(categoryDropDown, nextCustomCategoryId)
 
-	nextCustomAchieverId = CustAc_playerCharacter()..'-'..tostring(CustAc_getTimeUTCinMS())
+	nextCustomAchieverId = CustAc_playerCharacter()..'-'..CustAc_getTimeUTCinMS()
 	local achievementFontstring = CustomAchieverFrame:CreateFontString("AchievementFontstring", "ARTWORK", "GameFontNormal")
 	achievementFontstring:SetText(L["MENUCUSTAC_ACHIEVEMENT"])
 	achievementFontstring:SetPoint("TOPLEFT", 30, -79)
@@ -222,7 +222,7 @@ end
 function CustAc_SaveCategory(popup, categoryName, categoryId)
 	local newCategoryName = CustAc_titleFormat(categoryName)
 	if newCategoryName ~= "" then
-		local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..tostring(CustAc_getTimeUTCinMS())
+		local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..CustAc_getTimeUTCinMS()
 		CustAc_CreateOrUpdateCategory(newCategoryId, nil, newCategoryName, nil, true)
 		StaticPopupSpecial_Hide(popup)
 		CustAc_RefreshCustomAchiementFrame(nextCustomAchieverId, newCategoryId)
@@ -499,7 +499,7 @@ function CustAc_SaveButton_OnClick()
 		CustAc_CreateOrUpdateCategory(selectedAchievement.achievementCategory, nil, selectedAchievement.achievementCategoryName, nil, true)
 		CustAc_CreateOrUpdateAchievement(selectedAchievement.achievementId, selectedAchievement.achievementCategory, selectedAchievement.achievementIcon, selectedAchievement.achievementPoints, selectedAchievement.achievementName, selectedAchievement.achievementDesc, selectedAchievement.achievementRewardText, selectedAchievement.achievementRewardIsTitle, nil, true)
 		if selectedAchievement.achievementId == nextCustomAchieverId then
-			nextCustomAchieverId = CustAc_playerCharacter()..'-'..tostring(CustAc_getTimeUTCinMS())
+			nextCustomAchieverId = CustAc_playerCharacter()..'-'..CustAc_getTimeUTCinMS()
 		end
 		
 		local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name")
