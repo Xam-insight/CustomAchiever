@@ -18,6 +18,9 @@ externals:
 	Libs/LibUIDropDownMenu: https://repos.wowace.com/wow/libuidropdownmenu/trunk/LibUIDropDownMenu
 	Libs/EZBlizzardUiPopups: https://github.com/Xam-insight/EZBlizzardUiPopups
 
+ignore:
+	- art/PNG
+
 manual-changelog:
 	filename: CHANGELOG.txt
 	markup-type: markdown

@@ -1,4 +1,6 @@
-﻿- v1.3
+﻿- v1.3.1
+	- Delete achievement from dropdown menu.
+- v1.3
 	- Sub-categories!
 	- More noticeable loading spinner.
 	- Fixed: Ignore list is taken into account again.

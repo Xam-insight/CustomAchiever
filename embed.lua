@@ -328,16 +328,16 @@ function CustAc_CategoryDropDownMenu_Update(self)
 				LibDD:UIDropDownMenu_AddButton(info)
 				for _,v2 in pairs(categoriesId) do
 					if CustomAchieverData["Categories"][v2]["parent"] and CustomAchieverData["Categories"][v2]["parent"] == v then
-						local info2 = LibDD:UIDropDownMenu_CreateInfo()
-						info2.text  = "  "..CustAc_getLocaleData(CustomAchieverData["Categories"][v2], "name")
+						local info2         = LibDD:UIDropDownMenu_CreateInfo()
+						info2.text          = "  "..CustAc_getLocaleData(CustomAchieverData["Categories"][v2], "name")
 						info2.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
-						info2.iconXOffset = -10
-						info2.padding = 10
-						info2.leftPadding = 5
-						info2.value = v2
-						info2.func  = CustAc_SelectCategory
-						info2.arg1  = self
-						info2.arg2  = v2
+						info2.iconXOffset   = -10
+						info2.padding       = 10
+						info2.leftPadding   = 5
+						info2.value         = v2
+						info2.func          = CustAc_SelectCategory
+						info2.arg1          = self
+						info2.arg2          = v2
 						LibDD:UIDropDownMenu_AddButton(info2)
 					end
 				end
@@ -347,10 +347,19 @@ function CustAc_CategoryDropDownMenu_Update(self)
 end
 
 function CustAc_AchievementDropDownMenu_Update(self)
-	local function CustAc_SelectAchievement(_, dropdown, id)
-		CustAc_InitSelectedAchievement(id, selectedAchievement.achievementCategory)
-		LibDD:UIDropDownMenu_SetSelectedValue(dropdown, id)
-		CustomAchieverFrame_UpdateAchievementAlertFrame()
+	local function CustAc_SelectAchievement(button, dropdown, id)
+		local deleteIcon = button.Icon;
+		if button.mouseOverIcon and deleteIcon:IsMouseOver() then
+			local dialog = StaticPopup_Show("CUSTAC_DELETE", CustAc_getLocaleData(CustomAchieverData["Achievements"][id], "name"))
+			if (dialog) then
+				dialog.data = {}
+				dialog.data["achievementId"] = id
+			end
+		else
+			CustAc_InitSelectedAchievement(id, selectedAchievement.achievementCategory)
+			LibDD:UIDropDownMenu_SetSelectedValue(dropdown, id)
+			CustomAchieverFrame_UpdateAchievementAlertFrame()
+		end
 	end
 	
 	local info = LibDD:UIDropDownMenu_CreateInfo()
@@ -370,12 +379,15 @@ function CustAc_AchievementDropDownMenu_Update(self)
 
 	for k,v in pairs(CustomAchieverData["Achievements"]) do
 		if v["parent"] == LibDD:UIDropDownMenu_GetSelectedValue(CustomAchieverCategoryDownMenu) then
-			local info = LibDD:UIDropDownMenu_CreateInfo()
-			info.text  = CustAc_getLocaleData(v, "name")
-			info.value = k
-			info.func  = CustAc_SelectAchievement
-			info.arg1  = self
-			info.arg2  = k
+			local info         = LibDD:UIDropDownMenu_CreateInfo()
+			info.text          = CustAc_getLocaleData(v, "name")
+			info.mouseOverIcon = [[Interface\AddOns\CustomAchiever\art\delete]]
+			info.iconXOffset   = -5
+			info.padding       = 5
+			info.value         = k
+			info.func          = CustAc_SelectAchievement
+			info.arg1          = self
+			info.arg2          = k
 			LibDD:UIDropDownMenu_AddButton(info)
 		end
 	end
