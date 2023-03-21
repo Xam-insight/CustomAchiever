@@ -381,7 +381,7 @@ function CustAc_AchievementDropDownMenu_Update(self)
 		if v["parent"] == LibDD:UIDropDownMenu_GetSelectedValue(CustomAchieverCategoryDownMenu) then
 			local info         = LibDD:UIDropDownMenu_CreateInfo()
 			info.text          = CustAc_getLocaleData(v, "name")
-			info.mouseOverIcon = [[Interface\AddOns\CustomAchiever\art\delete]]
+			info.mouseOverIcon = [[Interface\AddOns\]]..(CustAcAddon or "CustomAchiever").."\\art\\delete"
 			info.iconXOffset   = -5
 			info.padding       = 5
 			info.value         = k
