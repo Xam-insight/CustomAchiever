@@ -1,4 +1,6 @@
-﻿- v1.3.1
+﻿- v1.3.2
+	- TOC for 10.0.7.
+- v1.3.1
 	- Delete achievement from dropdown menu.
 - v1.3
 	- Sub-categories!
