@@ -405,7 +405,7 @@
 	<Button name="CustomAchieverOptionsButtonTemplate" frameStrata="HIGH" virtual="true">
 		<Size x="16" y="16" />
 		<Scripts>
-			<OnClick function="CustomAchieverOptions"/>
+			<OnClick function="CustomAchiever_OpenOptions"/>
 			<OnEnter function="CustomAchieverButtonEnter"/>
 			<OnLeave function="CustomAchieverButtonLeave"/>
 		</Scripts>

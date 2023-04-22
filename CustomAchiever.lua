@@ -262,12 +262,12 @@ end
 
 function CustomAchiever:CustomAchieverChatCommand(input)
 	if input == "options" then
-		CustomAchieverOptions()
+		CustomAchiever_OpenOptions()
 	else
 		CustomAchieverFrame:Show()
 	end
 end
 
-function CustomAchieverOptions()
+function CustomAchiever_OpenOptions()
 	ACD:Open("CustomAchiever")
 end
