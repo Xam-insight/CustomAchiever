@@ -268,6 +268,36 @@ function CustomAchiever:CustomAchieverChatCommand(input)
 	end
 end
 
+function CustomAchiever_CompartmentFunc(addon, clickButton)
+	if clickButton == "RightButton" then
+		CustomAchiever_OpenOptions()
+	else
+		CustomAchiever_ToggleFrame()
+	end
+end
+
+function CustomAchiever_CompartmentFuncOnEnter(addon, button)
+	local tooltip = "Custom Achiever"
+	local tooltipDetail = L["MINIMAP_TOOLTIP1"]
+	local tooltipDetail2 = L["MINIMAP_TOOLTIP2"]
+	
+	button:SetAttribute("tooltip", tooltip)
+	button:SetAttribute("tooltipDetail", { tooltipDetail, tooltipDetail2 })
+	CustomAchieverButtonEnter(button, "LEFT")
+end
+
+function CustomAchiever_CompartmentFuncOnLeave()
+	CustomAchieverTooltip:Hide()
+end
+
+function CustomAchiever_ToggleFrame()
+	if CustomAchieverFrame:IsShown() then
+		CustomAchieverFrame:Hide()
+	else
+		CustomAchieverFrame:Show()
+	end
+end
+
 function CustomAchiever_OpenOptions()
 	ACD:Open("CustomAchiever")
 end

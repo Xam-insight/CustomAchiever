@@ -123,15 +123,7 @@ function CustAc_CreateMinimapButton()
 		icon = "interface\\friendsframe\\friendsframescrollicon",
 		tocname = "CustomAchiever",
 		OnClick = function(self, button)
-			if button == "LeftButton" then
-				if CustomAchieverFrame:IsShown() then
-					CustomAchieverFrame:Hide()
-				else
-					CustomAchieverFrame:Show()
-				end
-			else
-				ACD:Open("CustomAchiever")
-			end
+			CustomAchiever_CompartmentFunc("CustomAchiever", button)
 		end,
 		OnTooltipShow = function(tooltip)
 			tooltip:AddLine("Custom Achiever", 1.0, 1.0, 1.0)

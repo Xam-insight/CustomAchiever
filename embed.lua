@@ -595,12 +595,12 @@ function CustAc_IconsPopupFrame_RefreshIconDataProvider(self)
 	return self.iconDataProvider;
 end
 
-function CustomAchieverButtonEnter(self)
+function CustomAchieverButtonEnter(self, position)
 	local tooltip = self:GetAttribute("tooltip")
 	local tooltipDetail = self:GetAttribute("tooltipDetail")
 	local tooltipDetailGreen = self:GetAttribute("tooltipDetailGreen")
 	local tooltipDetailRed = self:GetAttribute("tooltipDetailRed")
-	CustomAchieverTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+	CustomAchieverTooltip:SetOwner(self, "ANCHOR_"..(position or "TOPRIGHT"))
 	if tooltip then
 		CustomAchieverTooltip:SetText(tooltip)
 		if tooltipDetail then
