@@ -1,4 +1,6 @@
-﻿- v1.3.3
+﻿- v1.3.4
+	- Fixed: Rare format error.
+- v1.3.3
 	- TOC for 10.1.0.
 - v1.3.2
 	- TOC for 10.0.7.

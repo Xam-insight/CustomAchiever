@@ -163,7 +163,7 @@ function CustomAchiever:LoadAddonsData()
 				local addonDataTime  = optionsData["dataTime"]
 				local custacDataTime = CustomAchieverOptionsData["dataTime"]
 				local optionsDataToMergeDataTime = optionsDataToMerge and optionsDataToMerge["dataTime"]
-				if addonDataTime and (not custacDataTime or custacDataTime < addonDataTime) and (not optionsDataToMergeDataTime or optionsDataToMergeDataTime < addonDataTime) then
+				if addonDataTime and (not custacDataTime or tonumber(custacDataTime) < tonumber(addonDataTime)) and (not optionsDataToMergeDataTime or tonumber(optionsDataToMergeDataTime) < tonumber(addonDataTime)) then
 					optionsDataToMerge = optionsData
 				end
 			end
