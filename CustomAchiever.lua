@@ -283,7 +283,7 @@ function CustomAchiever_CompartmentFuncOnEnter(addon, button)
 	
 	button:SetAttribute("tooltip", tooltip)
 	button:SetAttribute("tooltipDetail", { tooltipDetail, tooltipDetail2 })
-	CustomAchieverButtonEnter(button, "LEFT")
+	CustomAchieverButtonEnter(button, nil, "LEFT")
 end
 
 function CustomAchiever_CompartmentFuncOnLeave()

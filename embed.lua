@@ -595,7 +595,7 @@ function CustAc_IconsPopupFrame_RefreshIconDataProvider(self)
 	return self.iconDataProvider;
 end
 
-function CustomAchieverButtonEnter(self, position)
+function CustomAchieverButtonEnter(self, motion, position)
 	local tooltip = self:GetAttribute("tooltip")
 	local tooltipDetail = self:GetAttribute("tooltipDetail")
 	local tooltipDetailGreen = self:GetAttribute("tooltipDetailGreen")
