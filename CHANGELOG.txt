@@ -1,4 +1,6 @@
-﻿- v1.3.6
+﻿- v1.3.7
+	- TOC for 10.1.5.
+- v1.3.6
 	- Parameter error in CustomAchieverButtonEnter.
 - v1.3.5
 	- Better Addon compartment management.
