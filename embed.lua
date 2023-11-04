@@ -290,11 +290,6 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	if not CustomAchieverData["Categories"][nextCustomCategoryId] then
 		local info = LibDD:UIDropDownMenu_CreateInfo()
 		info.text  = CustAc_getLocaleData(CustomAchieverData["Categories"][nextCustomCategoryId], "name") or CustAc_delRealm(nextCustomCategoryId)--L["MENUCUSTAC_NEW"]
-		if CustomAchieverData["Categories"][nextCustomCategoryId] then
-			info.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
-			info.iconXOffset = -5
-			info.padding = 5
-		end
 		info.value = nextCustomCategoryId
 		info.func  = CustAc_SelectCategory
 		info.arg1  = self
