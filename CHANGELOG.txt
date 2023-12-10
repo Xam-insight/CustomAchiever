@@ -1,4 +1,6 @@
-﻿- v1.3.9
+﻿- v1.3.10
+	- Fixed: Error due to deprecated code.
+- v1.3.9
 	- Workaround in LibUIDropDownMenu.
 - v1.3.8
 	- TOC for 10.2.0.
