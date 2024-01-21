@@ -1,4 +1,6 @@
-﻿- v1.3.10
+﻿- v1.3.11
+	- Removed: Workaround in LibUIDropDownMenu.
+- v1.3.10
 	- TOC for 10.2.5.
 	- Workaround in LibUIDropDownMenu.
 	- Fixed: Error due to deprecated code.
