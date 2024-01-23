@@ -1,4 +1,6 @@
-﻿- v1.3.11
+﻿- v1.3.12
+	- [LibUIDropDownMenu] Fixed issue of version confliction when older version was loaded first and then newer version was to replace the library.
+- v1.3.11
 	- Removed: Workaround in LibUIDropDownMenu.
 - v1.3.10
 	- TOC for 10.2.5.
