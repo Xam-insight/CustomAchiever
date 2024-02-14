@@ -1,4 +1,6 @@
-﻿- v1.3.13
+﻿- v1.3.14
+	- [LibUIDropDownMenu] v4.26 integration.
+- v1.3.13
 	- [LibUIDropDownMenu] v4.25 integration.
 - v1.3.12
 	- [LibUIDropDownMenu] Fixed issue of version confliction when older version was loaded first and then newer version was to replace the library.
