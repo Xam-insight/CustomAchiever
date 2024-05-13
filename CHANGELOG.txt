@@ -1,6 +1,7 @@
-﻿- v1.3.15
+﻿- v1.3.16
+	- TOC for 10.2.7.
+- v1.3.15
 	- TOC for 10.2.6.
-	- Fixed: Errors when tryying to equip/unequip items in combat.
 - v1.3.14
 	- [LibUIDropDownMenu] v4.26 integration.
 - v1.3.13
