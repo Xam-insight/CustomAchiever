@@ -145,4 +145,3 @@ function CustAc_CreateMinimapButton()
 	--self:UnregisterEvent("ADDON_LOADED")
 	--self:SetScript("OnEvent", nil)
 end
-
