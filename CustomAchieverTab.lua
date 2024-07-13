@@ -251,9 +251,9 @@ function CustAc_AchievementFrameCategories_SelectDefaultElementData()
 	
 	local elementData = g_categorySelections[CustAc_AchievementTabId]
 	if elementData.id and CustomAchieverData["Categories"][elementData.id] then
-		CustAc_Categories.ScrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
+		CustAc_Categories.ScrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, nil, ScrollBoxConstants.NoScrollInterpolation)
 	else
-		elementData = CustAc_Categories.ScrollBox:ScrollToElementDataIndex(1, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
+		elementData = CustAc_Categories.ScrollBox:ScrollToElementDataIndex(1, ScrollBoxConstants.AlignCenter, nil, ScrollBoxConstants.NoScrollInterpolation)
 		ignoreCollapse = false
 	end
 	
@@ -413,7 +413,7 @@ function CustAc_AchievementFrame_OnClick(clickedTab)
 	--end
 
 	--SwitchAchievementSearchTab(clickedTab)
-	AchievementFrameFilterDropDown:Hide()
+	--AchievementFrameFilterDropDown:Hide()
 	AchievementFrame.Header.LeftDDLInset:Hide()
 end
 
@@ -692,7 +692,7 @@ function CustAc_AchievementFrame_UpdateAndSelectCategory(category)
 		end);
 		if elementData then
 			CustAc_AchievementFrameCategories_SelectElementData(elementData)
-			scrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
+			scrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, nil, ScrollBoxConstants.NoScrollInterpolation)
 		end
 	end
 end
@@ -707,7 +707,7 @@ function CustAc_AchievementFrame_SelectAndScrollToAchievementId(scrollBox, achie
 			g_achievementSelectionBehavior:SelectElementData(elementData)
 			-- Selection expands and modifies the size. We need to update the scroll box for the alignment to be correct.
 			scrollBox:FullUpdate(ScrollBoxConstants.UpdateImmediately)
-			scrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, ScrollBoxConstants.NoScrollInterpolation)
+			scrollBox:ScrollToElementData(elementData, ScrollBoxConstants.AlignCenter, nil, ScrollBoxConstants.NoScrollInterpolation)
 		end
 	end
 end

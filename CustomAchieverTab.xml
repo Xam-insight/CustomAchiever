@@ -73,10 +73,12 @@
 		<Scripts>
 			<OnLoad function="CustAc_AchievementFrameAchievements_OnLoad"/>
 			<OnHide>
-				AchievementFrameFilterDropDown:Hide()
+				AchievementFrame.SearchBox:Enable()
 				AchievementFrame.Header.LeftDDLInset:Hide()
 			</OnHide>
-			<!--OnShow function="CustAc_AchievementFrameAchievements_OnShow"/-->
+			<OnShow>
+				AchievementFrame.SearchBox:Disable()
+			</OnShow>
 		</Scripts>
 		<Frames>
 			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList" frameStrata="HIGH">

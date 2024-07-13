@@ -82,7 +82,7 @@ function CustomAchiever:OnEnable()
 end
 
 function CustAc_CommunitiesMemberOnEnter()
-	local mouseFocus = GetMouseFocus()
+	local mouseFocus = EZBlizzUiPop_GetMouseFocus()
 	if mouseFocus and mouseFocus["memberInfo"] and mouseFocus["memberInfo"]["clubType"] == 2 and mouseFocus["memberInfo"]["name"] then
 		local unitFullName = CustAc_addRealm(mouseFocus["memberInfo"]["name"])
 		if CustomAchieverData["Users"][unitFullName] then
