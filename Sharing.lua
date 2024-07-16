@@ -2,6 +2,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true);
 
 local messageTypeColors = {
 	["CallUsers"] = "FFD2B4DE",
+	["CallCategories"] = "FFD2B4DE",
 	["AnswerUsers"] = "FFD2B4DE",
 	["Award"] = "FFABEBC6",
 	["Revoke"] = "FFF5B7B1",
@@ -27,6 +28,14 @@ end
 
 function CustAc_SendCallForUsers()
 	sendInfo(GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version"), nil, "CallUsers")
+end
+
+function CustAc_SendCallForAchievementsCategories(achievements, aTarget)
+	if achievements then
+		local data = {}
+		data["AchievementsToUpdate"] = achievements
+		encodeAndSendAchievementInfo(data, aTarget, "CallCategories")
+	end
 end
 
 function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
@@ -201,100 +210,111 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 			else
 				CustomAchieverData["Users"][senderFullName] = o.Version or "UnknownVersion"
 				local updateData = messageType == "Award" or messageType == "Revoke" or messageType == "Update"
-				if o.Categories then
-					for k,v in pairs(o.Categories) do
-						local id = v.id
-						local parent = v.parent or ""
-						local name, locale = CustAc_getLocaleData(v, "name")
-						
-						if updateData then
-							CustAc_CreateOrUpdateCategory(id, parent, name, locale, isSenderSelf, not isSenderSelf and senderFullName)
-						else
-							if not isSenderSelf then
-								if not CustomAchieverData["AwardedPlayers"][id] then
-									CustomAchieverData["AwardedPlayers"][id] = {}
+				if messageType == "CallCategories" then
+					for k,v in pairs(o.AchievementsToUpdate) do
+						local alreadySent = {}
+						local category = CustomAchieverData["Achievements"][k] and CustomAchieverData["Achievements"][k]["parent"]
+						if category and not alreadySent[category] then
+							CustAc_SendUpdatedCategoryData(category, senderFullName)
+							alreadySent[category] = true
+						end
+					end
+				else
+					if o.Categories then
+						for k,v in pairs(o.Categories) do
+							local id = v.id
+							local parent = v.parent or ""
+							local name, locale = CustAc_getLocaleData(v, "name")
+							
+							if updateData then
+								CustAc_CreateOrUpdateCategory(id, parent, name, locale, isSenderSelf, not isSenderSelf and senderFullName)
+							else
+								if not isSenderSelf then
+									if not CustomAchieverData["AwardedPlayers"][id] then
+										CustomAchieverData["AwardedPlayers"][id] = {}
+									end
+									CustomAchieverData["AwardedPlayers"][id][senderFullName] = true
 								end
-								CustomAchieverData["AwardedPlayers"][id][senderFullName] = true
-							end
-							if messageType == "UpdateAcknowledgment" then
-								if CustomAchieverData["PendingUpdates"]["Categories"][id] then
-									CustomAchieverData["PendingUpdates"]["Categories"][id][senderFullName] = nil
-									if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Categories"][id]) == 0 then
-										CustomAchieverData["PendingUpdates"]["Categories"][id] = nil
+								if messageType == "UpdateAcknowledgment" then
+									if CustomAchieverData["PendingUpdates"]["Categories"][id] then
+										CustomAchieverData["PendingUpdates"]["Categories"][id][senderFullName] = nil
+										if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Categories"][id]) == 0 then
+											CustomAchieverData["PendingUpdates"]["Categories"][id] = nil
+										end
 									end
 								end
 							end
 						end
 					end
-				end
-				
-				if o.Achievements then
-					for k,v in pairs(o.Achievements) do
-						if v == "DELETE" then
-							local id = k
-							if messageType == "UpdateAcknowledgment" then
-								if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
-									CustomAchieverData["PendingUpdates"]["Achievements"][id][senderFullName] = nil
-									if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][id]) == 0 then
-										CustomAchieverData["PendingUpdates"]["Achievements"][id] = nil
+					
+					if o.Achievements then
+						for k,v in pairs(o.Achievements) do
+							if v == "DELETE" then
+								local id = k
+								if messageType == "UpdateAcknowledgment" then
+									if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
+										CustomAchieverData["PendingUpdates"]["Achievements"][id][senderFullName] = nil
+										if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][id]) == 0 then
+											CustomAchieverData["PendingUpdates"]["Achievements"][id] = nil
+										end
 									end
-								end
-								if CustomAchieverData["AwardedPlayers"][id] then
-									CustomAchieverData["AwardedPlayers"][id][senderFullName] = nil
-									if CustAc_countTableElements(CustomAchieverData["AwardedPlayers"][id]) == 0 then
-										CustomAchieverData["AwardedPlayers"][id] = nil
+									if CustomAchieverData["AwardedPlayers"][id] then
+										CustomAchieverData["AwardedPlayers"][id][senderFullName] = nil
+										if CustAc_countTableElements(CustomAchieverData["AwardedPlayers"][id]) == 0 then
+											CustomAchieverData["AwardedPlayers"][id] = nil
+										end
 									end
+									CustomAchieverAcknowledgmentReceived[senderFullName] = true
+								else
+									CustAc_DeleteAchievement(id)
 								end
-								CustomAchieverAcknowledgmentReceived[senderFullName] = true
 							else
-								CustAc_DeleteAchievement(id)
-							end
-						else
-							local id = v.id
-							local parent = v.parent
-							local icon = v.icon
-							local points = v.points
-							local name, locale = CustAc_getLocaleData(v,"name")
-							local description = CustAc_getLocaleData(v, "desc")
-							local rewardText = CustAc_getLocaleData(v, "rewardText", "")
-							local rewardIsTitle = v.rewardIsTitle
+								local id = v.id
+								local parent = v.parent
+								local icon = v.icon
+								local points = v.points
+								local name, locale = CustAc_getLocaleData(v,"name")
+								local description = CustAc_getLocaleData(v, "desc")
+								local rewardText = CustAc_getLocaleData(v, "rewardText", "")
+								local rewardIsTitle = v.rewardIsTitle
 
-							if updateData then
-								CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, rewardText, rewardIsTitle, locale, isSenderSelf)
-							end
-							if messageType == "Award" then
-								CustAc_CompleteAchievement(id)
-							elseif messageType == "Revoke" then
-								CustAc_RevokeAchievement(id)
-							elseif messageType == "UpdateAcknowledgment" then
-								if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
-									CustomAchieverData["PendingUpdates"]["Achievements"][id][senderFullName] = nil
-									if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][id]) == 0 then
-										CustomAchieverData["PendingUpdates"]["Achievements"][id] = nil
+								if updateData then
+									CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, description, rewardText, rewardIsTitle, locale, isSenderSelf)
+								end
+								if messageType == "Award" then
+									CustAc_CompleteAchievement(id)
+								elseif messageType == "Revoke" then
+									CustAc_RevokeAchievement(id)
+								elseif messageType == "UpdateAcknowledgment" then
+									if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
+										CustomAchieverData["PendingUpdates"]["Achievements"][id][senderFullName] = nil
+										if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][id]) == 0 then
+											CustomAchieverData["PendingUpdates"]["Achievements"][id] = nil
+										end
 									end
-								end
-								if not isSenderSelf then
-									if not CustomAchieverData["AwardedPlayers"][id] then
-										CustomAchieverData["AwardedPlayers"][id] = {}
-										CustomAchieverData["AwardedPlayers"][id][senderFullName] = false
+									if not isSenderSelf then
+										if not CustomAchieverData["AwardedPlayers"][id] then
+											CustomAchieverData["AwardedPlayers"][id] = {}
+											CustomAchieverData["AwardedPlayers"][id][senderFullName] = false
+										end
+										CustomAchieverAcknowledgmentReceived[senderFullName] = true
 									end
-									CustomAchieverAcknowledgmentReceived[senderFullName] = true
-								end
-							else
-								if not isSenderSelf then
-									if not CustomAchieverData["AwardedPlayers"][id] then
-										CustomAchieverData["AwardedPlayers"][id] = {}
+								else
+									if not isSenderSelf then
+										if not CustomAchieverData["AwardedPlayers"][id] then
+											CustomAchieverData["AwardedPlayers"][id] = {}
+										end
+										CustomAchieverAcknowledgmentReceived[senderFullName] = true
 									end
-									CustomAchieverAcknowledgmentReceived[senderFullName] = true
+									if messageType == "AwardAcknowledgment" then
+										if not isSenderSelf then CustomAchieverData["AwardedPlayers"][id][senderFullName] = true end
+										CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_AWARD"], CustomAchiever_CreateHyperlink(id, name), WHITE_FONT_COLOR_CODE..GetPlayerLink(sender, ("[%s]"):format(sender))..FONT_COLOR_CODE_CLOSE))
+									elseif messageType == "RevokeAcknowledgment" then
+										if not isSenderSelf then CustomAchieverData["AwardedPlayers"][id][senderFullName] = false end
+										CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_REVOKE"], CustomAchiever_CreateHyperlink(id, name), WHITE_FONT_COLOR_CODE..GetPlayerLink(sender, ("[%s]"):format(sender))..FONT_COLOR_CODE_CLOSE))
+									end
+									Custac_ChangeAwardButtonText()
 								end
-								if messageType == "AwardAcknowledgment" then
-									if not isSenderSelf then CustomAchieverData["AwardedPlayers"][id][senderFullName] = true end
-									CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_AWARD"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE..GetPlayerLink(sender, ("[%s]"):format(sender))))
-								elseif messageType == "RevokeAcknowledgment" then
-									if not isSenderSelf then CustomAchieverData["AwardedPlayers"][id][senderFullName] = false end
-									CustomAchiever:Print(GREEN_FONT_COLOR_CODE..string.format(L["LOGCUSTAC_REVOKE"], YELLOW_FONT_COLOR_CODE.."["..name.."]", WHITE_FONT_COLOR_CODE..GetPlayerLink(sender, ("[%s]"):format(sender))))
-								end
-								Custac_ChangeAwardButtonText()
 							end
 						end
 					end

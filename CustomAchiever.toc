@@ -1,4 +1,4 @@
-## Interface: 110000
+## Interface: 100207
 ## Title: Custom Achiever
 ## IconTexture: Interface\Icons\inv_inscription_tradeskill01.blp
 ## AddonCompartmentFunc: CustomAchiever_CompartmentFunc

@@ -494,8 +494,18 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 		CustAc_AchievementInit(button, elementData)
 		button:SetScript("OnEnter", function(frame) frame.Highlight:Show() end)
 		button:SetScript("OnLeave", function(frame) frame.Highlight:Hide() end)
-		--button.elementData = elementData
-		button:SetScript("OnClick", function() end)
+		button.elementData = elementData
+		button:SetScript("OnClick", function(frame)
+			if frame.elementData and frame.elementData.id then
+				if IsShiftKeyDown() then
+					--debug CustAc_SendUpdatedCategoryData(elementData.category, custacDataTarget)
+	
+					local name = CustAc_getLocaleData(CustomAchieverData["Achievements"][frame.elementData.id], "name")
+					-- Insérer le lien dans le champ de saisie de chat lors du Shift-clic
+					ChatEdit_InsertLink("".."[CustAc_" .. frame.elementData.id .. "_"..name.."]".."")
+				end
+			end
+		end)
 	end
 	view:SetElementInitializer("AchievementTemplate", AchievementInitializer)
 	view:SetElementResetter(AchievementResetter)

@@ -26,6 +26,7 @@ function CustomAchiever:OnInitialize()
 	self:RegisterComm(CustomAchieverGlobal_CommPrefix, "ReceiveDataFrame_OnEvent")
 	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
 	self:RegisterEvent("GUILD_ROSTER_UPDATE", "OnGuildRosterUpdate")
+	self:RegisterEvent("PLAYER_LOGIN", "OnPlayerLogin")
 	self:RegisterEvent("PLAYER_LOGOUT", "OnPlayerLogout")
 
 	self:RegisterEvent("ADDON_LOADED", function(event, arg)
@@ -38,11 +39,106 @@ function CustomAchiever:OnInitialize()
 			CustAc_AchievementFrame_Load()
 		end
 	end)
+	
+	-- Chat filter
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT MSG OFFICER", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", self.ChatFilter)
+end
+
+local playerNotFoundMsg = string.gsub(ERR_CHAT_PLAYER_NOT_FOUND_S, "%%s", "(.-)")
+local lastPlayerNotFoundMsg = ""
+local lastPlayerNotFoundMsgTime = GetTime()
+function CustomAchiever:ChatFilter(event, msg, author, ...)
+	if event == "CHAT_MSG_SYSTEM" and string.match(msg, playerNotFoundMsg) then
+		local actualTime = GetTime()
+		if lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1 then
+			return true
+		else
+			lastPlayerNotFoundMsg = msg
+			lastPlayerNotFoundMsgTime = actualTime
+			return false
+		end
+	end
+	if msg then
+		local custacDataIdFoundsInChat = {}
+		while true do
+			local found = false
+			msg, found = string.gsub(msg, "%[CustAc_(.-)_(.-)%]", function(id, name)
+				
+				if id and not CustAc_isPlayerCharacter(author) then
+					custacDataIdFoundsInChat[id] = true
+				end
+				
+				return CustomAchiever_CreateHyperlink(id, name)
+			end, 1)
+			if found == 0 then break end
+		end
+		
+		if CustAc_countTableElements(custacDataIdFoundsInChat) > 0 then
+			CustAc_SendCallForAchievementsCategories(custacDataIdFoundsInChat, author)
+		end
+	end
+	return false, msg, author, ...
+end
+
+function CustomAchiever_CreateHyperlink(id, name)
+	local realName = CustAc_getLocaleData(CustomAchieverData["Achievements"][id], "name")
+	if realName and realName ~= UNKNOWN then
+		name = realName
+	end
+    return YELLOW_FONT_COLOR_CODE.."|HCustAc:" .. id.."_"..name .. "|h[" .. name .. "]|h"..FONT_COLOR_CODE_CLOSE
 end
 
 function CustomAchiever:OnGuildRosterUpdate()
 	CustAc_SendCallForUsers()
 	self:UnregisterEvent("GUILD_ROSTER_UPDATE")
+end
+
+-- Function called when the hyperlink is clicked
+local function OnHyperlinkClick(self, link, text, button)
+    local linkType, linkData = strsplit(":", link, 2)
+	local id, name = strsplit("_", linkData, 2)
+    if linkType == "CustAc" then
+        if IsShiftKeyDown() then
+			-- Insert the link into the chat input field on Shift-click
+            ChatEdit_InsertLink("".."[CustAc_" .. id .. "_"..name.."]".."")
+        else
+			if AchievementFrame_LoadUI then
+				if (IsKioskModeEnabled and IsKioskModeEnabled()) then
+					return
+				end
+				if ( not AchievementFrame ) then
+					AchievementFrame_LoadUI()
+				end
+			end
+            CustAc_ShowAchievement(id)
+        end
+    else
+        -- If it's not our link, call the old handler
+        if self.OriginalHyperlinkClick then
+            self:OriginalHyperlinkClick(link, text, button)
+        end
+    end
+end
+
+function CustomAchiever:OnPlayerLogin(event)
+	if event == "PLAYER_LOGIN" then
+        for i = 1, NUM_CHAT_WINDOWS do
+            local chatFrame = _G["ChatFrame" .. i]
+            -- Save the old link click handler
+            chatFrame.OriginalHyperlinkClick = chatFrame:GetScript("OnHyperlinkClick")
+            chatFrame:SetScript("OnHyperlinkClick", OnHyperlinkClick)
+        end
+    end
 end
 
 function CustomAchiever:OnPlayerLogout()
@@ -82,7 +178,7 @@ function CustomAchiever:OnEnable()
 end
 
 function CustAc_CommunitiesMemberOnEnter()
-	local mouseFocus = EZBlizzUiPop_GetMouseFocus()
+	local mouseFocus = GetMouseFocus()
 	if mouseFocus and mouseFocus["memberInfo"] and mouseFocus["memberInfo"]["clubType"] == 2 and mouseFocus["memberInfo"]["name"] then
 		local unitFullName = CustAc_addRealm(mouseFocus["memberInfo"]["name"])
 		if CustomAchieverData["Users"][unitFullName] then
