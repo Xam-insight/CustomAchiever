@@ -1,8 +1,10 @@
-﻿- v1.4
+﻿- v1.4.1
+	- TOC for 11.0.0.
+- v1.4
 	- Added: Achievements sharing in the chat.
 	- Fixed: Multiple playerNotFound messages.
 - v1.3.17
-	- TOC and fixes for 11.0.0.
+	- Fixes for 11.0.0.
 - v1.3.16
 	- TOC for 10.2.7.
 - v1.3.15
