@@ -91,6 +91,9 @@ function CustomAchiever:ChatFilter(event, msg, author, ...)
 end
 
 function CustomAchiever_CreateHyperlink(id, name)
+	if _G["ChatFrame1"] and not _G["ChatFrame1"].OriginalHyperlinkClick then
+		CustomAchiever:OnPlayerLogin("PLAYER_LOGIN")
+	end
 	local realName = CustAc_getLocaleData(CustomAchieverData["Achievements"][id], "name")
 	if realName and realName ~= UNKNOWN then
 		name = realName

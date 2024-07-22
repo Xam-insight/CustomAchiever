@@ -1,4 +1,6 @@
-﻿- v1.4.1
+﻿- v1.4.2
+	- Fixed: Click on hyperlink KO for inherited CustomAchiever addons.
+- v1.4.1
 	- TOC for 11.0.0.
 - v1.4
 	- Added: Achievements sharing in the chat.
