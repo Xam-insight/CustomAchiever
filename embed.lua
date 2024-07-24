@@ -154,9 +154,9 @@ function CustomAchieverFrame_OnLoad(self)
 
 	local pointsFontstring = CustomAchieverFrame:CreateFontString("PointsFontstring", "ARTWORK", "GameFontNormal")
 	pointsFontstring:SetText(L["MENUCUSTAC_POINTS"])
-	pointsFontstring:SetPoint("TOPRIGHT", -70, -197)
+	pointsFontstring:SetPoint("TOPRIGHT", -80, -197)
 	CustomAchieverFrame.PointsEditBox:SetPoint("TOPRIGHT", -30 , -195)
-	CustomAchieverFrame.PointsEditBox:SetSize(20, 16)
+	CustomAchieverFrame.PointsEditBox:SetSize(30, 16)
 	CustomAchieverFrame.PointsEditBox:HighlightText()
 	CustomAchieverFrame.PointsEditBox.type = "achievementPoints"
 
