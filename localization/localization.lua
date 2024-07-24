@@ -2,7 +2,7 @@ local L = LibStub("AceLocale-3.0"):NewLocale("CustomAchiever", "enUS", true)
 
 if L then
 
-L["CUSTOMACHIEVER_WELCOME"] = "Type /cusac to show Custom Achiever."
+L["CUSTOMACHIEVER_WELCOME"] = "Type /custac to show Custom Achiever."
 
 L["SPACE_BEFORE_DOT"] = ""
 

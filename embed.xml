@@ -232,7 +232,7 @@
 					<OnEscapePressed function="HideParentPanel"/>
 				</Scripts>
 			</EditBox>
-			<EditBox parentKey="PointsEditBox" inherits="InputBoxTemplate" letters="2" numeric="true">
+			<EditBox parentKey="PointsEditBox" inherits="InputBoxTemplate" letters="3" numeric="true">
 				<Scripts>
 					<OnTextChanged function="CustomAchieverFrameEditBox_OnTextChanged"/>
 					<OnEscapePressed function="HideParentPanel"/>
