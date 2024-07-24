@@ -1,4 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Script file="CustomAchieverHelpTip.lua" />
-	<Frame name="CustomAchieverHelpTipTemplate" inherits="HelpTipTemplate" virtual="true" />
+	<Frame name="CustomAchieverHelpTipTemplate" inherits="HelpTipTemplate" virtual="true">
+		<Scripts>
+			<OnHide function="CustomAchieverHelpTipTemplate_OnHide" />
+		</Scripts>
+	</Frame>
 </Ui>

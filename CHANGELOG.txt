@@ -1,4 +1,6 @@
-﻿- v1.4.2
+﻿- v1.4.3
+	- Fixed: Error on closing Helptips.
+- v1.4.2
 	- Fixed: Click on hyperlink KO for inherited CustomAchiever addons.
 - v1.4.1
 	- TOC for 11.0.0.
