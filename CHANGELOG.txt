@@ -1,4 +1,7 @@
-﻿- v1.4.3
+﻿- v1.4.4
+	- [d-ellis] Achievements points length increased to 3 characters
+	- [d-ellis] Fixed: Corrected typo in welcome message
+- v1.4.3
 	- Fixed: Error on closing Helptips.
 - v1.4.2
 	- Fixed: Click on hyperlink KO for inherited CustomAchiever addons.
