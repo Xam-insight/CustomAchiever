@@ -73,11 +73,17 @@
 		<Scripts>
 			<OnLoad function="CustAc_AchievementFrameAchievements_OnLoad"/>
 			<OnHide>
-				AchievementFrame.SearchBox:Enable()
-				AchievementFrame.Header.LeftDDLInset:Hide()
+				if AchievementFrame.SearchBox then
+					AchievementFrame.SearchBox:Enable()
+				end
+				if AchievementFrame.Header.LeftDDLInset then
+					AchievementFrame.Header.LeftDDLInset:Hide()
+				end
 			</OnHide>
 			<OnShow>
-				AchievementFrame.SearchBox:Disable()
+				if AchievementFrame.SearchBox then
+					AchievementFrame.SearchBox:Disable()
+				end
 			</OnShow>
 		</Scripts>
 		<Frames>

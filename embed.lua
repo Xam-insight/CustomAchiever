@@ -1,22 +1,6 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 
--- Determine WoW TOC Version
-local WoWClassicEra, WoWClassicTBC, WoWWOTLKC, WoWRetail
-local wowversion  = select(4, GetBuildInfo())
-if wowversion < 20000 then
-	WoWClassicEra = true
-elseif wowversion < 30000 then 
-	WoWClassicTBC = true
-elseif wowversion < 40000 then 
-	WoWWOTLKC = true
-elseif wowversion > 90000 then
-	WoWRetail = true
-
-else
-	-- n/a
-end
-
 local nextCustomCategoryId
 local nextCustomAchieverId
 
@@ -127,7 +111,7 @@ function CustomAchieverFrame_OnLoad(self)
 	applyCustomAchieverWindowOptions()
 	
 	self:SetTitle("CustomAchiever")
-	if WoWRetail then
+	if CustAc_WoWRetail then
 		SetPortraitToTexture(self.PortraitContainer.portrait, "Interface\\Friendsframe\\friendsframescrollicon")
 	else
 		SetPortraitToTexture(CustomAchieverFramePortrait, "Interface\\Friendsframe\\friendsframescrollicon")
@@ -432,7 +416,7 @@ function CustomAchieverFrame_UpdateAchievementAlertFrame()
 			CustomAchieverFrame.AwardButton:Disable()
 		else
 			CustomAchieverFrame.AwardButton:Enable()
-			if WoWRetail then
+			if CustAc_WoWRetail then
 				custacShowHelpTip("CUSTAC_HELPTIP_AWARD")
 			end
 		end
@@ -555,7 +539,7 @@ function CustAc_IconsPopupFrame_OnHide(self)
 	CustomAchieverFrame.DescriptionEditBox:Enable()
 	if selectedAchievement.achievementId ~= nextCustomAchieverId then
 		CustomAchieverFrame.AwardButton:Enable()
-		if WoWRetail then
+		if CustAc_WoWRetail then
 			custacShowHelpTip("CUSTAC_HELPTIP_AWARD")
 		end
 	end

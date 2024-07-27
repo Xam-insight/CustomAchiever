@@ -3,6 +3,22 @@ local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
 local AceGUI = LibStub("AceGUI-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
 
+-- Determine WoW TOC Version
+CustAc_WoWClassicEra, CustAc_WoWClassicTBC, CustAc_WoWWOTLKC, CustAc_WoWRetail = false
+local wowversion = select(4, GetBuildInfo())
+if wowversion < 20000 then
+	CustAc_WoWClassicEra = true
+elseif wowversion < 30000 then 
+	CustAc_WoWClassicTBC = true
+elseif wowversion < 40000 then 
+	CustAc_WoWWOTLKC = true
+elseif wowversion > 90000 then
+	CustAc_WoWRetail = true
+
+else
+	-- n/a
+end
+
 CustomAchieverGlobal_CommPrefix = "CustomAchiever"
 
 customAchieverFramePool = {}

@@ -140,12 +140,27 @@ end
 
 function CustAc_AchievementFrame_Load()
 	if not CustAc_Categories then
+		if not CustAc_WoWRetail then
+			AchievementFrame.Header = _G["AchievementFrameHeader"]
+			AchievementFrame.Header.Title = _G["AchievementFrameHeaderTitle"]
+			AchievementFrame.Header.Points = _G["AchievementFrameHeaderPoints"]
+			AchievementFrame.Header.Shield = _G["AchievementFrameHeaderShield"]
+		end
 		local numtabs, tab = 0
 		repeat
+			if not CustAc_WoWRetail then
+				if _G["AchievementFrameTab"..numtabs] then
+					_G["AchievementFrameTab"..numtabs].Text = _G["AchievementFrameTab"..numtabs.."Text"]
+				end
+			end
 			numtabs = numtabs + 1
 		until (not _G["AchievementFrameTab"..numtabs])
 		CustAc_AchievementTabId = numtabs
 		tab = CreateFrame("Button", "AchievementFrameTab"..numtabs, AchievementFrame, "AchievementFrameTabButtonTemplate")
+		if not CustAc_WoWRetail then
+			tab.Text = _G["AchievementFrameTab"..numtabs.."Text"]
+			tab:SetPoint("LEFT", _G["AchievementFrameTab"..(numtabs-1)], "RIGHT", -5, 0);
+		end
 		CustacButton:SetParent(tab)
 		CustacButton:SetPoint("CENTER", tab, "BOTTOMRIGHT", -5, -5)
 		tab:SetText("Custom Achiever")
@@ -173,10 +188,10 @@ function CustAc_AchievementFrame_Load()
 	end
 
 	CustAc_CreateOrUpdateCategory("CustomAchiever", nil, "Custom Achiever")
-	CustAc_CreateOrUpdateAchievement("CustomAchiever1", "CustomAchiever", 975739,  10, "Bonne installation !", "Intaller Custom Achiever.", "", nil, "frFR")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever1", "CustomAchiever", 134939,  10, "Bonne installation !", "Intaller Custom Achiever.", "", nil, "frFR")
 	CustAc_CreateOrUpdateAchievement("CustomAchiever1", "CustomAchiever",    nil, nil, "Happy move in!", "Install Custom Achiever.",        "", nil,"enUS")
 	CustAc_CompleteAchievement("CustomAchiever1")
-	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever", 133053,  10, "Un petit pas pour Azeroth...",  "Créer votre premier Haut fait.", "", nil,"frFR")
+	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever", 134428,  10, "Un petit pas pour Azeroth...",  "Créer votre premier Haut fait.", "", nil,"frFR")
 	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever",    nil, nil, "One small step for Azeroth...", "Create your first Achievement.", "", nil,"enUS")
 end
 
@@ -196,6 +211,18 @@ function CustAc_AchievementFrameCategories_OnLoad(self)
 end
 
 function CustAc_CategoryInit(self, elementData)
+	if not CustAc_WoWRetail then
+		self.Button = self
+		self.Button.Label = self.label
+		self.Button.Background = self.background
+		self.UpdateSelectionState = function(selected)
+			if selected then
+				self.Button:LockHighlight();
+			else
+				self.Button:UnlockHighlight();
+			end
+		end
+	end
 	if ( elementData.isChild ) then
 		self.Button:SetWidth(ACHIEVEMENTUI_CATEGORIESWIDTH - 25)
 		self.Button.Label:SetFontObject("GameFontHighlight")
@@ -414,7 +441,9 @@ function CustAc_AchievementFrame_OnClick(clickedTab)
 
 	--SwitchAchievementSearchTab(clickedTab)
 	--AchievementFrameFilterDropDown:Hide()
-	AchievementFrame.Header.LeftDDLInset:Hide()
+	if AchievementFrame.Header.LeftDDLInset then
+		AchievementFrame.Header.LeftDDLInset:Hide()
+	end
 end
 
 function CustAc_GetAchievementInfoById(achievement)
@@ -487,6 +516,22 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 		end
 	end)
 	local function AchievementInitializer(button, elementData)
+		if not CustAc_WoWRetail then
+			button.Description = button.description
+			button.TitleBar = button.titleBar
+			button.Icon = button.icon
+			button.Label = button.label
+			button.Shield = button.shield
+			button.Shield.Points = button.shield.points
+			button.Shield.Icon = button.shield.icon
+			button.HiddenDescription = button.hiddenDescription
+			button.DateCompleted = button.dateCompleted
+			button.Reward = button.reward
+			button.RewardBackground = button.rewardBackground
+			button.Tracked = button.tracked
+			button.PlusMinus = button.plusMinus
+			button.Highlight = button.highlight
+		end	
 		if ( not ACHIEVEMENTUI_FONTHEIGHT ) then
 			local _, fontHeight = button.Description:GetFont()
 			ACHIEVEMENTUI_FONTHEIGHT = fontHeight
@@ -505,6 +550,9 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 					ChatEdit_InsertLink("".."[CustAc_" .. frame.elementData.id .. "_"..name.."]".."")
 				end
 			end
+		end)
+		button.Shield:SetScript("OnClick", function(self, but, down)
+			button:Click(but, down)
 		end)
 	end
 	view:SetElementInitializer("AchievementTemplate", AchievementInitializer)
@@ -545,14 +593,20 @@ function CustAc_AchievementInit(self, elementData)
 	self.Icon.frame:SetTexCoord(0, 0.5625, 0, 0.5625)
 	self.Icon.frame:SetPoint("CENTER", -1, 2)
 	local tsunami = self.BottomTsunami1
-	tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
-	tsunami:SetTexCoord(0, 0.72265, 0.51953125, 0.58203125)
-	tsunami:SetAlpha(0.35)
+	if tsunami then
+		tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
+		tsunami:SetTexCoord(0, 0.72265, 0.51953125, 0.58203125)
+		tsunami:SetAlpha(0.35)
+	end
 	local tsunami = self.TopTsunami1
-	tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
-	tsunami:SetTexCoord(0.72265, 0, 0.58203125, 0.51953125)
-	tsunami:SetAlpha(0.3)
-	self.Glow:SetTexCoord(0, 1, 0.00390625, 0.25390625)
+	if tsunami then
+		tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
+		tsunami:SetTexCoord(0.72265, 0, 0.58203125, 0.51953125)
+		tsunami:SetAlpha(0.3)
+	end
+	if self.Glow then
+		self.Glow:SetTexCoord(0, 1, 0.00390625, 0.25390625)
+	end
 
 	local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy
 	if self.index then
@@ -590,6 +644,9 @@ function CustAc_AchievementInit(self, elementData)
 	self.HiddenDescription:SetText(description)
 	self.numLines = ceil(self.HiddenDescription:GetHeight() / ACHIEVEMENTUI_FONTHEIGHT)
 	self.Icon.texture:SetTexture(icon)
+	if not CustAc_WoWRetail then
+		self.id = 0
+	end
 	if ( completed or wasEarnedByMe ) then
 		self.completed = true
 		self.DateCompleted:SetText(FormatShortDate(day, month, year))
@@ -618,13 +675,15 @@ function CustAc_AchievementInit(self, elementData)
 	end
 
 	local noSound = true
-	self:SetAsTracked(false, noSound)
+	if self.SetAsTracked then
+		self:SetAsTracked(false, noSound)
+	end
 	self.Tracked:Hide()
 
 	self:UpdatePlusMinusTexture()
 
-	local objectives = self:GetObjectiveFrame()
-	if objectives.id == self.id then
+	local objectives = self.GetObjectiveFrame and self:GetObjectiveFrame()
+	if objectives and objectives.id == self.id then
 		objectives:Hide()
 	end
 
