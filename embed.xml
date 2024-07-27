@@ -34,7 +34,7 @@
 			<Anchor point="CENTER" x="0" y="0" />
 		</Anchors>
 		<Frames>
-			<Button parentKey="RefreshButton" inherits="RefreshButtonTemplate">
+			<Button parentKey="RefreshButton" inherits="SquareIconButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPRIGHT" x="-10" y="-28" />
 				</Anchors>
@@ -288,7 +288,7 @@
 					<OnClick function="CustAc_AwardButton_OnClick"/>
 				</Scripts>
 			</Button>
-			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate" motionScriptsWhileDisabled="true" text="HUD_EDIT_MODE_SAVE_LAYOUT">
+			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate" motionScriptsWhileDisabled="true" text="SAVE">
 				<Size x="80" y="22"/>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" x="-82" y="4"/>
@@ -330,9 +330,9 @@
 							<TexCoords left="0.1599099099099099" right="0.8378378378378378" top="0" bottom="0.9612068965517241"/>
 						</Texture>
 					</Layer>
-					<Layer level="OVERLAY">
+					<!--Layer level="OVERLAY">
 						<Texture atlas="dressingroom-sideframe" setAllPoints="true"/>
-					</Layer>
+					</Layer-->
 				</Layers>
 				<Frames>
 					<Frame parentKey="Details" setAllPoints="true">

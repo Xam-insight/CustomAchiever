@@ -1,4 +1,6 @@
-﻿- v1.4.4
+﻿- v1.4.5
+	- Starting Cataclysm Classic compatibility.
+- v1.4.4
 	- [d-ellis] Achievements points length increased to 3 characters
 	- [d-ellis] Fixed: Corrected typo in welcome message
 - v1.4.3

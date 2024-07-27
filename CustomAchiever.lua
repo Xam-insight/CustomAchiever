@@ -168,6 +168,8 @@ function CustomAchiever:OnEnable()
 		CustomAchieverFrame = CreateFrame("Frame", "CustomAchieverFrame", UIParent, "CustomAchieverFrameTemplate")
 		CustomAchieverTargetTooltip:SetScale(0.8)
 		CustomAchieverTargetTooltip:SetParent(CustomAchieverFrame)
+		
+		CustomAchieverFrame.RefreshButton.Icon:SetTexture([[Interface\AddOns\]]..(CustAcAddon or "CustomAchiever").."\\art\\ui-refreshbutton")
 
 		CustomAchiever:Print(L["CUSTOMACHIEVER_WELCOME"])
 		CustomAchiever:LoadAddonsData()
