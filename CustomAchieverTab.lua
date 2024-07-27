@@ -115,6 +115,7 @@ function CustAc_LoadAchievementsData(callOrigin)
 		if CustAc_AchievementFrameAchievements and CustAc_AchievementFrameAchievements:IsShown() then
 			CustAc_AchievementFrameCategories_UpdateDataProvider()
 			CustAc_AchievementFrameAchievements_UpdateDataProvider()
+			AchievementFrame.Header.Points:SetText(BreakUpLargeNumbers(CustAc_GetTotalAchievementPoints()))
 		end
 		
 		CustAc_Categories.LoadingSpinner:Hide()
@@ -159,7 +160,7 @@ function CustAc_AchievementFrame_Load()
 		tab = CreateFrame("Button", "AchievementFrameTab"..numtabs, AchievementFrame, "AchievementFrameTabButtonTemplate")
 		if not CustAc_WoWRetail then
 			tab.Text = _G["AchievementFrameTab"..numtabs.."Text"]
-			tab:SetPoint("LEFT", _G["AchievementFrameTab"..(numtabs-1)], "RIGHT", -5, 0);
+			tab:SetPoint("LEFT", _G["AchievementFrameTab"..(numtabs-1)], "RIGHT", -5, 0)
 		end
 		CustacButton:SetParent(tab)
 		CustacButton:SetPoint("CENTER", tab, "BOTTOMRIGHT", -5, -5)
@@ -215,7 +216,7 @@ function CustAc_CategoryInit(self, elementData)
 		self.Button = self
 		self.Button.Label = self.label
 		self.Button.Background = self.background
-		self.UpdateSelectionState = function(selected)
+		self.UpdateSelectionState = function(self, selected)
 			if selected then
 				self.Button:LockHighlight();
 			else
@@ -520,6 +521,7 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 			button.Description = button.description
 			button.TitleBar = button.titleBar
 			button.Icon = button.icon
+			button.label:SetPoint("TOP", button.titleBar, "TOP", 0, 0)
 			button.Label = button.label
 			button.Shield = button.shield
 			button.Shield.Points = button.shield.points
@@ -530,7 +532,17 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 			button.RewardBackground = button.rewardBackground
 			button.Tracked = button.tracked
 			button.PlusMinus = button.plusMinus
+			button.highlight.topHighlight:SetPoint("TOPLEFT", button.highlight.topLeftHighlight, "TOPRIGHT", 0, 0)
+			button.highlight.topHighlight:SetPoint("BOTTOMRIGHT", button.highlight.topRightHighlight, "BOTTOMLEFT", 0, 0)
+			button.highlight.bottomHighlight:SetPoint("TOPLEFT", button.highlight.bottomLeftHighlight, "TOPRIGHT", 0, 0)
+			button.highlight.bottomHighlight:SetPoint("BOTTOMRIGHT", button.highlight.bottomRightHighlight, "BOTTOMLEFT", 0, 0)
+			button.highlight.leftHighlight:SetPoint("TOPLEFT", button.highlight.topLeftHighlight, "BOTTOMLEFT", 0, 0)
+			button.highlight.leftHighlight:SetPoint("BOTTOMRIGHT", button.highlight.bottomLeftHighlight, "TOPRIGHT", 0, 0)
+			button.highlight.rightHighlight:SetPoint("TOPLEFT", button.highlight.topRightHighlight, "BOTTOMLEFT", 0, 0)
+			button.highlight.rightHighlight:SetPoint("BOTTOMRIGHT", button.highlight.bottomRightHighlight, "TOPRIGHT", 0, 0)
 			button.Highlight = button.highlight
+			button.glow:SetPoint("TOPLEFT", button.titleBar, "BOTTOMLEFT", 0, 4)
+			button.Glow = button.glow
 		end	
 		if ( not ACHIEVEMENTUI_FONTHEIGHT ) then
 			local _, fontHeight = button.Description:GetFont()
@@ -555,7 +567,11 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 			button:Click(but, down)
 		end)
 	end
-	view:SetElementInitializer("AchievementTemplate", AchievementInitializer)
+	if CustAc_WoWRetail then
+		view:SetElementInitializer("AchievementTemplate", AchievementInitializer)
+	else
+		view:SetElementInitializer("CustAc_AchievementTemplate", AchievementInitializer)
+	end
 	view:SetElementResetter(AchievementResetter)
 	view:SetPadding(2,0,0,4,0)
 	ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view)
@@ -593,20 +609,14 @@ function CustAc_AchievementInit(self, elementData)
 	self.Icon.frame:SetTexCoord(0, 0.5625, 0, 0.5625)
 	self.Icon.frame:SetPoint("CENTER", -1, 2)
 	local tsunami = self.BottomTsunami1
-	if tsunami then
-		tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
-		tsunami:SetTexCoord(0, 0.72265, 0.51953125, 0.58203125)
-		tsunami:SetAlpha(0.35)
-	end
+	tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
+	tsunami:SetTexCoord(0, 0.72265, 0.51953125, 0.58203125)
+	tsunami:SetAlpha(0.35)
 	local tsunami = self.TopTsunami1
-	if tsunami then
-		tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
-		tsunami:SetTexCoord(0.72265, 0, 0.58203125, 0.51953125)
-		tsunami:SetAlpha(0.3)
-	end
-	if self.Glow then
-		self.Glow:SetTexCoord(0, 1, 0.00390625, 0.25390625)
-	end
+	tsunami:SetTexture("Interface\\AchievementFrame\\UI-Achievement-Borders")
+	tsunami:SetTexCoord(0.72265, 0, 0.58203125, 0.51953125)
+	tsunami:SetAlpha(0.3)
+	self.Glow:SetTexCoord(0, 1, 0.00390625, 0.25390625)
 
 	local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy
 	if self.index then
@@ -682,7 +692,7 @@ function CustAc_AchievementInit(self, elementData)
 
 	self:UpdatePlusMinusTexture()
 
-	local objectives = self.GetObjectiveFrame and self:GetObjectiveFrame()
+	local objectives = (self.GetObjectiveFrame and self:GetObjectiveFrame()) or AchievementFrameAchievementsObjectives
 	if objectives and objectives.id == self.id then
 		objectives:Hide()
 	end
