@@ -373,7 +373,7 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 		--CustAc_SaveAchievementDataIntoAddon(id)
 
 		local name = CustAc_getLocaleData(data, "name")
-		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif then
+		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif and not CustomAchieverOptionsData["CustomAchieverAchievementAnnounceDisabled"] then
 			EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, name, 5208, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, "Custom Achiever", function() CustAc_ShowAchievement(id) end, data["icon"])
 		end
 		CustAc_LoadAchievementsData("CustAc_CompleteAchievement")

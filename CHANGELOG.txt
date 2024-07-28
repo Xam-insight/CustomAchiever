@@ -3,6 +3,7 @@
 	- [EZBlizzardUiPopups] v1.0.6 integration.
 	- Fixed: Error on Shift-click on Achievement shield in Achievements frame.
 	- Fixed: Achievements points update on saving Achievement.
+	- Fixed: Achievements are no longer announced with option CustomAchieverAchievementAnnounceDisabled.
 - v1.4.4
 	- [d-ellis] Achievements points length increased to 3 characters
 	- [d-ellis] Fixed: Corrected typo in welcome message
