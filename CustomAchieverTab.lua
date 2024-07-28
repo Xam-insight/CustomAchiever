@@ -186,6 +186,9 @@ function CustAc_AchievementFrame_Load()
 
 		local categoriesFrame = CreateFrame("Frame", "CustAc_Categories", AchievementFrame, "CustAc_CategoriesTemplate")
 		local achievementsFrame = CreateFrame("Frame", "CustAc_AchievementFrameAchievements", AchievementFrame, "CustAc_AchievementFrameAchievementsTemplate")
+		if not CustAc_WoWRetail then
+			achievementsFrame:SetPoint("TOPLEFT", categoriesFrame, "TOPRIGHT", 22, 0)
+		end
 	end
 
 	CustAc_CreateOrUpdateCategory("CustomAchiever", nil, "Custom Achiever")

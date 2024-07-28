@@ -23,19 +23,19 @@
 				</Anchors>
 			</Frame>
 
-			<EventFrame parentKey="ScrollBar" inherits="WowTrimScrollBar" frameStrata="HIGH">
+			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar" frameStrata="HIGH">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="1" y="-3"/>
-					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="1" y="1"/>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="6" y="-8"/>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="6" y="6"/>
 				</Anchors>
 			</EventFrame>
 			<Frame parentKey="LoadingSpinner" frameStrata="HIGH" toplevel="true" inherits="CustAc_LoadingSpinnerTemplate"/>
 		</Frames>
 	</Frame>
 	<Frame name="CustAc_AchievementFrameAchievementsTemplate" hidden="true" virtual="true">
-		<Size x="500" y="440"/>
+		<Size x="504" y="440"/>
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="$parentCategories" relativePoint="TOPRIGHT" x="3" y="0"/>
+			<Anchor point="TOPLEFT" relativeTo="$parentCategories" relativePoint="TOPRIGHT" x="22" y="0"/>
 			<Anchor point="BOTTOM" relativeTo="$parentCategories" relativePoint="BOTTOM"/>
 			<!--<Anchor point="BOTTOMRIGHT">
 				<Offset>
@@ -94,10 +94,10 @@
 				</Anchors>
 			</Frame>
 
-			<EventFrame parentKey="ScrollBar" inherits="WowTrimScrollBar" frameStrata="HIGH">
+			<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar" frameStrata="HIGH">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="1" y="-3"/>
-					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="1" y="1"/>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="6" y="-8"/>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="6" y="6"/>
 				</Anchors>
 			</EventFrame>
 			<Frame setAllPoints="true" inherits="AchivementGoldBorderBackdrop"/>
