@@ -1,5 +1,6 @@
 ﻿- v1.4.5
 	- Cataclysm Classic compatibility.
+	- [EZBlizzardUiPopups] v1.0.6 integration.
 	- Fixed: Error on Shift-click on Achievement shield in Achievements frame.
 	- Fixed: Achievements points update on saving Achievement.
 - v1.4.4
