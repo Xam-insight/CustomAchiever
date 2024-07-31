@@ -518,7 +518,7 @@ function CustAc_SaveButton_OnClick()
 		local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name")
 		
 		CustAc_CompleteAchievement("CustomAchiever2")
-		EZBlizzUiPop_ToastFakeAchievementNew(CustomAchiever, selectedAchievement.achievementName, 5208, true, 4, categoryName, function() CustAc_ShowAchievement(selectedAchievement.achievementId) end, selectedAchievement.achievementIcon)
+		EZBlizzUiPop_ToastFakeAchievement(CustomAchiever, not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, selectedAchievement.achievementId, selectedAchievement.achievementName, selectedAchievement.achievementPoints, selectedAchievement.achievementIcon, false, categoryName, false, function() CustAc_ShowAchievement(selectedAchievement.achievementId) end)
 		
 		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
 		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, selectedAchievement.achievementId)
