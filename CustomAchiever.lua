@@ -185,7 +185,11 @@ function CustomAchiever:OnEnable()
 		CustomAchieverTargetTooltip:SetScale(0.8)
 		CustomAchieverTargetTooltip:SetParent(CustomAchieverFrame)
 		
-		CustomAchieverFrame.RefreshButton.Icon:SetTexture([[Interface\AddOns\]]..(CustAcAddon or "CustomAchiever").."\\art\\ui-refreshbutton")
+		if CustAc_WoWRetail then
+			CustomAchieverFrame.RefreshButton.Icon:SetAtlas("UI-RefreshButton", TextureKitConstants.IgnoreAtlasSize)
+		else
+			CustomAchieverFrame.RefreshButton.Icon:SetTexture([[Interface\AddOns\]]..(CustAcAddon or "CustomAchiever").."\\art\\ui-refreshbutton")
+		end
 
 		CustomAchiever:Print(L["CUSTOMACHIEVER_WELCOME"])
 		CustomAchiever:LoadAddonsData()
