@@ -295,6 +295,9 @@
 				</Anchors>
 				<Scripts>
 					<OnClick function="CustAc_SaveButton_OnClick"/>
+					<OnLoad>
+						self:Disable();
+					</OnLoad>
 				</Scripts>
 			</Button>
 			<Button parentKey="ExitButton" inherits="UIPanelButtonTemplate" text="EXIT">

@@ -1,4 +1,6 @@
-﻿- v1.4.6
+﻿- v1.4.7
+	- New: Controls if an achievement has been modified before activating saving.
+- v1.4.6
 	- [EZBlizzardUiPopups] v1.0.8 integration.
 	- Fixed: Refresh button icon.
 - v1.4.5

@@ -201,7 +201,7 @@ function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, descri
 		data["name_"..dataLocale]       = name              or data["name_"..dataLocale]       or L["MENUCUSTAC_DEFAULT_NAME"]
 		data["desc_"..dataLocale]       = description       or data["desc_"..dataLocale]       or L["MENUCUSTAC_DEFAULT_NAME"]
 		data["icon"]                    = icon              or data["icon"]                    or 236376
-		data["points"]                  = tonumber(points   or data["points"]                  or 10)
+		data["points"]                  = tonumber(points   or data["points"]                  or 0)
 		data["flags"]                   = 0
 		data["rewardText_"..dataLocale] = rewardText        or data["rewardText_"..dataLocale] or ""
 		data["rewardIsTitle"]           = rewardIsTitle     or false

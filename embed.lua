@@ -17,6 +17,7 @@ local function CustAc_InitSelectedAchievement(achievementId, categoryId)
 	selectedAchievement.achievementRewardText    =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "rewardText", "")                              or ""
 	selectedAchievement.achievementRewardIsTitle = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].rewardIsTitle) or false
 	selectedAchievement.achievementPoints        = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].points)        or 0
+	CustomAchieverFrame_EnableSaveIfDataModified()
 end
 
 StaticPopupDialogs["CUSTAC_CAT_DELETE"] = {
@@ -292,8 +293,9 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	LibDD:UIDropDownMenu_AddButton(info)
 
 	if not CustomAchieverData["Categories"][nextCustomCategoryId] then
+		local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][v], "name")
 		local info = LibDD:UIDropDownMenu_CreateInfo()
-		info.text  = CustAc_getLocaleData(CustomAchieverData["Categories"][nextCustomCategoryId], "name") or CustAc_delRealm(nextCustomCategoryId)--L["MENUCUSTAC_NEW"]
+		info.text  = (categoryName == nil and CustAc_delRealm(nextCustomCategoryId)) or (type(categoryName) == "string" and categoryName ~= "" and categoryName) or L["MENUCUSTAC_CATEGORY"]
 		info.value = nextCustomCategoryId
 		info.func  = CustAc_SelectCategory
 		info.arg1  = self
@@ -315,8 +317,9 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	for _,v in pairs(categoriesId) do
 		if (v ~= nextCustomCategoryId or CustomAchieverData["Categories"][nextCustomCategoryId]) and CustomAchieverData["PersonnalCategories"][v] then
 			if not CustomAchieverData["Categories"][v]["parent"] or CustomAchieverData["Categories"][v]["parent"] == true then
+				local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][v], "name")
 				local info = LibDD:UIDropDownMenu_CreateInfo()
-				info.text  = CustAc_getLocaleData(CustomAchieverData["Categories"][v], "name")
+				info.text  = (type(categoryName) == "string" and categoryName ~= "" and categoryName) or L["MENUCUSTAC_CATEGORY"]
 				info.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
 				info.iconXOffset = -5
 				info.padding = 5
@@ -327,8 +330,9 @@ function CustAc_CategoryDropDownMenu_Update(self)
 				LibDD:UIDropDownMenu_AddButton(info)
 				for _,v2 in pairs(categoriesId) do
 					if CustomAchieverData["Categories"][v2]["parent"] and CustomAchieverData["Categories"][v2]["parent"] == v then
+						categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][v2], "name")
 						local info2         = LibDD:UIDropDownMenu_CreateInfo()
-						info2.text          = "  "..CustAc_getLocaleData(CustomAchieverData["Categories"][v2], "name")
+						info2.text          = "  "..((type(categoryName) == "string" and categoryName ~= "" and categoryName) or L["MENUCUSTAC_CATEGORY"])
 						info2.mouseOverIcon = [[Interface\WorldMap\GEAR_64GREY]]
 						info2.iconXOffset   = -10
 						info2.padding       = 10
@@ -378,8 +382,9 @@ function CustAc_AchievementDropDownMenu_Update(self)
 
 	for k,v in pairs(CustomAchieverData["Achievements"]) do
 		if v["parent"] == LibDD:UIDropDownMenu_GetSelectedValue(CustomAchieverCategoryDownMenu) then
+			local achievementName = CustAc_getLocaleData(v, "name")
 			local info         = LibDD:UIDropDownMenu_CreateInfo()
-			info.text          = CustAc_getLocaleData(v, "name")
+			info.text          = (type(achievementName) == "string" and achievementName ~= "" and achievementName) or L["MENUCUSTAC_DEFAULT_NAME"]
 			info.mouseOverIcon = [[Interface\AddOns\]]..(CustAcAddon or "CustomAchiever").."\\art\\delete"
 			info.iconXOffset   = -5
 			info.padding       = 5
@@ -392,10 +397,29 @@ function CustAc_AchievementDropDownMenu_Update(self)
 	end
 end
 
+function CustomAchieverFrame_EnableSaveIfDataModified()
+	if selectedAchievement.achievementId then
+		local existingAchievement = CustomAchieverData["Achievements"][selectedAchievement.achievementId]
+		if existingAchievement then
+			if selectedAchievement.achievementCategory                   == existingAchievement.parent
+					and selectedAchievement.achievementName              == CustAc_getLocaleData(existingAchievement, "name")
+					and tonumber(selectedAchievement.achievementIcon)    == tonumber(existingAchievement.icon)
+					and selectedAchievement.achievementDesc              == CustAc_getLocaleData(existingAchievement, "desc")
+					and selectedAchievement.achievementRewardText        == CustAc_getLocaleData(existingAchievement, "rewardText", "")
+					and selectedAchievement.achievementRewardIsTitle     == existingAchievement.rewardIsTitle
+					and (tonumber(selectedAchievement.achievementPoints) == tonumber(existingAchievement.points) or selectedAchievement.achievementPoints == "") then
+				CustomAchieverFrame.SaveButton:Disable()
+				return
+			end
+		end
+		CustomAchieverFrame.SaveButton:Enable()
+	end
+end
+
 function CustomAchieverFrame_UpdateAchievementAlertFrame()
 	if selectedAchievement.achievementId then
 		CustomAchieverFrame.AchievementAlertFrame.Icon.Texture:SetTexture(selectedAchievement.achievementIcon)
-		CustomAchieverFrame.AchievementAlertFrame.Name:SetText(selectedAchievement.achievementName)
+		CustomAchieverFrame.AchievementAlertFrame.Name:SetText((type(selectedAchievement.achievementName) == "string" and selectedAchievement.achievementName) or L["MENUCUSTAC_DEFAULT_NAME"])
 		CustomAchieverFrame.AchievementAlertFrame.Shield.Points:SetText(selectedAchievement.achievementPoints)
 		CustomAchieverFrame.IconEditBox:SetText(selectedAchievement.achievementIcon)
 		--CustomAchieverFrame.IconEditBox:HighlightText()
@@ -422,6 +446,7 @@ function CustomAchieverFrame_UpdateAchievementAlertFrame()
 		end
 	end
 	Custac_ChangeAwardButtonText()
+	CustomAchieverFrame_EnableSaveIfDataModified()
 end
 
 function CustomAchieverFrame_UpdateTargetTooltip()
@@ -436,14 +461,17 @@ end
 
 function CustomAchieverFrameDescriptionEditBox_OnTextChanged(self)
 	selectedAchievement.achievementDesc = CustAc_titleFormat(self:GetText())
+	CustomAchieverFrame_EnableSaveIfDataModified()
 end
 
 function CustomAchieverFrameRewardEditBox_OnTextChanged(self)
 	selectedAchievement.achievementRewardText = CustAc_titleFormat(self:GetText())
+	CustomAchieverFrame_EnableSaveIfDataModified()
 end
 
 function CustomAchieverFrameRewardCheckButton_OnClick(self)
 	selectedAchievement.achievementRewardIsTitle = self:GetChecked()
+	CustomAchieverFrame_EnableSaveIfDataModified()
 end
 
 function CustomAchieverFrameEditBox_OnTextChanged(self)
@@ -451,6 +479,7 @@ function CustomAchieverFrameEditBox_OnTextChanged(self)
 		selectedAchievement[self.type] = self:GetText()
 	end
 	CustomAchieverFrame_UpdateAchievementAlertFrame()
+	CustomAchieverFrame_EnableSaveIfDataModified()
 end
 
 function CustAc_IconsPopupFrame_OkayButton_OnClick()
@@ -509,8 +538,20 @@ end
 
 function CustAc_SaveButton_OnClick()
 	if selectedAchievement.achievementId then
-		CustAc_CreateOrUpdateCategory(selectedAchievement.achievementCategory, nil, selectedAchievement.achievementCategoryName, nil, true)
-		CustAc_CreateOrUpdateAchievement(selectedAchievement.achievementId, selectedAchievement.achievementCategory, selectedAchievement.achievementIcon, selectedAchievement.achievementPoints, selectedAchievement.achievementName, selectedAchievement.achievementDesc, selectedAchievement.achievementRewardText, selectedAchievement.achievementRewardIsTitle, nil, true)
+		local achievementCategoryName = (type(selectedAchievement.achievementCategoryName) == "string" and selectedAchievement.achievementCategoryName ~= "" and selectedAchievement.achievementCategoryName) or L["MENUCUSTAC_CATEGORY"]
+		local achievementIcon         = (selectedAchievement.achievementIcon ~= "" and selectedAchievement.achievementIcon) or 236376
+		local achievementPoints       = (selectedAchievement.achievementPoints ~= "" and selectedAchievement.achievementPoints) or 0
+		local achievementName         = (type(selectedAchievement.achievementName) == "string" and selectedAchievement.achievementName ~= "" and selectedAchievement.achievementName) or L["MENUCUSTAC_DEFAULT_NAME"]
+		CustAc_CreateOrUpdateCategory(selectedAchievement.achievementCategory, nil, achievementCategoryName, nil, true)
+		CustAc_CreateOrUpdateAchievement(
+			selectedAchievement.achievementId,
+			selectedAchievement.achievementCategory,
+			tonumber(achievementIcon),
+			tonumber(achievementPoints),
+			achievementName,
+			selectedAchievement.achievementDesc,
+			selectedAchievement.achievementRewardText,
+			selectedAchievement.achievementRewardIsTitle, nil, true)
 		if selectedAchievement.achievementId == nextCustomAchieverId then
 			nextCustomAchieverId = CustAc_playerCharacter()..'-'..CustAc_getTimeUTCinMS()
 		end
@@ -518,7 +559,12 @@ function CustAc_SaveButton_OnClick()
 		local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name")
 		
 		CustAc_CompleteAchievement("CustomAchiever2")
-		EZBlizzUiPop_ToastFakeAchievement(CustomAchiever, not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, selectedAchievement.achievementId, selectedAchievement.achievementName, selectedAchievement.achievementPoints, selectedAchievement.achievementIcon, false, categoryName, false, function() CustAc_ShowAchievement(selectedAchievement.achievementId) end)
+		EZBlizzUiPop_ToastFakeAchievement(
+			CustomAchiever,
+			not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4,
+			selectedAchievement.achievementId,
+			achievementName, achievementPoints, achievementIcon, false, categoryName, false,
+			function() CustAc_ShowAchievement(selectedAchievement.achievementId) end)
 		
 		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
 		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, selectedAchievement.achievementId)
@@ -544,7 +590,7 @@ function CustAc_IconsPopupFrame_OnHide(self)
 		end
 	end
 	CustomAchieverFrame.DeleteButton:Enable()
-	CustomAchieverFrame.SaveButton:Enable()
+	--CustomAchieverFrame.SaveButton:Enable()
 end
 
 function CustAc_IconsPopupFrame_OnShow(self)
