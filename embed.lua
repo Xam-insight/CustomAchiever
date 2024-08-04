@@ -409,10 +409,11 @@ function CustomAchieverFrame_EnableSaveIfDataModified()
 					and selectedAchievement.achievementRewardIsTitle     == existingAchievement.rewardIsTitle
 					and (tonumber(selectedAchievement.achievementPoints) == tonumber(existingAchievement.points) or selectedAchievement.achievementPoints == "") then
 				CustomAchieverFrame.SaveButton:Disable()
-				return
+				return false
 			end
 		end
 		CustomAchieverFrame.SaveButton:Enable()
+		return true
 	end
 end
 
@@ -493,6 +494,9 @@ end
 
 
 function CustAc_AwardButton_OnClick(self)
+	if CustomAchieverFrame_EnableSaveIfDataModified() then
+		CustAc_SaveButton_OnClick(_, _,true)
+	end
 	if custacDataTarget then
 		local data = {}
 		data["Categories"]   = {}
@@ -536,7 +540,7 @@ function CustAc_DeleteButton_OnClick(self)
 	end
 end
 
-function CustAc_SaveButton_OnClick()
+function CustAc_SaveButton_OnClick(self, clickButton, noToast)
 	if selectedAchievement.achievementId then
 		local achievementCategoryName = (type(selectedAchievement.achievementCategoryName) == "string" and selectedAchievement.achievementCategoryName ~= "" and selectedAchievement.achievementCategoryName) or L["MENUCUSTAC_CATEGORY"]
 		local achievementIcon         = (selectedAchievement.achievementIcon ~= "" and selectedAchievement.achievementIcon) or 236376
@@ -559,13 +563,16 @@ function CustAc_SaveButton_OnClick()
 		local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name")
 		
 		CustAc_CompleteAchievement("CustomAchiever2")
-		EZBlizzUiPop_ToastFakeAchievement(
-			CustomAchiever,
-			not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4,
-			selectedAchievement.achievementId,
-			achievementName, achievementPoints, achievementIcon, false, categoryName, false,
-			function() CustAc_ShowAchievement(selectedAchievement.achievementId) end)
-		
+		if noToast then
+			-- No toast
+		else
+			EZBlizzUiPop_ToastFakeAchievement(
+				CustomAchiever,
+				not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4,
+				selectedAchievement.achievementId,
+				achievementName, achievementPoints, achievementIcon, false, categoryName, false,
+				function() CustAc_ShowAchievement(selectedAchievement.achievementId) end)
+		end
 		LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
 		LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, selectedAchievement.achievementId)
 		
