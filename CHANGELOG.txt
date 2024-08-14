@@ -1,4 +1,7 @@
-﻿- v1.4.7
+﻿- v1.4.8
+	- TOC for 11.0.2.
+	- Fixed: Deprecated calls.
+- v1.4.7
 	- New: Checks if an achievement has been modified before activating saving.
 	- New: When awarding or revoking an achievement, checks if saving is needed first.
 - v1.4.6

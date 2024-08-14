@@ -161,8 +161,8 @@ function CustomAchiever:OnPlayerLogin(event)
 end
 
 function CustomAchiever:OnPlayerLogout()
-	for i=1, GetNumAddOns() do
-		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
+	for i=1, C_AddOns.GetNumAddOns() do
+		local name, title, notes, loadable, reason, security, newVersion = C_AddOns.GetAddOnInfo(i)
 		if strmatch(name,"_CustomAchiever") then
 			local addOn    = gsub(name, "_CustomAchiever", "")
 			local dataTime = time()
@@ -223,8 +223,8 @@ end
 
 function CustomAchiever:LoadAddonsData()
 	local newCustomAchieverData, optionsDataToMerge
-	for i=1, GetNumAddOns() do
-		local name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
+	for i=1, C_AddOns.GetNumAddOns() do
+		local name, title, notes, loadable, reason, security, newVersion = C_AddOns.GetAddOnInfo(i)
 		if strmatch(name,"_CustomAchiever") then
 			local sourceAddonName = gsub(name, "_CustomAchiever", "")
 			local data = _G[sourceAddonName.."_CustomAchieverData"]
