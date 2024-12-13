@@ -1,4 +1,6 @@
-﻿- v1.4.11
+﻿- v1.4.12
+	- Changed the way GetMouseFocus works for Classic.
+- v1.4.11
 	- TOC for 11.0.7 and 4.4.1.
 - v1.4.10
 	- TOC for 11.0.5.
