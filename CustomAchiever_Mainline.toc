@@ -1,10 +1,10 @@
-## Interface: 110002,110005
+## Interface: 110005,110007
 ## Title: Custom Achiever
 ## IconTexture: Interface\Icons\inv_inscription_tradeskill01.blp
 ## AddonCompartmentFunc: CustomAchiever_CompartmentFunc
 ## AddonCompartmentFuncOnEnter: CustomAchiever_CompartmentFuncOnEnter
 ## AddonCompartmentFuncOnLeave: CustomAchiever_CompartmentFuncOnLeave
-## Version: 1.4.10
+## Version: 1.4.11
 ## Notes: Custom Achievements creator
 ## Author: Xam_insight
 ## SavedVariables: CustomAchieverData, CustomAchieverDataBackup, CustomAchieverOptionsData, CustomAchieverLastManualCall
