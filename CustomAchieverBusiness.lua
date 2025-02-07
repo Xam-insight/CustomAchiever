@@ -380,6 +380,40 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 	end
 end
 
+
+function CustAc_PrepareData(achievementId)
+	local data = {}
+	data["Categories"]   = {}
+	data["Achievements"] = {}
+	local categoryId = CustomAchieverData["Achievements"][achievementId]["parent"]
+	if categoryId then
+		data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
+		if CustomAchieverData["Categories"][categoryId] and CustomAchieverData["Categories"][categoryId]["parent"] and CustomAchieverData["Categories"][categoryId]["parent"] ~= true then
+			data["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]] = CustomAchieverData["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]]
+		end
+	end
+	data["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId]
+	return data
+end
+
+function CustAc_AwardPlayer(targetPlayer, achievementId)
+	if targetPlayer and achievementId then
+		local data = CustAc_PrepareData(achievementId)
+		if not noRewoking and CustAc_IsAchievementCompletedBy(achievementId, targetPlayer, CustAc_isPlayerCharacter(targetPlayer)) then
+			manualEncodeAndSendAchievementInfo(data, targetPlayer, "Revoke")
+		else
+			manualEncodeAndSendAchievementInfo(data, targetPlayer, "Award")
+		end
+	end
+end
+
+function CustAc_AddOnAwardPlayer(targetPlayer, achievementId)
+	if targetPlayer and achievementId then
+		local data = CustAc_PrepareData(achievementId)
+		encodeAndSendAchievementInfo(data, targetPlayer, "Award")
+	end
+end
+
 function CustAc_IsAchievementCompletedBy(id, earnedBy, isSelf)
 	local completed = false
 	

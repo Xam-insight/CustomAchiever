@@ -497,24 +497,7 @@ function CustAc_AwardButton_OnClick(self)
 	if CustomAchieverFrame_EnableSaveIfDataModified() then
 		CustAc_SaveButton_OnClick(_, _,true)
 	end
-	if custacDataTarget then
-		local data = {}
-		data["Categories"]   = {}
-		data["Achievements"] = {}
-		local categoryId = CustomAchieverData["Achievements"][selectedAchievement.achievementId]["parent"]
-		if categoryId then
-			data["Categories"][categoryId] = CustomAchieverData["Categories"][categoryId]
-			if CustomAchieverData["Categories"][categoryId] and CustomAchieverData["Categories"][categoryId]["parent"] and CustomAchieverData["Categories"][categoryId]["parent"] ~= true then
-				data["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]] = CustomAchieverData["Categories"][CustomAchieverData["Categories"][categoryId]["parent"]]
-			end
-		end
-		data["Achievements"][selectedAchievement.achievementId] = CustomAchieverData["Achievements"][selectedAchievement.achievementId]
-		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, custacDataTarget, CustAc_isPlayerCharacter(custacDataTarget)) then
-			manualEncodeAndSendAchievementInfo(data, custacDataTarget, "Revoke")
-		else
-			manualEncodeAndSendAchievementInfo(data, custacDataTarget, "Award")
-		end
-	end
+	CustAc_AwardPlayer(custacDataTarget, selectedAchievement.achievementId)
 end
 
 function CustAc_DeleteCategoryButton_OnClick(categoryId, categoryName)

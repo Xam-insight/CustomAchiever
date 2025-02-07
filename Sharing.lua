@@ -12,7 +12,7 @@ local messageTypeColors = {
 	["UpdateAcknowledgment"] = "FF85C1E9",
 }
 
-local function encodeAndSendAchievementInfo(aData, aTarget, messageType)
+function encodeAndSendAchievementInfo(aData, aTarget, messageType)
 	aData["Version"] = C_AddOns.GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version")
 	local s = CustomAchiever:Serialize(aData)
 	local text = messageType.."#"..s
