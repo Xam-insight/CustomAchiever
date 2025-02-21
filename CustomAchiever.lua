@@ -74,20 +74,21 @@ function CustomAchiever:OnInitialize()
 end
 
 local playerNotFoundMsg = string.gsub(ERR_CHAT_PLAYER_NOT_FOUND_S, "%%s", "(.-)")
-local lastPlayerNotFoundMsg = ""
-local lastPlayerNotFoundMsgTime = GetTime()
+--local lastPlayerNotFoundMsg = ""
+--local lastPlayerNotFoundMsgTime = GetTime()
 function CustomAchiever:ChatFilter(event, msg, author, ...)
 	if event == "CHAT_MSG_SYSTEM" and string.match(msg, playerNotFoundMsg) then
-		local actualTime = GetTime()
+		--local actualTime = GetTime()
 		
 		-- Extract the player's name
         local playerName = CustAc_addRealm(string.match(msg, playerNotFoundMsg))
 		
-		if CustomAchieverData["PendingUpdates"][playerName] or (lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1) then
+		if CustomAchieverData["PendingUpdates"][playerName] then --or (lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1) then
+			CustAc_NoAcknoledgmentError(playerName)
 			return true
 		else
-			lastPlayerNotFoundMsg = msg
-			lastPlayerNotFoundMsgTime = actualTime
+			--lastPlayerNotFoundMsg = msg
+			--lastPlayerNotFoundMsgTime = actualTime
 			return false
 		end
 	end

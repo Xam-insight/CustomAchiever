@@ -38,6 +38,22 @@ function CustAc_SendCallForAchievementsCategories(achievements, aTarget)
 	end
 end
 
+local lastPlayerNoAcknowledgmentError = ""
+local lastNoAcknowledgmentErrorTime = 0
+function CustAc_NoAcknoledgmentError(target)
+	local actualTime = GetTime()
+	local wait = 10
+	if lastPlayerNoAcknowledgmentError == target then
+		wait = 30
+	end
+	if actualTime > lastNoAcknowledgmentErrorTime + wait then
+		UIErrorsFrame:AddMessage(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], target), 1, 0, 0, 1)
+		CustomAchiever:Print(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], target))
+		lastPlayerNoAcknowledgmentError = target
+		lastNoAcknowledgmentErrorTime = actualTime
+	end
+end
+
 function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 	if (messageType == "Award" or messageType == "Update") and not CustAc_isPlayerCharacter(aTarget) then
 		local timeBetweenCalls = (messageType == "Update" and 10) or 300
@@ -52,8 +68,7 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 					seconds = seconds - minutes * 60
 					CustomAchiever:Print(string.format(L["SHARECUSTAC_WAIT"], minutes, seconds))
 				else
-					UIErrorsFrame:AddMessage(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], aTarget), 1, 0, 0, 1)
-					CustomAchiever:Print(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], aTarget))
+					CustAc_NoAcknoledgmentError(aTarget)
 				end
 				return
 			else
@@ -62,8 +77,7 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 		end
 	elseif messageType == "Revoke" and not CustAc_isPlayerCharacter(aTarget) then
 		if not CustomAchieverAcknowledgmentReceived[aTarget] then
-			UIErrorsFrame:AddMessage(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], aTarget), 1, 0, 0, 1)
-			CustomAchiever:Print(format(L["SHARECUSTAC_NOACKNOWLEDGMENT"], aTarget))
+			CustAc_NoAcknoledgmentError(aTarget)
 		end
 	end
 	encodeAndSendAchievementInfo(aData, aTarget, messageType)
@@ -135,8 +149,11 @@ function CustAc_SendUpdatedCategoryData(categoryId, alsoSendTo)
 end
 
 function CustAc_SendUpdatedDataTo(player, data)
-	CustomAchieverData["PendingUpdates"][player] = time()
-	manualEncodeAndSendAchievementInfo(data, player, "Update")
+	local actualTime = time()
+	if not CustomAchieverData["PendingUpdates"][player] or actualTime > CustomAchieverData["PendingUpdates"][player] + 10 then
+		CustomAchieverData["PendingUpdates"][player] = actualTime
+		manualEncodeAndSendAchievementInfo(data, player, "Update")
+	end
 end
 
 CustomAchieverAcknowledgmentReceived = {}
