@@ -67,6 +67,9 @@ function CustomAchiever:OnInitialize()
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", self.ChatFilter)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", self.ChatFilter)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER_INFORM", self.ChatFilter)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", self.ChatFilter)
 end
 
@@ -76,7 +79,11 @@ local lastPlayerNotFoundMsgTime = GetTime()
 function CustomAchiever:ChatFilter(event, msg, author, ...)
 	if event == "CHAT_MSG_SYSTEM" and string.match(msg, playerNotFoundMsg) then
 		local actualTime = GetTime()
-		if lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1 then
+		
+		-- Extract the player's name
+        local playerName = CustAc_addRealm(string.match(msg, playerNotFoundMsg))
+		
+		if CustomAchieverData["PendingUpdates"][playerName] or (lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1) then
 			return true
 		else
 			lastPlayerNotFoundMsg = msg
@@ -246,7 +253,6 @@ function CustomAchiever:LoadAddonsData()
 						end
 						if import then
 							newCustomAchieverData["Categories"][k] = v
-							if data["PendingUpdates"] and data["PendingUpdates"][k]           then newCustomAchieverData["PendingUpdates"][k]      = data["PendingUpdates"][k] end
 							if data["AwardedPlayers"] and data["AwardedPlayers"][k]           then newCustomAchieverData["AwardedPlayers"][k]      = data["AwardedPlayers"][k] end
 							if data["PersonnalCategories"] and data["PersonnalCategories"][k] then newCustomAchieverData["PersonnalCategories"][k] = data["PersonnalCategories"][k] end
 						end
@@ -265,7 +271,6 @@ function CustomAchiever:LoadAddonsData()
 						end
 						if import then
 							newCustomAchieverData["Achievements"][k] = v
-							if data["PendingUpdates"] and data["PendingUpdates"][k] then newCustomAchieverData["PendingUpdates"][k] = data["PendingUpdates"][k] end
 							if data["AwardedPlayers"] and data["AwardedPlayers"][k] then newCustomAchieverData["AwardedPlayers"][k] = data["AwardedPlayers"][k] end
 						end
 					end

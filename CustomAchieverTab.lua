@@ -558,10 +558,11 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 		button:SetScript("OnClick", function(frame)
 			if frame.elementData and frame.elementData.id then
 				if IsShiftKeyDown() then
-					--debug(usage??seems not needed) CustAc_SendUpdatedCategoryData(elementData.category, custacDataTarget)
+					-- Send updated data to custacDataTarget before sending chat message
+					CustAc_SendUpdatedCategoryData(elementData.category, custacDataTarget)
 	
 					local name = CustAc_getLocaleData(CustomAchieverData["Achievements"][frame.elementData.id], "name")
-					-- Insérer le lien dans le champ de saisie de chat lors du Shift-clic
+					-- Insert the link in chat writing box when Shift-clicking
 					ChatEdit_InsertLink("".."[CustAc_" .. frame.elementData.id .. "_"..name.."]".."")
 				end
 			end

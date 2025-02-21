@@ -4,9 +4,9 @@
 ## AddonCompartmentFunc: CustomAchiever_CompartmentFunc
 ## AddonCompartmentFuncOnEnter: CustomAchiever_CompartmentFuncOnEnter
 ## AddonCompartmentFuncOnLeave: CustomAchiever_CompartmentFuncOnLeave
-## Version: 1.4.13
+## Version: 1.5
 ## Notes: Custom Achievements creator
 ## Author: Xam_insight
-## SavedVariables: CustomAchieverData, CustomAchieverDataBackup, CustomAchieverOptionsData, CustomAchieverLastManualCall
+## SavedVariables: CustomAchieverData, CustomAchieverOptionsData, CustomAchieverLastManualCall
 
 embed.xml

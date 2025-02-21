@@ -89,7 +89,7 @@ function CustAc_SendUpdatedAchievementData(achievementId, alsoSendTo)
 				end
 			end
 		end
-		if alsoSendTo then
+		if alsoSendTo and alsoSendTo ~= UNKNOWN then
 			CustAc_SendUpdatedDataTo(alsoSendTo, data)
 		end
 	end
@@ -98,7 +98,7 @@ end
 function CustAc_SendUpdatedCategoryData(categoryId, alsoSendTo)
 	if categoryId then --CustomAchieverData["AwardedPlayers"][categoryId] then
 		local targets = {}
-		if alsoSendTo then
+		if alsoSendTo and alsoSendTo ~= UNKNOWN then
 			targets[alsoSendTo] = true
 		end
 
@@ -128,38 +128,6 @@ function CustAc_SendUpdatedCategoryData(categoryId, alsoSendTo)
 			end
 		end
 		
-		for k,v in pairs(CustomAchieverData["PendingUpdates"]["Achievements"]) do
-			for k2,v2 in pairs(v) do
-				if not CustAc_isPlayerCharacter(k2) then
-					if CustomAchieverData["AwardedPlayers"][k] and CustomAchieverData["AwardedPlayers"][k][k2] then
-						data["Achievements"][k] = CustomAchieverData["Achievements"][k] or "DELETE"
-						targets[k2] = true
-					else
-						CustomAchieverData["PendingUpdates"]["Achievements"][k][k2] = nil
-						if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][k]) == 0 then
-							CustomAchieverData["PendingUpdates"]["Achievements"][k] = nil
-						end
-					end
-				end
-			end
-		end
-		
-		for k,v in pairs(CustomAchieverData["PendingUpdates"]["Categories"]) do
-			for k2,v2 in pairs(v) do
-				if not CustAc_isPlayerCharacter(k2) then
-					if CustomAchieverData["AwardedPlayers"][k] and CustomAchieverData["AwardedPlayers"][k][k2] then
-						data["Categories"][k] = CustomAchieverData["Categories"][k]
-						targets[k2] = true
-					else
-						CustomAchieverData["PendingUpdates"]["Categories"][k][k2] = nil
-						if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Categories"][k]) == 0 then
-							CustomAchieverData["PendingUpdates"]["Categories"][k] = nil
-						end
-					end
-				end
-			end
-		end
-		
 		for k,v in pairs(targets) do
 			CustAc_SendUpdatedDataTo(k, data)
 		end
@@ -167,25 +135,7 @@ function CustAc_SendUpdatedCategoryData(categoryId, alsoSendTo)
 end
 
 function CustAc_SendUpdatedDataTo(player, data)
-	if not CustAc_isPlayerCharacter(sender) then
-		if data["Categories"] then
-			for k,v in pairs(data["Categories"]) do
-				if not CustomAchieverData["PendingUpdates"]["Categories"][k] then
-					CustomAchieverData["PendingUpdates"]["Categories"][k] = {}
-				end
-				CustomAchieverData["PendingUpdates"]["Categories"][k][player] = true
-			end
-		end
-		if data["Achievements"] then
-			for k,v in pairs(data["Achievements"]) do
-				if not CustomAchieverData["PendingUpdates"]["Achievements"][k] then
-					CustomAchieverData["PendingUpdates"]["Achievements"][k] = {}
-				end
-				CustomAchieverData["PendingUpdates"]["Achievements"][k][player] = true
-			end
-		end
-	end
-	
+	CustomAchieverData["PendingUpdates"][player] = time()
 	manualEncodeAndSendAchievementInfo(data, player, "Update")
 end
 
@@ -236,12 +186,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 									CustomAchieverData["AwardedPlayers"][id][senderFullName] = true
 								end
 								if messageType == "UpdateAcknowledgment" then
-									if CustomAchieverData["PendingUpdates"]["Categories"][id] then
-										CustomAchieverData["PendingUpdates"]["Categories"][id][senderFullName] = nil
-										if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Categories"][id]) == 0 then
-											CustomAchieverData["PendingUpdates"]["Categories"][id] = nil
-										end
-									end
+									CustomAchieverData["PendingUpdates"][senderFullName] = nil
 								end
 							end
 						end
@@ -252,12 +197,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 							if v == "DELETE" then
 								local id = k
 								if messageType == "UpdateAcknowledgment" then
-									if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
-										CustomAchieverData["PendingUpdates"]["Achievements"][id][senderFullName] = nil
-										if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][id]) == 0 then
-											CustomAchieverData["PendingUpdates"]["Achievements"][id] = nil
-										end
-									end
+									CustomAchieverData["PendingUpdates"][senderFullName] = nil
 									if CustomAchieverData["AwardedPlayers"][id] then
 										CustomAchieverData["AwardedPlayers"][id][senderFullName] = nil
 										if CustAc_countTableElements(CustomAchieverData["AwardedPlayers"][id]) == 0 then
@@ -286,12 +226,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 								elseif messageType == "Revoke" then
 									CustAc_RevokeAchievement(id)
 								elseif messageType == "UpdateAcknowledgment" then
-									if CustomAchieverData["PendingUpdates"]["Achievements"][id] then
-										CustomAchieverData["PendingUpdates"]["Achievements"][id][senderFullName] = nil
-										if CustAc_countTableElements(CustomAchieverData["PendingUpdates"]["Achievements"][id]) == 0 then
-											CustomAchieverData["PendingUpdates"]["Achievements"][id] = nil
-										end
-									end
+									CustomAchieverData["PendingUpdates"][senderFullName] = nil
 									if not isSenderSelf then
 										if not CustomAchieverData["AwardedPlayers"][id] then
 											CustomAchieverData["AwardedPlayers"][id] = {}

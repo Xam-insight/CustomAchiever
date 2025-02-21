@@ -9,51 +9,16 @@ function initCustomAchieverBusinessObjects()
 	if not CustomAchieverData then
 		CustomAchieverData = {}
 	else
-		local playerCharacter = CustAc_fullName("player")
-		if not CustomAchieverData["DataCleaning_1.2"] then
-			CustomAchieverDataBackup = CustomAchieverData
-			CustomAchieverData["DataCleaning_1.2"] = true
-		end
-		if not CustomAchieverData["DataCleaning_1.2"..playerCharacter] then
-			if CustomAchieverData["AwardedPlayers"] then
-				for k,v in pairs(CustomAchieverData["AwardedPlayers"]) do
-					for k2,v2 in pairs(v) do
-						if CustAc_isPlayerCharacter(k2) then
-							CustomAchieverData["AwardedPlayers"][k][k2] = nil
-						end
-					end
-					if CustAc_countTableElements(v) == 0 then
-						CustomAchieverData["AwardedPlayers"][k] = nil
-					end
+		if not CustomAchieverData["DataCleaning_1.5"] then
+			for key, _ in pairs(CustomAchieverData) do
+				if string.match(key, "^DataCleaning") then
+					CustomAchieverData[key] = nil
 				end
 			end
 			if CustomAchieverData["PendingUpdates"] then
-				if CustomAchieverData["PendingUpdates"]["Categories"] then
-					for k,v in pairs(CustomAchieverData["PendingUpdates"]["Categories"]) do
-						for k2,v2 in pairs(v) do
-							if CustAc_isPlayerCharacter(k2) then
-								CustomAchieverData["PendingUpdates"]["Categories"][k][k2] = nil
-							end
-						end
-						if CustAc_countTableElements(v) == 0 then
-							CustomAchieverData["PendingUpdates"]["Categories"][k] = nil
-						end
-					end
-				end
-				if CustomAchieverData["PendingUpdates"]["Achievements"] then
-					for k,v in pairs(CustomAchieverData["PendingUpdates"]["Achievements"]) do
-						for k2,v2 in pairs(v) do
-							if CustAc_isPlayerCharacter(k2) then
-								CustomAchieverData["PendingUpdates"]["Achievements"][k][k2] = nil
-							end
-						end
-						if CustAc_countTableElements(v) == 0 then
-							CustomAchieverData["PendingUpdates"]["Achievements"][k] = nil
-						end
-					end
-				end
+				CustomAchieverData["PendingUpdates"] = nil
 			end
-			CustomAchieverData["DataCleaning_1.2_"..playerCharacter] = true
+			CustomAchieverData["DataCleaning_1.5"] = true
 		end
 	end
 	CustomAchieverData["MainAddon"] = CustAcAddon or "CustomAchiever"
@@ -72,14 +37,6 @@ function initCustomAchieverBusinessObjects()
 
 	if not CustomAchieverData["PendingUpdates"] then
 		CustomAchieverData["PendingUpdates"] = {}
-	end
-
-	if not CustomAchieverData["PendingUpdates"]["Categories"] then
-		CustomAchieverData["PendingUpdates"]["Categories"] = {}
-	end
-
-	if not CustomAchieverData["PendingUpdates"]["Achievements"] then
-		CustomAchieverData["PendingUpdates"]["Achievements"] = {}
 	end
 
 	if not CustomAchieverData["Users"] then

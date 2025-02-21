@@ -1,4 +1,6 @@
-﻿- v1.4.13
+﻿- v1.5
+	- Streamlining Communications.
+- v1.4.13
 	- TOC for 11.1.0.
 - v1.4.12
 	- Changed the way GetMouseFocus works for Classic.
