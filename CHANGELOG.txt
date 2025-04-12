@@ -1,4 +1,6 @@
-﻿- v1.5.1
+﻿- v1.5.2
+	- TOC for 11.1.5.
+- v1.5.1
 	- Russian localization by ZamestoTV. Спасибо!
 - v1.5
 	- Streamlining Communications.

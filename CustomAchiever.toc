@@ -1,0 +1,7 @@
+## Interface: 40402,110100,110105
+## Title: Custom Achiever
+## Version: 1.5.2
+## Notes: This file exists only to support packaging systems.
+## LoadOnDemand: 1
+
+# On retail, the game loads CustomAchiever_Mainline.toc instead.
