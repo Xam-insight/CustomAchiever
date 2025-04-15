@@ -1,4 +1,7 @@
-﻿- v1.5.2
+﻿- v1.5.3
+	- Code cleaning.
+	- Fixed: Achievement links sent in whispers are now clickable.
+- v1.5.2
 	- TOC for 11.1.5.
 - v1.5.1
 	- Russian localization by ZamestoTV. Спасибо!

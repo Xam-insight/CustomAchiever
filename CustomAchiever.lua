@@ -42,8 +42,6 @@ function CustomAchiever:OnInitialize()
 	self:RegisterComm(CustomAchieverGlobal_CommPrefix, "ReceiveDataFrame_OnEvent")
 	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
 	self:RegisterEvent("GUILD_ROSTER_UPDATE", "OnGuildRosterUpdate")
-	self:RegisterEvent("PLAYER_LOGIN", "OnPlayerLogin")
-	self:RegisterEvent("PLAYER_LOGOUT", "OnPlayerLogout")
 
 	self:RegisterEvent("ADDON_LOADED", function(event, arg)
 		if(arg == "Krowi_AchievementFilter") then
@@ -114,22 +112,6 @@ function CustomAchiever:ChatFilter(event, msg, author, ...)
 	return false, msg, author, ...
 end
 
-function CustomAchiever_CreateHyperlink(id, name)
-	if _G["ChatFrame1"] and not _G["ChatFrame1"].OriginalHyperlinkClick then
-		CustomAchiever:OnPlayerLogin("PLAYER_LOGIN")
-	end
-	local realName = CustAc_getLocaleData(CustomAchieverData["Achievements"][id], "name")
-	if realName and realName ~= UNKNOWN then
-		name = realName
-	end
-    return YELLOW_FONT_COLOR_CODE.."|HCustAc:" .. id.."_"..name .. "|h[" .. name .. "]|h"..FONT_COLOR_CODE_CLOSE
-end
-
-function CustomAchiever:OnGuildRosterUpdate()
-	CustAc_SendCallForUsers()
-	self:UnregisterEvent("GUILD_ROSTER_UPDATE")
-end
-
 -- Function called when the hyperlink is clicked
 local function OnHyperlinkClick(self, link, text, button)
     local linkType, linkData = strsplit(":", link, 2)
@@ -157,29 +139,29 @@ local function OnHyperlinkClick(self, link, text, button)
     end
 end
 
-function CustomAchiever:OnPlayerLogin(event)
-	if event == "PLAYER_LOGIN" then
-        for i = 1, NUM_CHAT_WINDOWS do
-            local chatFrame = _G["ChatFrame" .. i]
-            -- Save the old link click handler
-            chatFrame.OriginalHyperlinkClick = chatFrame:GetScript("OnHyperlinkClick")
-            chatFrame:SetScript("OnHyperlinkClick", OnHyperlinkClick)
-        end
-    end
-end
-
-function CustomAchiever:OnPlayerLogout()
-	for i=1, C_AddOns.GetNumAddOns() do
-		local name, title, notes, loadable, reason, security, newVersion = C_AddOns.GetAddOnInfo(i)
-		if strmatch(name,"_CustomAchiever") then
-			local addOn    = gsub(name, "_CustomAchiever", "")
-			local dataTime = time()
-			_G[addOn.."_CustomAchieverData"]                    = CustomAchieverData
-			_G[addOn.."_CustomAchieverData"]["dataTime"]        = dataTime
-			_G[addOn.."_CustomAchieverOptionsData"]             = CustomAchieverOptionsData
-			_G[addOn.."_CustomAchieverOptionsData"]["dataTime"] = dataTime
+local function CustAc_ReplaceHyperlinkClick()
+	for i = 1, 20 do
+		local chatFrame = _G["ChatFrame" .. i]
+		if chatFrame and not chatFrame.OriginalHyperlinkClick then
+			-- Save the old link click handler
+			chatFrame.OriginalHyperlinkClick = chatFrame:GetScript("OnHyperlinkClick")
+			chatFrame:SetScript("OnHyperlinkClick", OnHyperlinkClick)
 		end
 	end
+end
+
+function CustomAchiever_CreateHyperlink(id, name)
+	CustAc_ReplaceHyperlinkClick()
+	local realName = CustAc_getLocaleData(CustomAchieverData["Achievements"][id], "name")
+	if realName and realName ~= UNKNOWN then
+		name = realName
+	end
+    return YELLOW_FONT_COLOR_CODE.."|HCustAc:" .. id.."_"..name .. "|h[" .. name .. "]|h"..FONT_COLOR_CODE_CLOSE
+end
+
+function CustomAchiever:OnGuildRosterUpdate()
+	CustAc_SendCallForUsers()
+	self:UnregisterEvent("GUILD_ROSTER_UPDATE")
 end
 
 function CustomAchiever:OnEnable()
