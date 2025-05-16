@@ -566,4 +566,19 @@
 			</CheckButton>
 		</Frames>
 	</Button>
+    <Button name="CustAc_DeleteButtonTemplate" hidden="true" virtual="true">
+        <Size>
+            <AbsDimension x="16" y="16"/>
+        </Size>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture name="$parentIcon" file="Interface\AddOns\CustomAchiever\art\delete.blp">
+                    <Anchors>
+                        <Anchor point="TOPLEFT"/>
+                        <Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
 </Ui>

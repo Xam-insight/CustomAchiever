@@ -67,7 +67,7 @@ function CustAc_LoadAchievementsData(callOrigin)
 		end
 
 		for k,v in pairs(categories) do
-			if CustomAchieverData["Categories"][k]["parent"] and CustomAchieverData["Categories"][k]["parent"] ~= true
+			if CustomAchieverData["Categories"][k] and CustomAchieverData["Categories"][k]["parent"] and CustomAchieverData["Categories"][k]["parent"] ~= true
 					and not categories[CustomAchieverData["Categories"][k]["parent"]] then
 				categories[CustomAchieverData["Categories"][k]["parent"]] = true
 				categoriesId[ #categoriesId + 1 ] = CustomAchieverData["Categories"][k]["parent"]
@@ -209,6 +209,54 @@ function CustAc_AchievementFrameCategories_OnLoad(self)
 		frame.Button:SetScript("OnClick", function(button)
 			CustAc_AchievementFrameCategories_OnCategoryClicked(button)
 		end)
+		if not frame.Button.DeleteButton then
+			local deleteButton = CreateFrame("Button", nil, frame.Button, "CustAc_DeleteButtonTemplate")
+			deleteButton:SetPoint("RIGHT", frame.Button, "RIGHT", -10, -2)
+			deleteButton:SetScript("OnClick", function(button)
+				local categoryId = frame.Button.elementData and frame.Button.elementData.id
+				local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][categoryId], "name")
+				if CustomAchieverData["PersonnalCategories"] and CustomAchieverData["PersonnalCategories"][categoryId] then
+					local dialog = StaticPopup_Show("CUSTAC_CAT_DELETE", categoryName, GENERAL)
+					if (dialog) then
+						dialog.data = {}
+						dialog.data["categoryId"] = categoryId
+					end
+				else
+					local dialog = StaticPopup_Show("CUSTAC_CAT_DELETE_EXT", categoryName)
+					if (dialog) then
+						dialog.data = {}
+						dialog.data["categoryId"] = categoryId
+					end
+				end
+			end)
+			frame.Button.DeleteButton = deleteButton
+		end
+	end)
+	
+	hooksecurefunc(AchievementCategoryTemplateButtonMixin, "OnEnter", function(self)
+		-- Delete button
+		local deleteButton = self.DeleteButton
+		if deleteButton then
+			local categoryId = self.elementData.id
+			if categoryId == "GENERAL" then
+				deleteButton:Hide()
+			else
+				deleteButton:Show()
+			end
+		end
+	end)
+
+	hooksecurefunc(AchievementCategoryTemplateButtonMixin, "OnLeave", function(self)
+		-- Delete button
+		C_Timer.After(0.05, function()
+			if not self:IsMouseOver() then
+				local deleteButton = self.DeleteButton
+				if deleteButton then
+					deleteButton:Hide()
+				end
+			end
+		end)
+		
 	end)
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view)

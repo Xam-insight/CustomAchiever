@@ -178,7 +178,7 @@ function CustomAchiever:OnEnable()
 		if CustAc_WoWRetail then
 			CustomAchieverFrame.RefreshButton.Icon:SetAtlas("UI-RefreshButton", TextureKitConstants.IgnoreAtlasSize)
 		else
-			CustomAchieverFrame.RefreshButton.Icon:SetTexture([[Interface\AddOns\]]..(CustAcAddon or "CustomAchiever").."\\art\\ui-refreshbutton")
+			CustomAchieverFrame.RefreshButton.Icon:SetTexture([[Interface\AddOns\]].."CustomAchiever\\art\\ui-refreshbutton")
 		end
 
 		CustomAchiever:Print(L["CUSTOMACHIEVER_WELCOME"])

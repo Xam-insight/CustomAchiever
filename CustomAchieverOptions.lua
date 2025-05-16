@@ -5,7 +5,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
 function loadCustomAchieverOptions()
 	local CustomAchieverOptions = {
 		type = "group",
-		name = format("%s |cffADFF2Fv%s|r", "Custom Achiever", C_AddOns.GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version") or ""),
+		name = format("%s |cffADFF2Fv%s|r", "Custom Achiever", C_AddOns.GetAddOnMetadata("CustomAchiever", "Version") or ""),
 		args = {
 			general = {
 				type = "group", order = 1,

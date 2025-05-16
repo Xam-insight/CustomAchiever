@@ -21,7 +21,7 @@ function initCustomAchieverBusinessObjects()
 			CustomAchieverData["DataCleaning_1.5"] = true
 		end
 	end
-	CustomAchieverData["MainAddon"] = CustAcAddon or "CustomAchiever"
+	CustomAchieverData["MainAddon"] = "CustomAchiever"
 
 	if not CustomAchieverData["Categories"] then
 		CustomAchieverData["Categories"] = {}
@@ -53,6 +53,18 @@ function initCustomAchieverBusinessObjects()
 
 	if not CustomAchieverData["Tutorial"] then
 		CustomAchieverData["Tutorial"] = {}
+	end
+	
+	if not CustomAchieverData.Trash then
+		CustomAchieverData.Trash = {}
+	else
+		-- Empty trash after 30 days
+		local now = time()
+		for k,v in pairs(CustomAchieverData.Trash) do
+			if v.trashTime and now > v.trashTime + (30 * 24 * 60 * 60) then
+				CustomAchieverData.Trash[k] = nil
+			end
+		end
 	end
 	
 	if not CustomAchieverLastManualCall then
@@ -176,7 +188,8 @@ function CustAc_CreateOrUpdateAchievement(id, parent, icon, points, name, descri
 	end
 end
 
-function CustAc_DeleteCategory(id, newCategory)
+function CustAc_DeleteCategory(id, givenNewCategory, trash)
+	local newCategory = givenNewCategory or "GENERAL"
 	if id then
 		local categoryParent = CustomAchieverData["Categories"][id]["parent"]
 		CustomAchieverData["Categories"][id] = nil
@@ -191,25 +204,30 @@ function CustAc_DeleteCategory(id, newCategory)
 	for k,v in pairs(CustomAchieverData["Categories"]) do
 		if v["parent"] == id then
 			categoryFound = true
-			v["parent"] = newCategory
+			v["parent"] = givenNewCategory
 		end
 	end
-	if categoryFound and newCategory and CustomAchieverData["Categories"][newCategory] then
-		CustomAchieverData["Categories"][newCategory]["parent"] = true
+	if categoryFound and givenNewCategory and CustomAchieverData["Categories"][givenNewCategory] then
+		CustomAchieverData["Categories"][givenNewCategory]["parent"] = true
 	end
 	
-	if newCategory then
-		local achievementFound = false
-		for k,v in pairs(CustomAchieverData["Achievements"]) do
-			if v["parent"] == id then
+	local achievementFound = false
+	for k,v in pairs(CustomAchieverData["Achievements"]) do
+		if v["parent"] == id then
+			if trash then
+				-- The achievements go to trash
+				CustomAchieverData.Trash[k] = CustomAchieverData["Achievements"][k]
+				CustomAchieverData.Trash[k].trashTime = time()
+				CustomAchieverData.Achievements[k] = nil
+			else
 				achievementFound = true
 				v["parent"] = newCategory
 			end
 		end
-		if achievementFound and not CustomAchieverData["Categories"][newCategory] then
-			local categoryName = (newCategory == "GENERAL" and GENERAL) or CustAc_delRealm(newCategory)
-			CustAc_CreateOrUpdateCategory(newCategory, nil, categoryName, nil, true)
-		end
+	end
+	if achievementFound and not CustomAchieverData["Categories"][newCategory] then
+		local categoryName = (newCategory == "GENERAL" and GENERAL) or CustAc_delRealm(newCategory)
+		CustAc_CreateOrUpdateCategory(newCategory, nil, categoryName, nil, true)
 	end
 	
 	CustAc_LoadAchievementsData("CustAc_DeleteCategory")

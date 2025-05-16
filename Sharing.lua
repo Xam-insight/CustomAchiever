@@ -13,7 +13,7 @@ local messageTypeColors = {
 }
 
 function encodeAndSendAchievementInfo(aData, aTarget, messageType)
-	aData["Version"] = C_AddOns.GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version")
+	aData["Version"] = C_AddOns.GetAddOnMetadata("CustomAchiever", "Version")
 	local s = CustomAchiever:Serialize(aData)
 	local text = messageType.."#"..s
 	CustomAchiever:SendCommMessage(CustomAchieverGlobal_CommPrefix, text, "WHISPER", aTarget)
@@ -27,7 +27,7 @@ local function sendInfo(info, aTarget, messageType)
 end
 
 function CustAc_SendCallForUsers()
-	sendInfo(C_AddOns.GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version"), nil, "CallUsers")
+	sendInfo(C_AddOns.GetAddOnMetadata("CustomAchiever", "Version"), nil, "CallUsers")
 end
 
 function CustAc_SendCallForAchievementsCategories(achievements, aTarget)
@@ -164,7 +164,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 		local messageType, messageMessage = strsplit("#", message, 2)
 		--if not isPlayerCharacter(sender) then
 		if messageType == "CallUsers" then
-			sendInfo(C_AddOns.GetAddOnMetadata(CustAcAddon or "CustomAchiever", "Version"), sender, "AnswerUsers")
+			sendInfo(C_AddOns.GetAddOnMetadata("CustomAchiever", "Version"), sender, "AnswerUsers")
 			CustomAchieverData["Users"][senderFullName] = messageMessage
 		elseif messageType == "AnswerUsers" then
 			CustomAchieverData["Users"][senderFullName] = messageMessage

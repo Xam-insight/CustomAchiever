@@ -21,12 +21,33 @@ local function CustAc_InitSelectedAchievement(achievementId, categoryId)
 end
 
 StaticPopupDialogs["CUSTAC_CAT_DELETE"] = {
-	text = L["MENUCUSTAC_CAT_CONFIRM_DELETION"],
+	text = L["MENUCUSTAC_CAT_CONFIRM_DELETION"].."|n"..L["MENUCUSTAC_CAT_CONFIRM_DELETION_MOVE"],
 	button1 = ACCEPT,
 	button2 = CANCEL,
 	OnAccept = function (self, data)
 		StaticPopupSpecial_Hide(CustacCategoryCreateDialog)
 		CustAc_DeleteCategory(data.categoryId, data.newCategory)
+		if selectedAchievement.achievementCategory and selectedAchievement.achievementCategory == data.categoryId then
+			LibDD:UIDropDownMenu_Initialize(CustomAchieverCategoryDownMenu, CustAc_CategoryDropDownMenu_Update)
+			LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverCategoryDownMenu, nextCustomCategoryId)
+			LibDD:UIDropDownMenu_Initialize(CustomAchieverAchievementsDownMenu, CustAc_AchievementDropDownMenu_Update)
+			LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverAchievementsDownMenu, nextCustomAchieverId)
+			CustAc_InitSelectedAchievement(nextCustomAchieverId, nextCustomCategoryId)
+			CustomAchieverFrame_UpdateAchievementAlertFrame()
+		end
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+}
+
+StaticPopupDialogs["CUSTAC_CAT_DELETE_EXT"] = {
+	text = L["MENUCUSTAC_CAT_CONFIRM_DELETION"].."|n"..L["MENUCUSTAC_CAT_CONFIRM_DELETION_LOST"],
+	button1 = ACCEPT,
+	button2 = CANCEL,
+	OnAccept = function (self, data)
+		CustAc_DeleteCategory(data.categoryId, nil, true)
 		if selectedAchievement.achievementCategory and selectedAchievement.achievementCategory == data.categoryId then
 			LibDD:UIDropDownMenu_Initialize(CustomAchieverCategoryDownMenu, CustAc_CategoryDropDownMenu_Update)
 			LibDD:UIDropDownMenu_SetSelectedValue(CustomAchieverCategoryDownMenu, nextCustomCategoryId)
@@ -385,7 +406,7 @@ function CustAc_AchievementDropDownMenu_Update(self)
 			local achievementName = CustAc_getLocaleData(v, "name")
 			local info         = LibDD:UIDropDownMenu_CreateInfo()
 			info.text          = (type(achievementName) == "string" and achievementName ~= "" and achievementName) or L["MENUCUSTAC_DEFAULT_NAME"]
-			info.mouseOverIcon = [[Interface\AddOns\]]..(CustAcAddon or "CustomAchiever").."\\art\\delete"
+			info.mouseOverIcon = [[Interface\AddOns\]].."CustomAchiever\\art\\delete"
 			info.iconXOffset   = -5
 			info.padding       = 5
 			info.value         = k
