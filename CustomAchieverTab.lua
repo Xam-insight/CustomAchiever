@@ -604,8 +604,30 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 			ACHIEVEMENTUI_FONTHEIGHT = fontHeight
 		end
 		CustAc_AchievementInit(button, elementData)
-		button:SetScript("OnEnter", function(frame) frame.Highlight:Show() end)
-		button:SetScript("OnLeave", function(frame) frame.Highlight:Hide() end)
+		button:SetScript("OnEnter", function(frame)
+			frame.Highlight:Show()
+			
+			-- Delete button
+			local deleteButton = frame.DeleteButton
+			if deleteButton then
+				deleteButton:Show()
+			end
+		end)
+		button:SetScript("OnLeave", function(frame)
+			if ( not frame.selected ) then
+				frame.Highlight:Hide()
+			end
+			
+			-- Delete button
+			C_Timer.After(0.05, function()
+				if not frame:IsMouseOver() then
+					local deleteButton = frame.DeleteButton
+					if deleteButton then
+						deleteButton:Hide()
+					end
+				end
+			end)
+		end)
 		button.elementData = elementData
 		button:SetScript("OnClick", function(frame)
 			if frame.elementData and frame.elementData.id then
@@ -622,6 +644,23 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 		button.Shield:SetScript("OnClick", function(self, but, down)
 			button:Click(but, down)
 		end)
+		
+		if not button.DeleteButton then
+			local deleteButton = CreateFrame("Button", nil, button, "CustAc_DeleteButtonTemplate")
+			deleteButton:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -3, 3)
+			deleteButton:SetAttribute("tooltip", DELETE)
+			deleteButton:SetAttribute("tooltipDetail", { L["CUSTAC_ACH_DELETION"] })
+			deleteButton:SetScript("OnClick", function(clickbutton)
+				local achievementId = button.elementData and button.elementData.id
+				local achievementName = CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "name")
+				local dialog = StaticPopup_Show("CUSTAC_DELETE", achievementName)
+				if (dialog) then
+					dialog.data = {}
+					dialog.data["achievementId"] = achievementId
+				end
+			end)
+			button.DeleteButton = deleteButton
+		end
 	end
 	if CustAc_WoWRetail then
 		view:SetElementInitializer("AchievementTemplate", AchievementInitializer)

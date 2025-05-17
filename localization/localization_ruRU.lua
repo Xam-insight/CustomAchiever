@@ -52,6 +52,7 @@ L["SHARECUSTAC_NOACKNOWLEDGMENT"] = "Похоже, у %s не установле
 L["MENUOPTIONS_TOOLTIP"] = "Настройки Custom Achiever"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Изменить настройки Custom Achiever."
 
+L["CUSTAC_ACH_DELETION"] = "Удалить пользовательское достижение"
 L["CUSTAC_CAT_DELETION"] = "Удалить пользовательскую категорию достижений"
 
 L["MINIMAP_TOOLTIP1"] = "ЛКМ, чтобы показать Custom Achiever."

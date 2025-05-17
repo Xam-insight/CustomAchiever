@@ -1,6 +1,6 @@
 ﻿- v1.5.4
 	- TOC for 11.1.7.
-	- Categories can now be deleted directly from the Achievements frame.
+	- Categories and achievements can now be deleted directly from the Achievements frame.
 - v1.5.3
 	- Code cleaning.
 	- Fixed: Achievement links sent in whispers are now clickable.

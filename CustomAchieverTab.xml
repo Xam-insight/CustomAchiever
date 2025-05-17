@@ -354,17 +354,6 @@
 		</Layers>
 		<Scripts>
 			<OnLoad inherit="prepend" function="AchievementButton_OnLoad"/>
-			<OnClick>
-				AchievementButton_OnClick(self);
-			</OnClick>
-			<OnEnter>
-				self.highlight:Show();
-			</OnEnter>
-			<OnLeave>
-				if ( not self.selected ) then
-				self.highlight:Hide();
-				end
-			</OnLeave>
 		</Scripts>
 		<Frames>
 			<Frame name="$parentHighlight" setAllPoints="true" hidden="true" enableMouse="false" parentKey="highlight">
@@ -566,7 +555,7 @@
 			</CheckButton>
 		</Frames>
 	</Button>
-    <Button name="CustAc_DeleteButtonTemplate" hidden="true" virtual="true">
+    <Button name="CustAc_DeleteButtonTemplate" alpha="0.5" hidden="true" virtual="true">
         <Size>
             <AbsDimension x="16" y="16"/>
         </Size>
