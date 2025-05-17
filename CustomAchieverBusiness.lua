@@ -67,6 +67,20 @@ function initCustomAchieverBusinessObjects()
 				CustomAchieverData.Trash[k] = nil
 			end
 		end
+		for k,v in pairs(CustomAchieverData.Achievements) do
+			local parent = v.parent
+			if not parent or not CustomAchieverData.Categories[parent] then
+				print("nettoyage", k, CustAc_getLocaleData(v, "name"))
+				CustomAchieverData.Trash[k] = CustomAchieverData.Achievements[k]
+				CustomAchieverData.Trash[k].trashTime = time()
+				CustomAchieverData.Achievements[k] = nil
+			end
+		end
+		for k,v in pairs(CustomAchieverData.AwardedPlayers) do
+			if not CustomAchieverData.Categories[k] and not CustomAchieverData.Achievements[k] and not CustomAchieverData.Trash[k] then
+				CustomAchieverData.AwardedPlayers[k] = nil
+			end
+		end
 	end
 	
 	if not CustomAchieverLastManualCall then
