@@ -70,10 +70,7 @@ function initCustomAchieverBusinessObjects()
 		for k,v in pairs(CustomAchieverData.Achievements) do
 			local parent = v.parent
 			if not parent or not CustomAchieverData.Categories[parent] then
-				print("nettoyage", k, CustAc_getLocaleData(v, "name"))
-				CustomAchieverData.Trash[k] = CustomAchieverData.Achievements[k]
-				CustomAchieverData.Trash[k].trashTime = time()
-				CustomAchieverData.Achievements[k] = nil
+				CustAc_DeleteAchievement(k)
 			end
 		end
 		for k,v in pairs(CustomAchieverData.AwardedPlayers) do
@@ -232,9 +229,7 @@ function CustAc_DeleteCategory(id, givenNewCategory, trash)
 		if v["parent"] == id then
 			if trash then
 				-- The achievements go to trash
-				CustomAchieverData.Trash[k] = CustomAchieverData["Achievements"][k]
-				CustomAchieverData.Trash[k].trashTime = time()
-				CustomAchieverData.Achievements[k] = nil
+				CustAc_DeleteAchievement(k)
 			else
 				achievementFound = true
 				v["parent"] = newCategory
@@ -277,7 +272,9 @@ end
 
 function CustAc_DeleteAchievement(id)
 	if id then
-		CustomAchieverData["Achievements"][id] = nil
+		CustomAchieverData.Trash[id] = CustomAchieverData.Achievements[id]
+		CustomAchieverData.Trash[id].trashTime = time()
+		CustomAchieverData.Achievements[id] = nil
 	end
 	
 	CustAc_LoadAchievementsData("CustAc_DeleteAchievement")
