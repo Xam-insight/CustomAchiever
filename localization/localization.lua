@@ -52,6 +52,8 @@ L["SHARECUSTAC_NOACKNOWLEDGMENT"] = "%s does not seem to have Custom Achiever in
 L["MENUOPTIONS_TOOLTIP"] = "Custom Achiever options"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Change Custom Achiever options."
 
+L["CUSTAC_CAT_DELETION"] = "Delete custom achievement category"
+
 L["MINIMAP_TOOLTIP1"] = "Left click to show Custom Achiever."
 L["MINIMAP_TOOLTIP2"] = "Right click to open options panel."
 

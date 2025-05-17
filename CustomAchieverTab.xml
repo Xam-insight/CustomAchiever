@@ -580,5 +580,9 @@
                 </Texture>
             </Layer>
         </Layers>
+		<Scripts>
+			<OnEnter function="CustomAchieverButtonEnter"/>
+			<OnLeave function="CustomAchieverButtonLeave"/>
+		</Scripts>
     </Button>
 </Ui>

@@ -52,6 +52,8 @@ L["SHARECUSTAC_NOACKNOWLEDGMENT"] = "%s ne semble pas avoir Custom Achiever ou e
 L["MENUOPTIONS_TOOLTIP"] = "Options de Custom Achiever"
 L["MENUOPTIONS_TOOLTIPDETAIL"] = "Modifier les options de Custom Achiever."
 
+L["CUSTAC_CAT_DELETION"] = "Supprimer une catégorie de hauts faits personnalisés"
+
 L["MINIMAP_TOOLTIP1"] = "Clic gauche pour afficher Custom Achiever."
 L["MINIMAP_TOOLTIP2"] = "Clic droit pour ouvrir les options."
 

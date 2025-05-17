@@ -1,3 +1,5 @@
+local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
+
 local ACHIEVEMENTUI_FONTHEIGHT
 local ACHIEVEMENTUI_MAX_LINES_COLLAPSED = 3	-- can show 3 lines of text when achievement is collapsed
 
@@ -212,6 +214,8 @@ function CustAc_AchievementFrameCategories_OnLoad(self)
 		if not frame.Button.DeleteButton then
 			local deleteButton = CreateFrame("Button", nil, frame.Button, "CustAc_DeleteButtonTemplate")
 			deleteButton:SetPoint("RIGHT", frame.Button, "RIGHT", -10, -2)
+			deleteButton:SetAttribute("tooltip", DELETE)
+			deleteButton:SetAttribute("tooltipDetail", { L["CUSTAC_CAT_DELETION"] })
 			deleteButton:SetScript("OnClick", function(button)
 				local categoryId = frame.Button.elementData and frame.Button.elementData.id
 				local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][categoryId], "name")
