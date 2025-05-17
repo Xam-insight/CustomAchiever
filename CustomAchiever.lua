@@ -214,73 +214,59 @@ end
 function CustomAchiever:LoadAddonsData()
 	local newCustomAchieverData, optionsDataToMerge
 	for i=1, C_AddOns.GetNumAddOns() do
-		local name, title, notes, loadable, reason, security, newVersion = C_AddOns.GetAddOnInfo(i)
-		if strmatch(name,"_CustomAchiever") then
-			local sourceAddonName = gsub(name, "_CustomAchiever", "")
-			local data = _G[sourceAddonName.."_CustomAchieverData"]
-			if data then
-				local dataTime        = data["dataTime"] or time()
-				local currentDataTime = CustomAchieverData["dataTime"] or 0
-				if dataTime ~= currentDataTime then
-					newCustomAchieverData = newCustomAchieverData or CustomAchieverData
-					for k,v in pairs(data["Categories"]) do
-						local import
-						if newCustomAchieverData["Categories"][k] then
-							local thisDataTime        = v["dataTime"] or dataTime
-							local thisCurrentDataTime = (newCustomAchieverData[k] and newCustomAchieverData[k]["dataTime"]) or currentDataTime
-							if thisDataTime > thisCurrentDataTime then
-								import = true
-							end
-						else
+		local name = C_AddOns.GetAddOnInfo(i)
+		local data = _G[name.."_CustomAchieverData"]
+		if data then
+			local dataTime        = data["dataTime"] or time()
+			local currentDataTime = CustomAchieverData["dataTime"] or 0
+			if dataTime ~= currentDataTime then
+				newCustomAchieverData = newCustomAchieverData or CustomAchieverData
+				for k,v in pairs(data["Categories"]) do
+					local import
+					if newCustomAchieverData["Categories"][k] then
+						local thisDataTime        = v["dataTime"] or dataTime
+						local thisCurrentDataTime = (newCustomAchieverData[k] and newCustomAchieverData[k]["dataTime"]) or currentDataTime
+						if thisDataTime > thisCurrentDataTime then
 							import = true
 						end
-						if import then
-							newCustomAchieverData["Categories"][k] = v
-							if data["AwardedPlayers"] and data["AwardedPlayers"][k]           then newCustomAchieverData["AwardedPlayers"][k]      = data["AwardedPlayers"][k] end
-							if data["PersonnalCategories"] and data["PersonnalCategories"][k] then newCustomAchieverData["PersonnalCategories"][k] = data["PersonnalCategories"][k] end
-						end
+					else
+						import = true
 					end
-					
-					for k,v in pairs(data["Achievements"]) do
-						local import
-						if newCustomAchieverData["Achievements"][k] then
-							local thisDataTime        = v["dataTime"] or dataTime
-							local thisCurrentDataTime = (newCustomAchieverData[k] and newCustomAchieverData[k]["dataTime"]) or currentDataTime
-							if thisDataTime > thisCurrentDataTime then
-								import = true
-							end
-						else
+					if import then
+						newCustomAchieverData["Categories"][k] = v
+						if data["AwardedPlayers"] and data["AwardedPlayers"][k]           then newCustomAchieverData["AwardedPlayers"][k]      = data["AwardedPlayers"][k] end
+						if data["PersonnalCategories"] and data["PersonnalCategories"][k] then newCustomAchieverData["PersonnalCategories"][k] = data["PersonnalCategories"][k] end
+					end
+				end
+				
+				for k,v in pairs(data["Achievements"]) do
+					local import
+					if newCustomAchieverData["Achievements"][k] then
+						local thisDataTime        = v["dataTime"] or dataTime
+						local thisCurrentDataTime = (newCustomAchieverData[k] and newCustomAchieverData[k]["dataTime"]) or currentDataTime
+						if thisDataTime > thisCurrentDataTime then
 							import = true
 						end
-						if import then
-							newCustomAchieverData["Achievements"][k] = v
-							if data["AwardedPlayers"] and data["AwardedPlayers"][k] then newCustomAchieverData["AwardedPlayers"][k] = data["AwardedPlayers"][k] end
-						end
+					else
+						import = true
 					end
+					if import then
+						newCustomAchieverData["Achievements"][k] = v
+						if data["AwardedPlayers"] and data["AwardedPlayers"][k] then newCustomAchieverData["AwardedPlayers"][k] = data["AwardedPlayers"][k] end
+					end
+				end
 
-					if data["Users"] then
-						for k,v in pairs(data["Users"]) do
-							if not newCustomAchieverData["Users"][k] then
-								newCustomAchieverData["Users"][k] = v
-							end
+				if data["Users"] then
+					for k,v in pairs(data["Users"]) do
+						if not newCustomAchieverData["Users"][k] then
+							newCustomAchieverData["Users"][k] = v
 						end
 					end
 				end
 			end
-			local optionsData = _G[sourceAddonName.."_CustomAchieverOptionsData"]
-			if optionsData then
-				local addonDataTime  = optionsData["dataTime"]
-				local custacDataTime = CustomAchieverOptionsData["dataTime"]
-				local optionsDataToMergeDataTime = optionsDataToMerge and optionsDataToMerge["dataTime"]
-				if addonDataTime and (not custacDataTime or tonumber(custacDataTime) < tonumber(addonDataTime)) and (not optionsDataToMergeDataTime or tonumber(optionsDataToMergeDataTime) < tonumber(addonDataTime)) then
-					optionsDataToMerge = optionsData
-				end
-			end
+			
+			_G[name.."_CustomAchieverData"] = nil
 		end
-	end
-	if optionsDataToMerge then
-		CustomAchieverOptionsData = optionsDataToMerge
-		applyCustomAchieverWindowOptions()
 	end
 	if newCustomAchieverData then
 		CustomAchieverData = newCustomAchieverData

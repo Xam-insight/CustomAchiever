@@ -21,7 +21,9 @@ function initCustomAchieverBusinessObjects()
 			CustomAchieverData["DataCleaning_1.5"] = true
 		end
 	end
-	CustomAchieverData["MainAddon"] = "CustomAchiever"
+	if CustomAchieverData["MainAddon"] then
+		CustomAchieverData["MainAddon"] = nil
+	end
 
 	if not CustomAchieverData["Categories"] then
 		CustomAchieverData["Categories"] = {}
