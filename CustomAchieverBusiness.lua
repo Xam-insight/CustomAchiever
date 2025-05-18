@@ -271,7 +271,7 @@ function CustAc_DetermineNewCategory(oldCategory, proposedCategory, proposedCate
 end
 
 function CustAc_DeleteAchievement(id)
-	if id then
+	if id and CustomAchieverData.Achievements[id] then
 		CustomAchieverData.Trash[id] = CustomAchieverData.Achievements[id]
 		CustomAchieverData.Trash[id].trashTime = time()
 		CustomAchieverData.Achievements[id] = nil
