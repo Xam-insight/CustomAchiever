@@ -4,7 +4,7 @@
 ## AddonCompartmentFunc: CustomAchiever_CompartmentFunc
 ## AddonCompartmentFuncOnEnter: CustomAchiever_CompartmentFuncOnEnter
 ## AddonCompartmentFuncOnLeave: CustomAchiever_CompartmentFuncOnLeave
-## Version: 1.5.4
+## Version: 1.5.5
 ## Notes: Custom Achievements creator
 ## Author: Xam_insight
 ## Category-enUS: Collections

@@ -201,6 +201,31 @@ function CustAc_AchievementFrame_Load()
 	CustAc_CreateOrUpdateAchievement("CustomAchiever2", "CustomAchiever",    nil, nil, "One small step for Azeroth...", "Create your first Achievement.", "", nil,"enUS")
 end
 
+local function CustAc_CategoryOnEnter(frame)
+	-- Delete button
+	local deleteButton = frame.DeleteButton
+	if deleteButton then
+		local categoryId = frame.elementData.id
+		if categoryId == "GENERAL" then
+			deleteButton:Hide()
+		else
+			deleteButton:Show()
+		end
+	end
+end
+
+local function CustAc_CategoryOnLeave(frame)
+	-- Delete button
+	C_Timer.After(0.05, function()
+		if not frame:IsMouseOver() then
+			local deleteButton = frame.DeleteButton
+			if deleteButton then
+				deleteButton:Hide()
+			end
+		end
+	end)
+end
+
 function CustAc_AchievementFrameCategories_OnLoad(self)
 	---self:RegisterEvent("ADDON_LOADED")
 
@@ -235,33 +260,25 @@ function CustAc_AchievementFrameCategories_OnLoad(self)
 			end)
 			frame.Button.DeleteButton = deleteButton
 		end
-	end)
-	
-	hooksecurefunc(AchievementCategoryTemplateButtonMixin, "OnEnter", function(self)
-		-- Delete button
-		local deleteButton = self.DeleteButton
-		if deleteButton then
-			local categoryId = self.elementData.id
-			if categoryId == "GENERAL" then
-				deleteButton:Hide()
-			else
-				deleteButton:Show()
-			end
+		if not CustAc_WoWRetail then
+			frame:HookScript("OnEnter", function(self)
+				CustAc_CategoryOnEnter(self)
+			end)
+			frame:HookScript("OnLeave", function(self)
+				CustAc_CategoryOnLeave(self)
+			end)
 		end
 	end)
-
-	hooksecurefunc(AchievementCategoryTemplateButtonMixin, "OnLeave", function(self)
-		-- Delete button
-		C_Timer.After(0.05, function()
-			if not self:IsMouseOver() then
-				local deleteButton = self.DeleteButton
-				if deleteButton then
-					deleteButton:Hide()
-				end
-			end
+	
+	if CustAc_WoWRetail then
+		hooksecurefunc(AchievementCategoryTemplateButtonMixin, "OnEnter", function(self)
+			CustAc_CategoryOnEnter(self)
 		end)
-		
-	end)
+
+		hooksecurefunc(AchievementCategoryTemplateButtonMixin, "OnLeave", function(self)
+			CustAc_CategoryOnLeave(self)
+		end)
+	end
 
 	ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view)
 end

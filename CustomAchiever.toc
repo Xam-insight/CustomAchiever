@@ -1,6 +1,6 @@
-## Interface: 40402,110105,110107
+## Interface: 40402,50500,110107,110200
 ## Title: Custom Achiever
-## Version: 1.5.4
+## Version: 1.5.5
 ## Notes: This file exists only to support packaging systems.
 ## LoadOnDemand: 1
 

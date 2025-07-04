@@ -12,6 +12,10 @@ elseif wowversion < 30000 then
 	CustAc_WoWClassicTBC = true
 elseif wowversion < 40000 then 
 	CustAc_WoWWOTLKC = true
+elseif wowversion < 50000 then 
+	CustAc_WoWCATA = true
+elseif wowversion < 60000 then 
+	CustAc_WoWMISTS = true
 elseif wowversion > 90000 then
 	CustAc_WoWRetail = true
 
