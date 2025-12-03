@@ -44,9 +44,11 @@ function CustomAchiever:OnInitialize()
 	-- Called when the addon is loaded
 	self:RegisterChatCommand("custac", "CustomAchieverChatCommand")
 	self:RegisterComm(CustomAchieverGlobal_CommPrefix, "ReceiveDataFrame_OnEvent")
-	--self:RegisterEvent("PLAYER_ENTERING_WORLD", "CallForCustomAchieverData")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", function() CustAc_CompleteAchievement("CustomAchiever1") end)
 	self:RegisterEvent("GUILD_ROSTER_UPDATE", "OnGuildRosterUpdate")
-
+	
+	CustAc_CreateMinimapButton()
+	
 	self:RegisterEvent("ADDON_LOADED", function(event, arg)
 		if(arg == "Krowi_AchievementFilter") then
 			--WATCHED_ADDON = "Overachiever_Tabs" -- Overachiever no longer supported. >> Krowi_AchievementFilter
@@ -193,7 +195,6 @@ function CustomAchiever:OnEnable()
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, CustAc_OnTooltipUnit)
 		GameTooltip:HookScript("OnShow", CustAc_CommunitiesMemberOnEnter)
 	end
-	CustAc_CreateMinimapButton()
 end
 
 function CustAc_CommunitiesMemberOnEnter()

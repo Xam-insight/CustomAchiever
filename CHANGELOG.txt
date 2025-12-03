@@ -1,4 +1,6 @@
-﻿- v1.5.7
+﻿- v1.5.8
+	- Fixed: Initializing functions order.
+- v1.5.7
 	- TOC for 11.2.7.
 	- TOC for 5.5.2.
 - v1.5.6

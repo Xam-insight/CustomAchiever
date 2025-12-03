@@ -109,10 +109,13 @@ end
 
 function CustAc_ApplyIgnoreList()
 	CustomAchieverData["BlackList"] = {}
-	for i = 1, C_FriendList.GetNumIgnores() do
-		local user = CustAc_addRealm(C_FriendList.GetIgnoreName(i))
-		if user then
-			CustomAchieverData["BlackList"][user] = "IgnoreList"
+	local numIgnores = C_FriendList.GetNumIgnores()
+	if numIgnores then 
+		for i = 1, numIgnores do
+			local user = CustAc_addRealm(C_FriendList.GetIgnoreName(i))
+			if user then
+				CustomAchieverData["BlackList"][user] = "IgnoreList"
+			end
 		end
 	end
 end
