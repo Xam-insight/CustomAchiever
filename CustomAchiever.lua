@@ -2,26 +2,7 @@ CustomAchiever = LibStub("AceAddon-3.0"):NewAddon("CustomAchiever", "AceConsole-
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
 local AceGUI = LibStub("AceGUI-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
-
--- Determine WoW TOC Version
-CustAc_WoWClassicEra, CustAc_WoWClassicTBC, CustAc_WoWWOTLKC, CustAc_WoWRetail = false
-local wowversion = select(4, GetBuildInfo())
-if wowversion < 20000 then
-	CustAc_WoWClassicEra = true
-elseif wowversion < 30000 then 
-	CustAc_WoWClassicTBC = true
-elseif wowversion < 40000 then 
-	CustAc_WoWWOTLKC = true
-elseif wowversion < 50000 then 
-	CustAc_WoWCATA = true
-elseif wowversion < 60000 then 
-	CustAc_WoWMISTS = true
-elseif wowversion > 90000 then
-	CustAc_WoWRetail = true
-
-else
-	-- n/a
-end
+local XITK = LibStub("XamInsightToolKit")
 
 CustomAchieverGlobal_CommPrefix = "CustomAchiever"
 
@@ -85,7 +66,7 @@ function CustomAchiever:ChatFilter(event, msg, author, ...)
 		--local actualTime = GetTime()
 		
 		-- Extract the player's name
-        local playerName = CustAc_addRealm(string.match(msg, playerNotFoundMsg))
+        local playerName = XITK.addRealm(string.match(msg, playerNotFoundMsg))
 		
 		if CustomAchieverData["PendingUpdates"][playerName] then --or (lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1) then
 			CustAc_NoAcknoledgmentError(playerName)
@@ -102,7 +83,7 @@ function CustomAchiever:ChatFilter(event, msg, author, ...)
 			local found = false
 			msg, found = string.gsub(msg, "%[CustAc_(.-)_(.-)%]", function(id, name)
 				
-				if id and not CustAc_isPlayerCharacter(author) then
+				if id and not XITK.isPlayerCharacter(author) then
 					custacDataIdFoundsInChat[id] = true
 				end
 				
@@ -111,7 +92,7 @@ function CustomAchiever:ChatFilter(event, msg, author, ...)
 			if found == 0 then break end
 		end
 		
-		if CustAc_countTableElements(custacDataIdFoundsInChat) > 0 then
+		if XITK.countTableElements(custacDataIdFoundsInChat) > 0 then
 			CustAc_SendCallForAchievementsCategories(custacDataIdFoundsInChat, author)
 		end
 	end
@@ -181,7 +162,7 @@ function CustomAchiever:OnEnable()
 		CustomAchieverTargetTooltip:SetScale(0.8)
 		CustomAchieverTargetTooltip:SetParent(CustomAchieverFrame)
 		
-		if CustAc_WoWRetail then
+		if XITK.WoWRetail then
 			CustomAchieverFrame.RefreshButton.Icon:SetAtlas("UI-RefreshButton", TextureKitConstants.IgnoreAtlasSize)
 		else
 			CustomAchieverFrame.RefreshButton.Icon:SetTexture([[Interface\AddOns\]].."CustomAchiever\\art\\ui-refreshbutton")
@@ -198,9 +179,9 @@ function CustomAchiever:OnEnable()
 end
 
 function CustAc_CommunitiesMemberOnEnter()
-	local mouseFocus = EZBlizzUiPop_GetMouseFocus()
+	local mouseFocus = XITK.GetMouseFocus()
 	if mouseFocus and mouseFocus["memberInfo"] and mouseFocus["memberInfo"]["clubType"] == 2 and mouseFocus["memberInfo"]["name"] then
-		local unitFullName = CustAc_addRealm(mouseFocus["memberInfo"]["name"])
+		local unitFullName = XITK.addRealm(mouseFocus["memberInfo"]["name"])
 		if CustomAchieverData["Users"][unitFullName] then
 			GameTooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][unitFullName], 0, 1, 0, 0, 1, 0)
 			GameTooltip:Show()
@@ -210,7 +191,7 @@ end
 
 function CustAc_OnTooltipUnit(tooltip, data)
 	local unitName, unitId = GameTooltip:GetUnit()
-	local unitFullName = CustAc_addRealm(unitName)
+	local unitFullName = XITK.addRealm(unitName)
 	if CustomAchieverData["Users"][unitFullName] then
 		tooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][unitFullName], 0, 1, 0, 0, 1, 0)
 	end
@@ -323,39 +304,11 @@ function customAchieverSaveWindowPosition()
 	--CustAc_saveCustomAchieverOptionsDataForAddon()
 end
 
-function CustAc_fullName(unit)
-	local fullName = nil
-	if unit then
-		local playerName, playerRealm = UnitFullName(unit)
-		if playerName and playerName ~= "" and playerName ~= UNKNOWNOBJECT then
-			if not playerRealm or playerRealm == "" then
-				playerRealm = GetNormalizedRealmName()
-			end
-			if playerRealm and playerRealm ~= "" then
-				fullName = playerName.."-"..playerRealm
-			end
-		end
-	end
-	return fullName
-end
-
-function CustAc_isPlayerCharacter(aName)
-	return CustAc_playerCharacter() == CustAc_addRealm(aName)
-end
-
-local CustAc_pc
-function CustAc_playerCharacter()
-	if not CustAc_pc then
-		CustAc_pc = CustAc_fullName("player")
-	end
-	return CustAc_pc
-end
-
 function CustomAchiever:ReloadData()
 	CustomAchieverBetButton:Hide()
 	local numGroupMembers = GetNumGroupMembers()
 	if numGroupMembers <= 1 then
-		playerJoinsCustomAchieverSession("CustomAchieverSession_"..CustAc_playerCharacter(), true, true)
+		playerJoinsCustomAchieverSession("CustomAchieverSession_"..XITK.playerCharacter(), true, true)
 	end
 	generateCustomAchieverTable()
 end

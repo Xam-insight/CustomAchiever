@@ -1,5 +1,7 @@
 customAchieverCharInfo = {}
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
+local XITK = LibStub("XamInsightToolKit")
+local EZBUP = LibStub("EZBlizzardUiPopups")
 
 local willPlay, soundHandle
 
@@ -112,7 +114,7 @@ function CustAc_ApplyIgnoreList()
 	local numIgnores = C_FriendList.GetNumIgnores()
 	if numIgnores then 
 		for i = 1, numIgnores do
-			local user = CustAc_addRealm(C_FriendList.GetIgnoreName(i))
+			local user = XITK.addRealm(C_FriendList.GetIgnoreName(i))
 			if user then
 				CustomAchieverData["BlackList"][user] = "IgnoreList"
 			end
@@ -148,7 +150,7 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		data["dataTime"] = time()
 		
 		if isPersonnal then
-			data["author"] = data["author"] or CustAc_playerCharacter()
+			data["author"] = data["author"] or XITK.playerCharacter()
 			CustomAchieverData["PersonnalCategories"][id] = true
 		else
 			if author then
@@ -240,7 +242,7 @@ function CustAc_DeleteCategory(id, givenNewCategory, trash)
 		end
 	end
 	if achievementFound and not CustomAchieverData["Categories"][newCategory] then
-		local categoryName = (newCategory == "GENERAL" and GENERAL) or CustAc_delRealm(newCategory)
+		local categoryName = (newCategory == "GENERAL" and GENERAL) or XITK.delRealm(newCategory)
 		CustAc_CreateOrUpdateCategory(newCategory, nil, categoryName, nil, true)
 	end
 	
@@ -290,8 +292,8 @@ function CustAc_GetAchievement(achievement)
 		data["name"] = CustAc_getLocaleData(achievement, "name")
 		data["description"] = CustAc_getLocaleData(achievement, "desc")
 		data["points"] = achievement["points"]
-		data["completed"] = achievement["completed"][CustAc_playerCharacter()] or achievement["firstAchiever"]
-		local custacDate = (achievement["firstAchiever"] and achievement["date"][achievement["firstAchiever"]]) or achievement["date"][CustAc_playerCharacter()]
+		data["completed"] = achievement["completed"][XITK.playerCharacter()] or achievement["firstAchiever"]
+		local custacDate = (achievement["firstAchiever"] and achievement["date"][achievement["firstAchiever"]]) or achievement["date"][XITK.playerCharacter()]
 		if custacDate then
 			local month, day, year = custacDate.month, custacDate.monthDay, custacDate.year
 			data["month"] = month
@@ -308,8 +310,8 @@ function CustAc_GetAchievement(achievement)
 		end
 		data["rewardText"] = rewardText
 		data["isGuild"] = achievement["isGuild"]
-		data["wasEarnedByMe"] = achievement["completed"][CustAc_playerCharacter()]
-		data["earnedBy"] = (achievement["completed"][CustAc_playerCharacter()] and CustAc_playerCharacter()) or achievement["firstAchiever"]
+		data["wasEarnedByMe"] = achievement["completed"][XITK.playerCharacter()]
+		data["earnedBy"] = (achievement["completed"][XITK.playerCharacter()] and XITK.playerCharacter()) or achievement["firstAchiever"]
 		if not CUSTOMACHIEVER_ACHIEVEMENTS[achievement["parent"]] then
 			CUSTOMACHIEVER_ACHIEVEMENTS[achievement["parent"]] = {}
 		end
@@ -346,11 +348,11 @@ end
 
 function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSound)
 	if id and CustomAchieverData["Achievements"][id] then
-		local earnedByWithRealm = CustAc_playerCharacter()
+		local earnedByWithRealm = XITK.playerCharacter()
 		if earnedBy then
-			earnedByWithRealm = CustAc_addRealm(earnedBy)
+			earnedByWithRealm = XITK.addRealm(earnedBy)
 		end
-		local forPlayerCharacter = earnedByWithRealm == CustAc_playerCharacter()
+		local forPlayerCharacter = earnedByWithRealm == XITK.playerCharacter()
 		local data = CustomAchieverData["Achievements"][id]
 		local alreadyEarned = data["completed"][earnedByWithRealm]
 		data["completed"][earnedByWithRealm] = data["completed"][earnedByWithRealm] or true
@@ -365,7 +367,7 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 
 		local name = CustAc_getLocaleData(data, "name")
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif and not CustomAchieverOptionsData["CustomAchieverAchievementAnnounceDisabled"] then
-			EZBlizzUiPop_ToastFakeAchievement(CustomAchiever, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, id, name, data.points, data.icon, false, "Custom Achiever", alreadyEarned, function() CustAc_ShowAchievement(id) end)
+			EZBUP.ToastFakeAchievement(CustomAchiever, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, id, name, data.points, data.icon, false, "Custom Achiever", alreadyEarned, function() CustAc_ShowAchievement(id) end)
 		end
 		CustAc_LoadAchievementsData("CustAc_CompleteAchievement")
 	end
@@ -390,7 +392,7 @@ end
 function CustAc_AwardPlayer(targetPlayer, achievementId)
 	if targetPlayer and achievementId then
 		local data = CustAc_PrepareData(achievementId)
-		if not noRewoking and CustAc_IsAchievementCompletedBy(achievementId, targetPlayer, CustAc_isPlayerCharacter(targetPlayer)) then
+		if not noRewoking and CustAc_IsAchievementCompletedBy(achievementId, targetPlayer, XITK.isPlayerCharacter(targetPlayer)) then
 			manualEncodeAndSendAchievementInfo(data, targetPlayer, "Revoke")
 		else
 			manualEncodeAndSendAchievementInfo(data, targetPlayer, "Award")
@@ -426,9 +428,9 @@ end
 
 function CustAc_RevokeAchievement(id, earnedBy)--/run CustAc_RevokeAchievement("Xamëna-Ner'zhul-1668713877", "Xamëna-Ner'zhul")
 	if id and CustomAchieverData["Achievements"][id] then
-		local earnedByWithRealm = CustAc_playerCharacter()
+		local earnedByWithRealm = XITK.playerCharacter()
 		if earnedBy then
-			earnedByWithRealm = CustAc_addRealm(earnedBy)
+			earnedByWithRealm = XITK.addRealm(earnedBy)
 		end
 		local data = CustomAchieverData["Achievements"][id]
 		data["completed"][earnedByWithRealm] = nil
@@ -482,102 +484,10 @@ function CustAc_GetAchievementCategory(id)
 	return category
 end
 
-function CustAc_addRealm(aName, aRealm)
-	if aName and not string.match(aName, "-") then
-		if aRealm and aRealm ~= "" then
-			aName = aName.."-"..aRealm
-		elseif GetNormalizedRealmName() then
-			aName = aName.."-"..GetNormalizedRealmName()
-		end
-	end
-	return aName
-end
-
-function CustAc_delRealm(aName)
-	if aName and string.match(aName, "-") then
-		aName = strsplit("-", aName)
-	end
-	return aName
-end
-
 function CustAc_Error(message)
 	local messageToPrint = "CustomAchiever"..L["SPACE_BEFORE_DOT"]..": "..message
 	UIErrorsFrame:AddMessage(messageToPrint, 1.0, 0.1, 0.1)
 	CustomAchiever:Print("|cFFFF0000"..messageToPrint)
-end
-
-
-function CustAc_titleFormat(aText)
-	local newText = ""
-	if aText then
-		newText = strtrim(aText):gsub("%s+", " ")
-		retOK, ret = pcall(CustAc_upperCaseBusiness, string.utf8sub(string.utf8upper(newText), 1 , 1))
-		if retOK then
-			newText = ret..string.utf8sub(newText, 2)
-		end
-	end
-	return newText
-end
-
-
-function CustAc_upperCase(aText)
-	local newText = ""
-	if aText then
-		retOK, ret = pcall(CustAc_upperCaseBusiness, aText)
-		if retOK then
-			newText = ret
-		else
-			newText = aText
-		end
-	end
-	return newText
-end
-
-function CustAc_upperCaseBusiness(aText)
-	return string.utf8upper(aText)
-end
-
-function CustAc_PlaySound(soundID, channel, forcePlay)
-	if forcePlay or not CustomAchieverOptionsData or not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"] or not (CustomAchieverOptionsData["CustomAchieverSoundsDisabled"] == true) then
-		PlaySound(soundID, channel)
-	end
-end
-
-function CustAc_PlaySoundFile(soundFile, channel, forcePlay)
-	if soundHandle then
-		StopSound(soundHandle)
-	end
-	if forcePlay or not CustomAchieverOptionsData or not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"] or not (CustomAchieverOptionsData["CustomAchieverSoundsDisabled"] == true) then
-		willPlay, soundHandle = PlaySoundFile("Interface\\AddOns\\CustomAchiever\\sound\\"..soundFile.."_"..GetLocale()..".ogg", channel)
-		if not willPlay then
-			willPlay, soundHandle = PlaySoundFile("Interface\\AddOns\\CustomAchiever\\sound\\"..soundFile..".ogg", channel)
-		end
-	end
-	return soundHandle
-end
-
-function CustAc_PlaySoundFileId(soundFileId, channel, forcePlay)
-	if soundHandle then
-		StopSound(soundHandle)
-	end
-	if forcePlay or not CustomAchieverOptionsData or not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"] or not (CustomAchieverOptionsData["CustomAchieverSoundsDisabled"] == true) then
-		PlaySoundFile(soundFileId, channel)
-	end
-	return soundHandle
-end
-
-function CustAc_getTimeUTCinMS()
-	return tostring(time(date("!*t")))
-end
-
-function CustAc_countTableElements(table)
-	local count = 0
-	if table then
-		for _ in pairs(table) do
-			count = count + 1
-		end
-	end
-	return count
 end
 
 function CustomAchieverLogs_SetText(logLine, info1, info2)

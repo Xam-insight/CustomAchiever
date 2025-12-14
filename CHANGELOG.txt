@@ -1,4 +1,8 @@
-﻿- v1.5.8
+- v1.5.9
+	- TOC for 12.0.0.
+	- TOC for 5.5.3.
+	- Code optimization.
+- v1.5.8
 	- Fixed: Initializing functions order.
 - v1.5.7
 	- TOC for 11.2.7.

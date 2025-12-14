@@ -1,4 +1,5 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true);
+local XITK = LibStub("XamInsightToolKit")
 
 local messageTypeColors = {
 	["CallUsers"] = "FFD2B4DE",
@@ -17,8 +18,8 @@ function encodeAndSendAchievementInfo(aData, aTarget, messageType)
 	local s = CustomAchiever:Serialize(aData)
 	local text = messageType.."#"..s
 	CustomAchiever:SendCommMessage(CustomAchieverGlobal_CommPrefix, text, "WHISPER", aTarget)
-	if not CustAc_isPlayerCharacter(aTarget) then
-		CustomAchieverLogs_SetText("%s sent to %s.", "|c"..messageTypeColors[messageType]..messageType.."|r", CustAc_delRealm(aTarget))
+	if not XITK.isPlayerCharacter(aTarget) then
+		CustomAchieverLogs_SetText("%s sent to %s.", "|c"..messageTypeColors[messageType]..messageType.."|r", XITK.delRealm(aTarget))
 	end
 end
 
@@ -55,7 +56,7 @@ function CustAc_NoAcknoledgmentError(target)
 end
 
 function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
-	if (messageType == "Award" or messageType == "Update") and not CustAc_isPlayerCharacter(aTarget) then
+	if (messageType == "Award" or messageType == "Update") and not XITK.isPlayerCharacter(aTarget) then
 		local timeBetweenCalls = (messageType == "Update" and 10) or 300
 		local callTime = time()
 		if not CustomAchieverLastManualCall[aTarget.."|"..messageType] then
@@ -75,7 +76,7 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 				CustomAchieverLastManualCall[aTarget.."|"..messageType] = callTime
 			end
 		end
-	elseif messageType == "Revoke" and not CustAc_isPlayerCharacter(aTarget) then
+	elseif messageType == "Revoke" and not XITK.isPlayerCharacter(aTarget) then
 		if not CustomAchieverAcknowledgmentReceived[aTarget] then
 			CustAc_NoAcknoledgmentError(aTarget)
 		end
@@ -98,7 +99,7 @@ function CustAc_SendUpdatedAchievementData(achievementId, alsoSendTo)
 		data["Achievements"][achievementId] = CustomAchieverData["Achievements"][achievementId] or "DELETE"
 		if CustomAchieverData["AwardedPlayers"][achievementId] then
 			for k,v in pairs(CustomAchieverData["AwardedPlayers"][achievementId]) do
-				if not CustAc_isPlayerCharacter(k) and (not alsoSendTo or k ~= alsoSendTo) then
+				if not XITK.isPlayerCharacter(k) and (not alsoSendTo or k ~= alsoSendTo) then
 					CustAc_SendUpdatedDataTo(k, data)
 				end
 			end
@@ -136,7 +137,7 @@ function CustAc_SendUpdatedCategoryData(categoryId, alsoSendTo)
 		
 		if CustomAchieverData["AwardedPlayers"][categoryId] then
 			for k,v in pairs(CustomAchieverData["AwardedPlayers"][categoryId]) do
-				if not CustAc_isPlayerCharacter(k) then
+				if not XITK.isPlayerCharacter(k) then
 					targets[k] = true
 				end
 			end
@@ -159,17 +160,17 @@ end
 CustomAchieverAcknowledgmentReceived = {}
 function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, sender)
 	if prefix == CustomAchieverGlobal_CommPrefix then
-		local senderFullName = CustAc_addRealm(sender)
+		local senderFullName = XITK.addRealm(sender)
 		--CustomAchiever:Print(time().." - Received message from "..sender..".")
 		local messageType, messageMessage = strsplit("#", message, 2)
-		--if not isPlayerCharacter(sender) then
+		--if not XITK.isPlayerCharacter(sender) then
 		if messageType == "CallUsers" then
 			sendInfo(C_AddOns.GetAddOnMetadata("CustomAchiever", "Version"), sender, "AnswerUsers")
 			CustomAchieverData["Users"][senderFullName] = messageMessage
 		elseif messageType == "AnswerUsers" then
 			CustomAchieverData["Users"][senderFullName] = messageMessage
 		else
-			local isSenderSelf = CustAc_isPlayerCharacter(sender)
+			local isSenderSelf = XITK.isPlayerCharacter(sender)
 			
 			local success, o = self:Deserialize(messageMessage)
 			if success == false then
@@ -217,7 +218,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 									CustomAchieverData["PendingUpdates"][senderFullName] = nil
 									if CustomAchieverData["AwardedPlayers"][id] then
 										CustomAchieverData["AwardedPlayers"][id][senderFullName] = nil
-										if CustAc_countTableElements(CustomAchieverData["AwardedPlayers"][id]) == 0 then
+										if XITK.countTableElements(CustomAchieverData["AwardedPlayers"][id]) == 0 then
 											CustomAchieverData["AwardedPlayers"][id] = nil
 										end
 									end
@@ -275,7 +276,7 @@ function CustomAchiever:ReceiveDataFrame_OnEvent(prefix, message, distribution, 
 				if updateData then
 					encodeAndSendAchievementInfo(o, sender, messageType.."Acknowledgment")
 				elseif not isSenderSelf then
-					CustomAchieverLogs_SetText("%s received from %s.", "|c"..messageTypeColors[messageType]..messageType.."|r", CustAc_delRealm(sender))
+					CustomAchieverLogs_SetText("%s received from %s.", "|c"..messageTypeColors[messageType]..messageType.."|r", XITK.delRealm(sender))
 				end
 			end
 		end

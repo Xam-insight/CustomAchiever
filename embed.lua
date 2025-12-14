@@ -1,5 +1,7 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
+local XITK = LibStub("XamInsightToolKit")
+local EZBUP = LibStub("EZBlizzardUiPopups")
 
 local nextCustomCategoryId
 local nextCustomAchieverId
@@ -10,7 +12,7 @@ local function CustAc_InitSelectedAchievement(achievementId, categoryId)
 	selectedAchievement = {}
 	selectedAchievement.achievementId            =  achievementId or nextCustomAchieverId
 	selectedAchievement.achievementCategory      =  categoryId    or (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].parent) or nextCustomCategoryId
-	selectedAchievement.achievementCategoryName  =  CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name") or CustAc_delRealm(selectedAchievement.achievementCategory)
+	selectedAchievement.achievementCategoryName  =  CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name") or XITK.delRealm(selectedAchievement.achievementCategory)
 	selectedAchievement.achievementName          =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "name")                                        or L["MENUCUSTAC_DEFAULT_NAME"]
 	selectedAchievement.achievementIcon          = (CustomAchieverData["Achievements"][achievementId] and CustomAchieverData["Achievements"][achievementId].icon)          or 236376
 	selectedAchievement.achievementDesc          =  CustAc_getLocaleData(CustomAchieverData["Achievements"][achievementId], "desc")                                        or DESCRIPTION
@@ -84,12 +86,12 @@ StaticPopupDialogs["CUSTAC_DELETE"] = {
 custacDataTarget = UNKNOWN
 function Custac_DetermineTarget()
 	local name, realm = UnitFullName("target")
-	local target = (name and CustAc_addRealm(name, realm)) or CustAc_playerCharacter()
+	local target = (name and XITK.addRealm(name, realm)) or XITK.playerCharacter()
 	
 	if UnitIsPlayer("target") then
 		custacDataTarget = target
 	else
-		custacDataTarget = CustAc_playerCharacter()
+		custacDataTarget = XITK.playerCharacter()
 	end
 end
 
@@ -99,7 +101,7 @@ function Custac_ChangeAwardButtonText(force)
 			Custac_DetermineTarget()
 		end
 	
-		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, custacDataTarget, CustAc_isPlayerCharacter(custacDataTarget)) then
+		if CustAc_IsAchievementCompletedBy(selectedAchievement.achievementId, custacDataTarget, XITK.isPlayerCharacter(custacDataTarget)) then
 			CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_REVOKE"])
 		else
 			CustomAchieverFrame.AwardButton:SetText(L["MENUCUSTAC_AWARD"])
@@ -117,7 +119,7 @@ end
 
 function CustAc_TargetUnit(name, exactMatch)
 	if exactMatch then
-		custacDataTarget = CustAc_addRealm(name)
+		custacDataTarget = XITK.addRealm(name)
 		Custac_ChangeAwardButtonText()
 	elseif UnitIsPlayer(name) then
 		Custac_DetermineTarget()
@@ -133,7 +135,7 @@ function CustomAchieverFrame_OnLoad(self)
 	applyCustomAchieverWindowOptions()
 	
 	self:SetTitle("CustomAchiever")
-	if CustAc_WoWRetail then
+	if XITK.WoWRetail then
 		SetPortraitToTexture(self.PortraitContainer.portrait, "Interface\\Friendsframe\\friendsframescrollicon")
 	else
 		SetPortraitToTexture(CustomAchieverFramePortrait, "Interface\\Friendsframe\\friendsframescrollicon")
@@ -151,7 +153,7 @@ function CustomAchieverFrame_OnLoad(self)
 	CustomAchieverFrameAchievementAlertFrame.GuildBorder:Hide()
 	CustomAchieverFrameAchievementAlertFrame.Icon.Bling:Hide()
 	
-	nextCustomCategoryId = CustAc_playerCharacter()
+	nextCustomCategoryId = XITK.playerCharacter()
 	local categoryFontstring = CustomAchieverFrame:CreateFontString("CategoryFontstring", "ARTWORK", "GameFontNormal")
 	categoryFontstring:SetText(L["MENUCUSTAC_CATEGORY"])
 	categoryFontstring:SetPoint("TOPLEFT", 65, -39)
@@ -162,7 +164,7 @@ function CustomAchieverFrame_OnLoad(self)
 	LibDD:UIDropDownMenu_Initialize(categoryDropDown, CustAc_CategoryDropDownMenu_Update)
 	LibDD:UIDropDownMenu_SetSelectedValue(categoryDropDown, nextCustomCategoryId)
 
-	nextCustomAchieverId = CustAc_playerCharacter()..'-'..CustAc_getTimeUTCinMS()
+	nextCustomAchieverId = XITK.playerCharacter()..'-'..XITK.getTimeUTCinMS()
 	local achievementFontstring = CustomAchieverFrame:CreateFontString("AchievementFontstring", "ARTWORK", "GameFontNormal")
 	achievementFontstring:SetText(L["MENUCUSTAC_ACHIEVEMENT"])
 	achievementFontstring:SetPoint("TOPLEFT", 30, -79)
@@ -246,9 +248,9 @@ function CustomAchieverFrameRewardRefreshButton_OnClick()
 end
 
 function CustAc_SaveCategory(popup, categoryName, categoryId)
-	local newCategoryName = CustAc_titleFormat(categoryName)
+	local newCategoryName = XITK.titleFormat(categoryName)
 	if newCategoryName ~= "" then
-		local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..CustAc_getTimeUTCinMS()
+		local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..XITK.getTimeUTCinMS()
 		CustAc_CreateOrUpdateCategory(newCategoryId, nil, newCategoryName, nil, true)
 		StaticPopupSpecial_Hide(popup)
 		CustAc_RefreshCustomAchiementFrame(nextCustomAchieverId, newCategoryId)
@@ -316,7 +318,7 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	if not CustomAchieverData["Categories"][nextCustomCategoryId] then
 		local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][v], "name")
 		local info = LibDD:UIDropDownMenu_CreateInfo()
-		info.text  = (categoryName == nil and CustAc_delRealm(nextCustomCategoryId)) or (type(categoryName) == "string" and categoryName ~= "" and categoryName) or L["MENUCUSTAC_CATEGORY"]
+		info.text  = (categoryName == nil and XITK.delRealm(nextCustomCategoryId)) or (type(categoryName) == "string" and categoryName ~= "" and categoryName) or L["MENUCUSTAC_CATEGORY"]
 		info.value = nextCustomCategoryId
 		info.func  = CustAc_SelectCategory
 		info.arg1  = self
@@ -326,7 +328,7 @@ function CustAc_CategoryDropDownMenu_Update(self)
 	
 	local categoriesId = {}
 	for k,v in pairs(CustomAchieverData["Categories"]) do
-		if v["author"] and v["author"] == CustAc_playerCharacter() then
+		if v["author"] and v["author"] == XITK.playerCharacter() then
 			CustomAchieverData["PersonnalCategories"][k] = true
 		end
 		if CustomAchieverData["PersonnalCategories"][k] == true then
@@ -462,7 +464,7 @@ function CustomAchieverFrame_UpdateAchievementAlertFrame()
 			CustomAchieverFrame.AwardButton:Disable()
 		else
 			CustomAchieverFrame.AwardButton:Enable()
-			if CustAc_WoWRetail then
+			if XITK.WoWRetail then
 				custacShowHelpTip("CUSTAC_HELPTIP_AWARD")
 			end
 		end
@@ -482,12 +484,12 @@ function CustomAchieverFrame_UpdateTargetTooltip()
 end
 
 function CustomAchieverFrameDescriptionEditBox_OnTextChanged(self)
-	selectedAchievement.achievementDesc = CustAc_titleFormat(self:GetText())
+	selectedAchievement.achievementDesc = XITK.titleFormat(self:GetText())
 	CustomAchieverFrame_EnableSaveIfDataModified()
 end
 
 function CustomAchieverFrameRewardEditBox_OnTextChanged(self)
-	selectedAchievement.achievementRewardText = CustAc_titleFormat(self:GetText())
+	selectedAchievement.achievementRewardText = XITK.titleFormat(self:GetText())
 	CustomAchieverFrame_EnableSaveIfDataModified()
 end
 
@@ -508,7 +510,7 @@ function CustAc_IconsPopupFrame_OkayButton_OnClick()
 	CustAc_IconsPopupFrame:Hide()
 	
 	selectedAchievement.achievementIcon = CustAc_IconsPopupFrame.BorderBox.SelectedIconArea.SelectedIconButton:GetIconTexture()
-	selectedAchievement.achievementName = CustAc_titleFormat(CustAc_IconsPopupFrame.BorderBox.IconSelectorEditBox:GetText())
+	selectedAchievement.achievementName = XITK.titleFormat(CustAc_IconsPopupFrame.BorderBox.IconSelectorEditBox:GetText())
 
 	CustomAchieverFrame_UpdateAchievementAlertFrame()
 end
@@ -561,7 +563,7 @@ function CustAc_SaveButton_OnClick(self, clickButton, noToast)
 			selectedAchievement.achievementRewardText,
 			selectedAchievement.achievementRewardIsTitle, nil, true)
 		if selectedAchievement.achievementId == nextCustomAchieverId then
-			nextCustomAchieverId = CustAc_playerCharacter()..'-'..CustAc_getTimeUTCinMS()
+			nextCustomAchieverId = XITK.playerCharacter()..'-'..XITK.getTimeUTCinMS()
 		end
 		
 		local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name")
@@ -570,7 +572,7 @@ function CustAc_SaveButton_OnClick(self, clickButton, noToast)
 		if noToast then
 			-- No toast
 		else
-			EZBlizzUiPop_ToastFakeAchievement(
+			EZBUP.ToastFakeAchievement(
 				CustomAchiever,
 				not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4,
 				selectedAchievement.achievementId,
@@ -596,7 +598,7 @@ function CustAc_IconsPopupFrame_OnHide(self)
 	CustomAchieverFrame.DescriptionEditBox:Enable()
 	if selectedAchievement.achievementId ~= nextCustomAchieverId then
 		CustomAchieverFrame.AwardButton:Enable()
-		if CustAc_WoWRetail then
+		if XITK.WoWRetail then
 			custacShowHelpTip("CUSTAC_HELPTIP_AWARD")
 		end
 	end

@@ -1,4 +1,5 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
+local XITK = LibStub("XamInsightToolKit")
 
 local ACHIEVEMENTUI_FONTHEIGHT
 local ACHIEVEMENTUI_MAX_LINES_COLLAPSED = 3	-- can show 3 lines of text when achievement is collapsed
@@ -143,7 +144,7 @@ end
 
 function CustAc_AchievementFrame_Load()
 	if not CustAc_Categories then
-		if not CustAc_WoWRetail then
+		if not XITK.WoWRetail then
 			AchievementFrame.Header = _G["AchievementFrameHeader"]
 			AchievementFrame.Header.Title = _G["AchievementFrameHeaderTitle"]
 			AchievementFrame.Header.Points = _G["AchievementFrameHeaderPoints"]
@@ -151,7 +152,7 @@ function CustAc_AchievementFrame_Load()
 		end
 		local numtabs, tab = 0
 		repeat
-			if not CustAc_WoWRetail then
+			if not XITK.WoWRetail then
 				if _G["AchievementFrameTab"..numtabs] then
 					_G["AchievementFrameTab"..numtabs].Text = _G["AchievementFrameTab"..numtabs.."Text"]
 				end
@@ -160,7 +161,7 @@ function CustAc_AchievementFrame_Load()
 		until (not _G["AchievementFrameTab"..numtabs])
 		CustAc_AchievementTabId = numtabs
 		tab = CreateFrame("Button", "AchievementFrameTab"..numtabs, AchievementFrame, "AchievementFrameTabButtonTemplate")
-		if not CustAc_WoWRetail then
+		if not XITK.WoWRetail then
 			tab.Text = _G["AchievementFrameTab"..numtabs.."Text"]
 			tab:SetPoint("LEFT", _G["AchievementFrameTab"..(numtabs-1)], "RIGHT", -5, 0)
 		end
@@ -188,7 +189,7 @@ function CustAc_AchievementFrame_Load()
 
 		local categoriesFrame = CreateFrame("Frame", "CustAc_Categories", AchievementFrame, "CustAc_CategoriesTemplate")
 		local achievementsFrame = CreateFrame("Frame", "CustAc_AchievementFrameAchievements", AchievementFrame, "CustAc_AchievementFrameAchievementsTemplate")
-		if not CustAc_WoWRetail then
+		if not XITK.WoWRetail then
 			achievementsFrame:SetPoint("TOPLEFT", categoriesFrame, "TOPRIGHT", 22, 0)
 		end
 	end
@@ -259,7 +260,7 @@ function CustAc_AchievementFrameCategories_OnLoad(self)
 			end)
 			frame.Button.DeleteButton = deleteButton
 		end
-		if not CustAc_WoWRetail then
+		if not XITK.WoWRetail then
 			frame:HookScript("OnEnter", function(self)
 				CustAc_CategoryOnEnter(self)
 			end)
@@ -269,7 +270,7 @@ function CustAc_AchievementFrameCategories_OnLoad(self)
 		end
 	end)
 	
-	if CustAc_WoWRetail then
+	if XITK.WoWRetail then
 		hooksecurefunc(AchievementCategoryTemplateButtonMixin, "OnEnter", function(self)
 			CustAc_CategoryOnEnter(self)
 		end)
@@ -283,7 +284,7 @@ function CustAc_AchievementFrameCategories_OnLoad(self)
 end
 
 function CustAc_CategoryInit(self, elementData)
-	if not CustAc_WoWRetail then
+	if not XITK.WoWRetail then
 		self.Button = self
 		self.Button.Label = self.label
 		self.Button.Background = self.background
@@ -588,7 +589,7 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 		end
 	end)
 	local function AchievementInitializer(button, elementData)
-		if not CustAc_WoWRetail then
+		if not XITK.WoWRetail then
 			button.Description = button.description
 			button.TitleBar = button.titleBar
 			button.Icon = button.icon
@@ -678,7 +679,7 @@ function CustAc_AchievementFrameAchievements_OnLoad(self)
 			button.DeleteButton = deleteButton
 		end
 	end
-	if CustAc_WoWRetail then
+	if XITK.WoWRetail then
 		view:SetElementInitializer("AchievementTemplate", AchievementInitializer)
 	else
 		view:SetElementInitializer("CustAc_AchievementTemplate", AchievementInitializer)
@@ -765,7 +766,7 @@ function CustAc_AchievementInit(self, elementData)
 	self.HiddenDescription:SetText(description)
 	self.numLines = ceil(self.HiddenDescription:GetHeight() / ACHIEVEMENTUI_FONTHEIGHT)
 	self.Icon.texture:SetTexture(icon)
-	if not CustAc_WoWRetail then
+	if not XITK.WoWRetail then
 		self.id = 0
 	end
 	if ( completed or wasEarnedByMe ) then
