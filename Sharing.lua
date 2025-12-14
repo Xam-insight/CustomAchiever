@@ -41,7 +41,7 @@ end
 
 local lastPlayerNoAcknowledgmentError = ""
 local lastNoAcknowledgmentErrorTime = 0
-function CustAc_NoAcknoledgmentError(target)
+function CustAc_NoAcknowledgmentError(target)
 	local actualTime = GetTime()
 	local wait = 10
 	if lastPlayerNoAcknowledgmentError == target then
@@ -69,7 +69,7 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 					seconds = seconds - minutes * 60
 					CustomAchiever:Print(string.format(L["SHARECUSTAC_WAIT"], minutes, seconds))
 				else
-					CustAc_NoAcknoledgmentError(aTarget)
+					CustAc_NoAcknowledgmentError(aTarget)
 				end
 				return
 			else
@@ -78,7 +78,7 @@ function manualEncodeAndSendAchievementInfo(aData, aTarget, messageType)
 		end
 	elseif messageType == "Revoke" and not XITK.isPlayerCharacter(aTarget) then
 		if not CustomAchieverAcknowledgmentReceived[aTarget] then
-			CustAc_NoAcknoledgmentError(aTarget)
+			CustAc_NoAcknowledgmentError(aTarget)
 		end
 	end
 	encodeAndSendAchievementInfo(aData, aTarget, messageType)

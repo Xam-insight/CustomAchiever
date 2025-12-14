@@ -484,12 +484,6 @@ function CustAc_GetAchievementCategory(id)
 	return category
 end
 
-function CustAc_Error(message)
-	local messageToPrint = "CustomAchiever"..L["SPACE_BEFORE_DOT"]..": "..message
-	UIErrorsFrame:AddMessage(messageToPrint, 1.0, 0.1, 0.1)
-	CustomAchiever:Print("|cFFFF0000"..messageToPrint)
-end
-
 function CustomAchieverLogs_SetText(logLine, info1, info2)
 	if CustomAchieverLogs then
 		local logsText = CustomAchieverLogs:GetText()

@@ -69,7 +69,7 @@ function CustomAchiever:ChatFilter(event, msg, author, ...)
         local playerName = XITK.addRealm(string.match(msg, playerNotFoundMsg))
 		
 		if CustomAchieverData["PendingUpdates"][playerName] then --or (lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1) then
-			CustAc_NoAcknoledgmentError(playerName)
+			CustAc_NoAcknowledgmentError(playerName)
 			return true
 		else
 			--lastPlayerNotFoundMsg = msg

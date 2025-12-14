@@ -22,7 +22,7 @@ externals:
 ignore:
 	- art/PNG
 	- Libs/XamInsightToolKit/XamInsightToolKit.toc
-	- Libs/XamInsightToolKit/CHANGELOG.toc
+	- Libs/XamInsightToolKit/CHANGELOG.txt
 	- Libs/EZBlizzardUiPopups/EZBlizzardUiPopups.toc
 	- Libs/EZBlizzardUiPopups/CHANGELOG.txt
 
