@@ -88,7 +88,7 @@ function Custac_DetermineTarget()
 	local name, realm = UnitFullName("target")
 	local target = (name and XITK.addRealm(name, realm)) or XITK.playerCharacter()
 	
-	if UnitIsPlayer("target") then
+	if XITK.IsPlayerUnitSafe("target") then
 		custacDataTarget = target
 	else
 		custacDataTarget = XITK.playerCharacter()
@@ -117,11 +117,11 @@ function CustomAchieverFrame_OnEvent(self, event)
 	end
 end
 
-function CustAc_TargetUnit(name, exactMatch)
+function CustAc_TargetUnit(unitIDorName, exactMatch)
 	if exactMatch then
-		custacDataTarget = XITK.addRealm(name)
+		custacDataTarget = XITK.addRealm(unitIDorName)
 		Custac_ChangeAwardButtonText()
-	elseif UnitIsPlayer(name) then
+	elseif XITK.IsPlayerUnitSafe(unitIDorName) then
 		Custac_DetermineTarget()
 		Custac_ChangeAwardButtonText()
 	end
