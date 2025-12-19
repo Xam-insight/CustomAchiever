@@ -136,7 +136,7 @@ function CustomAchieverFrame_OnLoad(self)
 	
 	self:SetTitle("CustomAchiever")
 	if XITK.WoWRetail then
-		SetPortraitToTexture(self.PortraitContainer.portrait, "Interface\\Friendsframe\\friendsframescrollicon")
+		self.PortraitContainer.portrait:SetTexture("Interface\\Friendsframe\\friendsframescrollicon")
 	else
 		SetPortraitToTexture(CustomAchieverFramePortrait, "Interface\\Friendsframe\\friendsframescrollicon")
 	end
