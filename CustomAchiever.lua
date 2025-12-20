@@ -51,7 +51,7 @@ function CustomAchiever:OnInitialize()
 	-- Chat filter
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", self.ChatFilter)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT MSG OFFICER", self.ChatFilter)
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_OFFICER", self.ChatFilter)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", self.ChatFilter)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", self.ChatFilter)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", self.ChatFilter)
@@ -220,7 +220,7 @@ function CustomAchiever:LoadAddonsData()
 					local import
 					if newCustomAchieverData["Categories"][k] then
 						local thisDataTime        = v["dataTime"] or dataTime
-						local thisCurrentDataTime = (newCustomAchieverData[k] and newCustomAchieverData[k]["dataTime"]) or currentDataTime
+						local thisCurrentDataTime = (newCustomAchieverData["Categories"][k] and newCustomAchieverData["Categories"][k]["dataTime"]) or currentDataTime
 						if thisDataTime > thisCurrentDataTime then
 							import = true
 						end
@@ -238,7 +238,7 @@ function CustomAchiever:LoadAddonsData()
 					local import
 					if newCustomAchieverData["Achievements"][k] then
 						local thisDataTime        = v["dataTime"] or dataTime
-						local thisCurrentDataTime = (newCustomAchieverData[k] and newCustomAchieverData[k]["dataTime"]) or currentDataTime
+						local thisCurrentDataTime = (newCustomAchieverData["Achievements"][k] and newCustomAchieverData["Achievements"][k]["dataTime"]) or currentDataTime
 						if thisDataTime > thisCurrentDataTime then
 							import = true
 						end
