@@ -49,47 +49,48 @@ function CustomAchiever:OnInitialize()
 	end)
 	
 	-- Chat filter
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_OFFICER", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER_INFORM", self.ChatFilter)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_SYSTEM", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_CHANNEL", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_GUILD", self.ChatFilter)
+	--ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_OFFICER", self.ChatFilter) -- Protected chanel - Kstrings
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_PARTY", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_RAID", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_RAID_LEADER", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_RAID_WARNING", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_SAY", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_YELL", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_WHISPER", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_BN_WHISPER", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_BN_WHISPER_INFORM", self.ChatFilter)
+	ChatFrameUtil.AddMessageEventFilter("CHAT_MSG_SYSTEM", self.ChatFilter)
 end
 
 local playerNotFoundMsg = string.gsub(ERR_CHAT_PLAYER_NOT_FOUND_S, "%%s", "(.-)")
 --local lastPlayerNotFoundMsg = ""
 --local lastPlayerNotFoundMsgTime = GetTime()
 function CustomAchiever:ChatFilter(event, msg, author, ...)
-	if event == "CHAT_MSG_SYSTEM" and string.match(msg, playerNotFoundMsg) then
-		--local actualTime = GetTime()
-		
-		-- Extract the player's name
-        local playerName = XITK.addRealm(string.match(msg, playerNotFoundMsg))
-		
-		if CustomAchieverData["PendingUpdates"][playerName] then --or (lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1) then
-			CustAc_NoAcknowledgmentError(playerName)
-			return true
-		else
-			--lastPlayerNotFoundMsg = msg
-			--lastPlayerNotFoundMsgTime = actualTime
-			return false
+	if event == "CHAT_MSG_SYSTEM" then
+		if string.match(msg, playerNotFoundMsg) then
+			--local actualTime = GetTime()
+			
+			-- Extract the player's name
+			local playerName = XITK.addRealm(string.match(msg, playerNotFoundMsg))
+			
+			if CustomAchieverData["PendingUpdates"][playerName] then --or (lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1) then
+				CustAc_NoAcknowledgmentError(playerName)
+				return true
+			else
+				--lastPlayerNotFoundMsg = msg
+				--lastPlayerNotFoundMsgTime = actualTime
+				return false
+			end
 		end
-	end
-	if msg then
+	elseif msg then
 		local custacDataIdFoundsInChat = {}
 		while true do
 			local found = false
 			msg, found = string.gsub(msg, "%[CustAc_(.-)_(.-)%]", function(id, name)
-				
 				if id and not XITK.isPlayerCharacter(author) then
 					custacDataIdFoundsInChat[id] = true
 				end
