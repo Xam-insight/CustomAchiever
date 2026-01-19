@@ -180,7 +180,7 @@ function CustAc_AchievementFrame_Load()
 		
 		tab:SetScript("OnClick", function(self)
 			CustAc_AchievementFrame_OnClick(self:GetID())
-			PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
+			PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB, "SFX")
 		end)
 		
 		PanelTemplates_SetNumTabs(AchievementFrame, numtabs)

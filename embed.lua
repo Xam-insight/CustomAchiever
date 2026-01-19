@@ -164,7 +164,7 @@ function CustomAchieverFrame_OnLoad(self)
 	LibDD:UIDropDownMenu_Initialize(categoryDropDown, CustAc_CategoryDropDownMenu_Update)
 	LibDD:UIDropDownMenu_SetSelectedValue(categoryDropDown, nextCustomCategoryId)
 
-	nextCustomAchieverId = XITK.playerCharacter()..'-'..XITK.getTimeUTCinMS()
+	nextCustomAchieverId = XITK.playerCharacter()..'-'..tostring(XITK.getTimeUTCinMS())
 	local achievementFontstring = CustomAchieverFrame:CreateFontString("AchievementFontstring", "ARTWORK", "GameFontNormal")
 	achievementFontstring:SetText(L["MENUCUSTAC_ACHIEVEMENT"])
 	achievementFontstring:SetPoint("TOPLEFT", 30, -79)
@@ -250,7 +250,7 @@ end
 function CustAc_SaveCategory(popup, categoryName, categoryId)
 	local newCategoryName = XITK.titleFormat(categoryName)
 	if newCategoryName ~= "" then
-		local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..XITK.getTimeUTCinMS()
+		local newCategoryId = categoryId or string.sub(newCategoryName, 1, 1)..'_'..tostring(XITK.getTimeUTCinMS())
 		CustAc_CreateOrUpdateCategory(newCategoryId, nil, newCategoryName, nil, true)
 		StaticPopupSpecial_Hide(popup)
 		CustAc_RefreshCustomAchiementFrame(nextCustomAchieverId, newCategoryId)
@@ -563,7 +563,7 @@ function CustAc_SaveButton_OnClick(self, clickButton, noToast)
 			selectedAchievement.achievementRewardText,
 			selectedAchievement.achievementRewardIsTitle, nil, true)
 		if selectedAchievement.achievementId == nextCustomAchieverId then
-			nextCustomAchieverId = XITK.playerCharacter()..'-'..XITK.getTimeUTCinMS()
+			nextCustomAchieverId = XITK.playerCharacter()..'-'..tostring(XITK.getTimeUTCinMS())
 		end
 		
 		local categoryName = CustAc_getLocaleData(CustomAchieverData["Categories"][selectedAchievement.achievementCategory], "name")
@@ -620,7 +620,7 @@ function CustAc_IconsPopupFrame_OnShow(self)
 
 	self.BorderBox.IconSelectorEditBox:SetFocus()
 
-	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
+	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN, "SFX")
 	self.iconDataProvider = CustAc_IconsPopupFrame_RefreshIconDataProvider(self)
 	CustAc_IconsPopupFrame_Init(self)
 	self:Update()
