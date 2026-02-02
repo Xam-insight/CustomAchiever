@@ -1,5 +1,5 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
-local XITK = LibStub("XamInsightToolKit")
+local XITK = LibStub("XamInsightToolKit-2.0")
 
 local ACHIEVEMENTUI_FONTHEIGHT
 local ACHIEVEMENTUI_MAX_LINES_COLLAPSED = 3	-- can show 3 lines of text when achievement is collapsed

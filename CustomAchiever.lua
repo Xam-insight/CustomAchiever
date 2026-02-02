@@ -2,7 +2,7 @@ CustomAchiever = LibStub("AceAddon-3.0"):NewAddon("CustomAchiever", "AceConsole-
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
 local AceGUI = LibStub("AceGUI-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
-local XITK = LibStub("XamInsightToolKit")
+local XITK = LibStub("XamInsightToolKit-2.0")
 
 CustomAchieverGlobal_CommPrefix = "CustomAchiever"
 
@@ -75,7 +75,7 @@ function CustomAchiever:ChatFilter(event, msg, author, ...)
 			--local actualTime = GetTime()
 			
 			-- Extract the player's name
-			local playerName = XITK.addRealm(string.match(msg, playerNotFoundMsg))
+			local playerName = XITK:addRealm(string.match(msg, playerNotFoundMsg))
 			
 			if CustomAchieverData["PendingUpdates"][playerName] then --or (lastPlayerNotFoundMsg == msg and actualTime <= lastPlayerNotFoundMsgTime + 1) then
 				CustAc_NoAcknowledgmentError(playerName)
@@ -91,7 +91,7 @@ function CustomAchiever:ChatFilter(event, msg, author, ...)
 		while true do
 			local found = false
 			msg, found = string.gsub(msg, "%[CustAc_(.-)_(.-)%]", function(id, name)
-				if id and not XITK.isPlayerCharacter(author) then
+				if id and not XITK:isPlayerCharacter(author) then
 					custacDataIdFoundsInChat[id] = true
 				end
 				
@@ -100,7 +100,7 @@ function CustomAchiever:ChatFilter(event, msg, author, ...)
 			if found == 0 then break end
 		end
 		
-		if XITK.countTableElements(custacDataIdFoundsInChat) > 0 then
+		if XITK:countTableElements(custacDataIdFoundsInChat) > 0 then
 			CustAc_SendCallForAchievementsCategories(custacDataIdFoundsInChat, author)
 		end
 	end
@@ -187,9 +187,9 @@ function CustomAchiever:OnEnable()
 end
 
 function CustAc_CommunitiesMemberOnEnter()
-	local mouseFocus = XITK.GetMouseFocus()
+	local mouseFocus = XITK:GetMouseFocus()
 	if mouseFocus and mouseFocus["memberInfo"] and mouseFocus["memberInfo"]["clubType"] == 2 and mouseFocus["memberInfo"]["name"] then
-		local unitFullName = XITK.addRealm(mouseFocus["memberInfo"]["name"])
+		local unitFullName = XITK:addRealm(mouseFocus["memberInfo"]["name"])
 		if CustomAchieverData["Users"][unitFullName] then
 			GameTooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][unitFullName], 0, 1, 0, 0, 1, 0)
 			GameTooltip:Show()
@@ -199,8 +199,8 @@ end
 
 function CustAc_OnTooltipUnit(tooltip, data)
 	local unitName, unitId = GameTooltip:GetUnit()
-	if XITK.IsPlayerUnitSafe(unitId) then
-		local unitFullName = XITK.addRealm(unitName)
+	if XITK:IsPlayerUnitSafe(unitId) then
+		local unitFullName = XITK:addRealm(unitName)
 		if CustomAchieverData["Users"][unitFullName] then
 			tooltip:AddDoubleLine("CustomAchiever", CustomAchieverData["Users"][unitFullName], 0, 1, 0, 0, 1, 0)
 		end
@@ -318,7 +318,7 @@ function CustomAchiever:ReloadData()
 	CustomAchieverBetButton:Hide()
 	local numGroupMembers = GetNumGroupMembers()
 	if numGroupMembers <= 1 then
-		playerJoinsCustomAchieverSession("CustomAchieverSession_"..XITK.playerCharacter(), true, true)
+		playerJoinsCustomAchieverSession("CustomAchieverSession_"..XITK:playerCharacter(), true, true)
 	end
 	generateCustomAchieverTable()
 end

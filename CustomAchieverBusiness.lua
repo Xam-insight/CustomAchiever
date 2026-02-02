@@ -1,7 +1,7 @@
 customAchieverCharInfo = {}
 local L = LibStub("AceLocale-3.0"):GetLocale("CustomAchiever", true)
-local XITK = LibStub("XamInsightToolKit")
-local EZBUP = LibStub("EZBlizzardUiPopups")
+local XITK = LibStub("XamInsightToolKit-2.0")
+local EZBUP = LibStub("EZBlizzardUiPopups-2.0")
 
 local willPlay, soundHandle
 
@@ -114,7 +114,7 @@ function CustAc_ApplyIgnoreList()
 	local numIgnores = C_FriendList.GetNumIgnores()
 	if numIgnores then 
 		for i = 1, numIgnores do
-			local user = XITK.addRealm(C_FriendList.GetIgnoreName(i))
+			local user = XITK:addRealm(C_FriendList.GetIgnoreName(i))
 			if user then
 				CustomAchieverData["BlackList"][user] = "IgnoreList"
 			end
@@ -150,7 +150,7 @@ function CustAc_CreateOrUpdateCategory(id, parentID, categoryName, locale, isPer
 		data["dataTime"] = time()
 		
 		if isPersonnal then
-			data["author"] = data["author"] or XITK.playerCharacter()
+			data["author"] = data["author"] or XITK:playerCharacter()
 			CustomAchieverData["PersonnalCategories"][id] = true
 		else
 			if author then
@@ -242,7 +242,7 @@ function CustAc_DeleteCategory(id, givenNewCategory, trash)
 		end
 	end
 	if achievementFound and not CustomAchieverData["Categories"][newCategory] then
-		local categoryName = (newCategory == "GENERAL" and GENERAL) or XITK.delRealm(newCategory)
+		local categoryName = (newCategory == "GENERAL" and GENERAL) or XITK:delRealm(newCategory)
 		CustAc_CreateOrUpdateCategory(newCategory, nil, categoryName, nil, true)
 	end
 	
@@ -292,8 +292,8 @@ function CustAc_GetAchievement(achievement)
 		data["name"] = CustAc_getLocaleData(achievement, "name")
 		data["description"] = CustAc_getLocaleData(achievement, "desc")
 		data["points"] = achievement["points"]
-		data["completed"] = achievement["completed"][XITK.playerCharacter()] or achievement["firstAchiever"]
-		local custacDate = (achievement["firstAchiever"] and achievement["date"][achievement["firstAchiever"]]) or achievement["date"][XITK.playerCharacter()]
+		data["completed"] = achievement["completed"][XITK:playerCharacter()] or achievement["firstAchiever"]
+		local custacDate = (achievement["firstAchiever"] and achievement["date"][achievement["firstAchiever"]]) or achievement["date"][XITK:playerCharacter()]
 		if custacDate then
 			local month, day, year = custacDate.month, custacDate.monthDay, custacDate.year
 			data["month"] = month
@@ -310,8 +310,8 @@ function CustAc_GetAchievement(achievement)
 		end
 		data["rewardText"] = rewardText
 		data["isGuild"] = achievement["isGuild"]
-		data["wasEarnedByMe"] = achievement["completed"][XITK.playerCharacter()]
-		data["earnedBy"] = (achievement["completed"][XITK.playerCharacter()] and XITK.playerCharacter()) or achievement["firstAchiever"]
+		data["wasEarnedByMe"] = achievement["completed"][XITK:playerCharacter()]
+		data["earnedBy"] = (achievement["completed"][XITK:playerCharacter()] and XITK:playerCharacter()) or achievement["firstAchiever"]
 		if not CUSTOMACHIEVER_ACHIEVEMENTS[achievement["parent"]] then
 			CUSTOMACHIEVER_ACHIEVEMENTS[achievement["parent"]] = {}
 		end
@@ -348,11 +348,11 @@ end
 
 function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSound)
 	if id and CustomAchieverData["Achievements"][id] then
-		local earnedByWithRealm = XITK.playerCharacter()
+		local earnedByWithRealm = XITK:playerCharacter()
 		if earnedBy then
-			earnedByWithRealm = XITK.addRealm(earnedBy)
+			earnedByWithRealm = XITK:addRealm(earnedBy)
 		end
-		local forPlayerCharacter = earnedByWithRealm == XITK.playerCharacter()
+		local forPlayerCharacter = earnedByWithRealm == XITK:playerCharacter()
 		local data = CustomAchieverData["Achievements"][id]
 		local alreadyEarned = data["completed"][earnedByWithRealm]
 		data["completed"][earnedByWithRealm] = data["completed"][earnedByWithRealm] or true
@@ -367,7 +367,7 @@ function CustAc_CompleteAchievement(id, earnedBy, noNotif, forceNotif, forceNoSo
 
 		local name = CustAc_getLocaleData(data, "name")
 		if forPlayerCharacter and (not alreadyEarned or forceNotif) and not noNotif and not CustomAchieverOptionsData["CustomAchieverAchievementAnnounceDisabled"] then
-			EZBUP.ToastFakeAchievement(CustomAchiever, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, id, name, data.points, data.icon, false, "Custom Achiever", alreadyEarned, function() CustAc_ShowAchievement(id) end)
+			EZBUP:ToastFakeAchievement(CustomAchiever, not forceNoSound and not CustomAchieverOptionsData["CustomAchieverSoundsDisabled"], 4, id, name, data.points, data.icon, false, "Custom Achiever", alreadyEarned, function() CustAc_ShowAchievement(id) end)
 		end
 		CustAc_LoadAchievementsData("CustAc_CompleteAchievement")
 	end
@@ -392,7 +392,7 @@ end
 function CustAc_AwardPlayer(targetPlayer, achievementId)
 	if targetPlayer and achievementId then
 		local data = CustAc_PrepareData(achievementId)
-		if not noRewoking and CustAc_IsAchievementCompletedBy(achievementId, targetPlayer, XITK.isPlayerCharacter(targetPlayer)) then
+		if not noRewoking and CustAc_IsAchievementCompletedBy(achievementId, targetPlayer, XITK:isPlayerCharacter(targetPlayer)) then
 			manualEncodeAndSendAchievementInfo(data, targetPlayer, "Revoke")
 		else
 			manualEncodeAndSendAchievementInfo(data, targetPlayer, "Award")
@@ -428,9 +428,9 @@ end
 
 function CustAc_RevokeAchievement(id, earnedBy)--/run CustAc_RevokeAchievement("Xamëna-Ner'zhul-1668713877", "Xamëna-Ner'zhul")
 	if id and CustomAchieverData["Achievements"][id] then
-		local earnedByWithRealm = XITK.playerCharacter()
+		local earnedByWithRealm = XITK:playerCharacter()
 		if earnedBy then
-			earnedByWithRealm = XITK.addRealm(earnedBy)
+			earnedByWithRealm = XITK:addRealm(earnedBy)
 		end
 		local data = CustomAchieverData["Achievements"][id]
 		data["completed"][earnedByWithRealm] = nil
