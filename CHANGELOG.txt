@@ -1,3 +1,5 @@
+- v1.5.12
+	- Data cleaning.
 - v1.5.11
 	- LibStub usage adjustments.
 - v1.5.10
