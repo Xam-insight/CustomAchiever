@@ -604,6 +604,7 @@ function CustAc_IconsPopupFrame_OnHide(self)
 	end
 	CustomAchieverFrame.DeleteButton:Enable()
 	--CustomAchieverFrame.SaveButton:Enable()
+	CustomAchieverFrame_EnableSaveIfDataModified()
 end
 
 function CustAc_IconsPopupFrame_OnShow(self)
