@@ -1,3 +1,5 @@
+- v1.5.14
+	- Classic compatibility
 - v1.5.13
 	- TOC for 12.0.5.
 - v1.5.12

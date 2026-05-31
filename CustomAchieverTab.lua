@@ -478,6 +478,7 @@ function CustAc_AchievementFrame_UpdateTabs(clickedTab)
 end
 
 function CustAc_AchievementFrame_OnClick(clickedTab)
+	CustAc_LoadAchievementsData("CustAc_AchievementFrame_OnClick")
 	AchievementFrameTab_OnClick(1) -- to prevent IN_GUILD_VIEW
 	AchievementFrame_UpdateTabs(clickedTab)
 	CustAc_Categories:Show()
@@ -781,6 +782,7 @@ function CustAc_AchievementInit(self, elementData)
 		self.RewardBackground:Hide()
 	else
 		self.Reward:SetText(rewardText)
+		self.Reward:SetPoint("TOP", self.RewardBackground, "TOP", 0, 1)
 		self.Reward:Show()
 		self.RewardBackground:Show()
 		if ( self.completed ) then
