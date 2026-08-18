@@ -464,8 +464,14 @@ function CustAc_AchievementFrame_UpdateTabs(clickedTab)
 	CustAc_AchievementFrameAchievements:Hide()
 	local tab = _G["AchievementFrameTab"..CustAc_AchievementTabId]
 	if tab then
+		if AchievementFrame.HeaderDetails then
+			AchievementFrame.HeaderDetails:Show()
+		end
 		if (CustAc_AchievementTabId == clickedTab) then
 			tab.Text:SetPoint("CENTER", 0, -5)
+			if AchievementFrame.HeaderDetails then
+				AchievementFrame.HeaderDetails:Hide()
+			end
 		else
 			tab.Text:SetPoint("CENTER", 0, -3)
 			if 1 == clickedTab then

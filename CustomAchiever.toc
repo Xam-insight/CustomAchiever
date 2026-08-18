@@ -1,6 +1,6 @@
-## Interface: 50503,50504,120005,120007
+## Interface: 50504,120100
 ## Title: Custom Achiever
-## Version: 1.5.14
+## Version: 1.5.15
 ## Notes: This file exists only to support packaging systems.
 ## LoadOnDemand: 1
 

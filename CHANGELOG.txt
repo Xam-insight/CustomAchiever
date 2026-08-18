@@ -1,3 +1,5 @@
+- v1.5.15
+	- 12.1.0 compatibility.
 - v1.5.14
 	- Classic compatibility
 - v1.5.13
