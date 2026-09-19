@@ -15,7 +15,7 @@ externals:
 	Libs/LibDataBroker-1.1: https://repos.wowace.com/wow/libdatabroker-1-1
 	Libs/LibDBIcon-1.0: https://repos.wowace.com/wow/libdbicon-1-0/trunk/LibDBIcon-1.0
 	Libs/UTF8: https://repos.wowace.com/wow/utf8/trunk
-	#Libs/LibUIDropDownMenu: https://repos.wowace.com/wow/libuidropdownmenu/trunk/LibUIDropDownMenu
+	Libs/LibUIDropDownMenu: https://repos.wowace.com/wow/libuidropdownmenu/trunk/LibUIDropDownMenu
 	Libs/XamInsightToolKit: https://github.com/Xam-insight/XamInsightToolKit
 	Libs/EZBlizzardUiPopups: https://github.com/Xam-insight/EZBlizzardUiPopups
 
@@ -26,6 +26,7 @@ ignore:
 	- Libs/EZBlizzardUiPopups/EZBlizzardUiPopups.toc
 	- Libs/EZBlizzardUiPopups/CHANGELOG.txt
 	- Libs/EZBlizzardUiPopups/wow_lua_to_csv.py
+	- Libs/LibUIDropDownMenu/LibEasyMenu.lua
 
 manual-changelog:
 	filename: CHANGELOG.txt
