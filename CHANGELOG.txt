@@ -1,3 +1,5 @@
+- v1.5.17
+	- TOC for 12.1.5.
 - v1.5.16
 	- [LibUIDropDownMenu] v4.27 integration.
 - v1.5.15
